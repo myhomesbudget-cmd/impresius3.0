@@ -27,7 +27,7 @@ Trasforma la logica operativa dei fogli Excel in un motore applicativo web moder
 | M8 | **Analisi Economica** | Calcolo risultati, indicatori, margini, incidenze |
 | M9 | **Scenari e Simulazioni** | Prudente/realistico/ottimistico, analisi sensibilita |
 | M10 | **Reportistica PDF** | Report per area e completo, layout professionale |
-| M11 | **Pagamenti** | Stripe, modello freemium/pay-per-plan/premium |
+| M11 | **Pagamenti** | Stripe, modello freemium/singolo piano/premium |
 | M12 | **Archivio Operazioni** | Lista, ricerca, filtri, confronto tra operazioni |
 | M13 | **Monitoraggio Premium** | Costi reali vs previsti, scostamenti, dashboard gestionale |
 
@@ -328,7 +328,7 @@ profiles
   - company_name TEXT
   - phone TEXT
   - avatar_url TEXT
-  - subscription_plan ENUM('free','pay_per_plan','premium') DEFAULT 'free'
+  - subscription_plan ENUM('free','premium') DEFAULT 'free'
   - subscription_expires_at TIMESTAMPTZ
   - free_plan_used BOOLEAN DEFAULT false
   - created_at, updated_at TIMESTAMPTZ
@@ -412,7 +412,7 @@ operation_costs
   - category TEXT NOT NULL
   - subcategory TEXT
   - label TEXT NOT NULL
-  - calculation_type TEXT DEFAULT 'fixed'
+  - calculation_type TEXT CHECK IN ('fixed','percentage','unit_quantity') DEFAULT 'fixed'
   - base_value NUMERIC(14,2)
   - percentage NUMERIC(6,4)
   - unit_price NUMERIC(14,2)
@@ -567,8 +567,8 @@ GROUP BY ci.project_id, ci.floor, ci.category;
 
 ### Regole di business
 
-| Aspetto | Free | Pay-per-plan (3 EUR) | Premium (10 EUR/mese) |
-|---------|------|---------------------|----------------------|
+| Aspetto | Free | Singolo Piano (3 EUR) | Premium (10 EUR/mese) |
+|---------|------|----------------------|----------------------|
 | Business plan | 1 gratuito | Illimitati (3 EUR cad.) | Illimitati |
 | Area 1 - Acquisizione | Si | Si | Si |
 | Area 2 - Computo Metrico | Si | Si | Si |
@@ -596,8 +596,8 @@ ELSE IF user.subscription_plan == 'premium':
 
 ELSE:
     -> Mostra paywall con opzioni:
-       a) Acquista singolo piano (3 EUR)
-       b) Passa a Premium (10 EUR/mese)
+       a) Acquista singolo piano (single_plan, 3 EUR via Stripe)
+       b) Passa a Premium (subscription, 10 EUR/mese)
 ```
 
 ---
@@ -648,25 +648,25 @@ Per ogni voce di costo (acquisizione, operazione, computo), l'utente premium puo
 **Incluso:**
 - [x] Registrazione e login (Supabase Auth)
 - [x] Dashboard utente con statistiche
-- [ ] Creazione primo business plan gratuito
-- [ ] Form dati generali operazione
-- [ ] Area 1: Costi acquisizione (categorie, voci, calcoli)
-- [ ] Area 2: Computo metrico (voci, misurazioni, totali per piano)
-- [ ] Area 3: Stima valore vendita (unita, superfici, coefficienti)
-- [ ] Sintesi operazione con indicatori chiave
-- [ ] Report PDF base (con watermark per piano free)
-- [ ] Salvataggio e riapertura piani
-- [ ] Paywall: acquisto singolo piano (3 EUR via Stripe)
-- [ ] Landing page professionale aggiornata
+- [x] Creazione primo business plan gratuito
+- [x] Form dati generali operazione
+- [x] Area 1: Costi acquisizione (categorie, voci, calcoli)
+- [x] Area 2: Computo metrico (voci, misurazioni, totali per piano)
+- [x] Area 3: Stima valore vendita (unita, superfici, coefficienti)
+- [x] Sintesi operazione con indicatori chiave
+- [x] Report PDF base (con watermark per piano free)
+- [x] Salvataggio e riapertura piani
+- [x] Paywall: acquisto singolo piano (3 EUR via Stripe)
+- [x] Landing page professionale aggiornata
 
-**Escluso dall'MVP:**
-- Scenari multipli
-- Confronto tra operazioni
-- Analisi di sensibilita
-- Monitoraggio premium previsto/reale
-- Grafici avanzati
-- Archivio documentale
-- Piano premium (subscription)
+**Implementato post-MVP:**
+- [x] Scenari multipli (prudente/realistico/ottimistico + custom)
+- [x] Confronto tra operazioni
+- [x] Monitoraggio premium previsto/reale
+- [x] Grafici avanzati (recharts)
+- [x] Piano premium (subscription via Stripe)
+- [ ] Analisi di sensibilita
+- [ ] Archivio documentale
 
 ### Criteri di completamento MVP
 1. Un utente puo registrarsi e creare il primo piano gratis
