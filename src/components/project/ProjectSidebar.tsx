@@ -10,6 +10,7 @@ import {
   Hammer,
   TrendingUp,
   BarChart3,
+  GitBranch,
   ArrowLeft,
 } from 'lucide-react';
 
@@ -33,6 +34,7 @@ export function ProjectSidebar({ project }: ProjectSidebarProps) {
     { href: `${basePath}/construction`, icon: Hammer, label: 'Area 2 - Computo Metrico', exact: false },
     { href: `${basePath}/valuation`, icon: TrendingUp, label: 'Area 3 - Stima Vendita', exact: false },
     { href: `${basePath}/summary`, icon: BarChart3, label: 'Sintesi', exact: false },
+    { href: `${basePath}/scenarios`, icon: GitBranch, label: 'Scenari', exact: false },
   ];
 
   const status = statusConfig[project.status] ?? statusConfig.draft;
