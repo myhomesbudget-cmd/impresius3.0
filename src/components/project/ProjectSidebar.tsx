@@ -11,6 +11,8 @@ import {
   TrendingUp,
   BarChart3,
   GitBranch,
+  Activity,
+  FileDown,
   ArrowLeft,
 } from 'lucide-react';
 
@@ -35,6 +37,8 @@ export function ProjectSidebar({ project }: ProjectSidebarProps) {
     { href: `${basePath}/valuation`, icon: TrendingUp, label: 'Area 3 - Stima Vendita', exact: false },
     { href: `${basePath}/summary`, icon: BarChart3, label: 'Sintesi', exact: false },
     { href: `${basePath}/scenarios`, icon: GitBranch, label: 'Scenari', exact: false },
+    { href: `${basePath}/monitoring`, icon: Activity, label: 'Monitoring', exact: false },
+    { href: `${basePath}/report`, icon: FileDown, label: 'Report', exact: false },
   ];
 
   const status = statusConfig[project.status] ?? statusConfig.draft;

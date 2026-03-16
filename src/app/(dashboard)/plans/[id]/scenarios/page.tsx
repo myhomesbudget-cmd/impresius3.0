@@ -1,16 +1,13 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { cn, formatCurrency, formatPercentage } from '@/lib/utils';
+import { cn, formatCurrency, formatPercentage, formatNumber } from '@/lib/utils';
 import { calculateProjectResults } from '@/lib/calculations';
 import type {
   Project,
-  Scenario,
   ProjectResults,
   PropertyUnit,
   UnitSurface,
@@ -20,17 +17,17 @@ import type {
   Measurement,
 } from '@/types/database';
 import {
-  Loader2,
-  Plus,
-  Trash2,
-  Save,
+  MapPin,
+  Building2,
   TrendingUp,
   TrendingDown,
   ShieldAlert,
   Target,
   Rocket,
   Sliders,
-  BarChart3,
+  AlertTriangle,
+  Shield,
+  ArrowDown,
 } from 'lucide-react';
 import {
   BarChart,
@@ -41,57 +38,64 @@ import {
   Tooltip as RechartsTooltip,
   Legend,
   ResponsiveContainer,
-  Cell,
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
+  Radar,
 } from 'recharts';
 
-// Default scenario presets
-const SCENARIO_PRESETS: Pick<Scenario, 'name' | 'type' | 'sale_price_variation' | 'construction_cost_variation' | 'acquisition_cost_variation'>[] = [
+// Strategy labels in Italian
+const STRATEGY_LABELS: Record<string, string> = {
+  ristrutturazione: 'Ristrutturazione e Rivendita',
+  frazionamento: 'Frazionamento',
+  nuova_costruzione: 'Nuova Costruzione',
+  rivendita: 'Rivendita Diretta',
+};
+
+// Predefined scenario configs (fixed, not editable)
+const PREDEFINED_SCENARIOS = [
   {
+    key: 'conservative',
     name: 'Prudente',
-    type: 'conservative',
+    icon: ShieldAlert,
+    color: { bg: 'bg-amber-50', border: 'border-amber-300', text: 'text-amber-700', badge: 'bg-amber-100 text-amber-800', bar: '#f59e0b' },
     sale_price_variation: -10,
-    construction_cost_variation: 15,
-    acquisition_cost_variation: 5,
+    construction_cost_variation: 10,
+    acquisition_cost_variation: 0,
+    description: 'Prezzo vendita -10%, costi lavori +10%',
   },
   {
+    key: 'realistic',
     name: 'Realistico',
-    type: 'realistic',
+    icon: Target,
+    color: { bg: 'bg-blue-50', border: 'border-blue-300', text: 'text-blue-700', badge: 'bg-blue-100 text-blue-800', bar: '#3b82f6' },
     sale_price_variation: 0,
     construction_cost_variation: 0,
     acquisition_cost_variation: 0,
+    description: 'Valori base del piano',
   },
   {
+    key: 'optimistic',
     name: 'Ottimistico',
-    type: 'optimistic',
+    icon: Rocket,
+    color: { bg: 'bg-emerald-50', border: 'border-emerald-300', text: 'text-emerald-700', badge: 'bg-emerald-100 text-emerald-800', bar: '#10b981' },
     sale_price_variation: 10,
     construction_cost_variation: -5,
-    acquisition_cost_variation: -3,
+    acquisition_cost_variation: 0,
+    description: 'Prezzo vendita +10%, costi lavori -5%',
   },
 ];
 
-const SCENARIO_ICONS: Record<string, typeof ShieldAlert> = {
-  conservative: ShieldAlert,
-  realistic: Target,
-  optimistic: Rocket,
-  custom: Sliders,
-};
+const CUSTOM_COLOR = { bg: 'bg-purple-50', border: 'border-purple-300', text: 'text-purple-700', badge: 'bg-purple-100 text-purple-800', bar: '#8b5cf6' };
 
-const SCENARIO_COLORS: Record<string, { bg: string; border: string; text: string; bar: string }> = {
-  conservative: { bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-700', bar: '#f59e0b' },
-  realistic: { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-700', bar: '#3b82f6' },
-  optimistic: { bg: 'bg-emerald-50', border: 'border-emerald-200', text: 'text-emerald-700', bar: '#10b981' },
-  custom: { bg: 'bg-purple-50', border: 'border-purple-200', text: 'text-purple-700', bar: '#8b5cf6' },
-};
-
-const SCENARIO_TYPE_LABELS: Record<string, string> = {
-  conservative: 'Prudente',
-  realistic: 'Realistico',
-  optimistic: 'Ottimistico',
-  custom: 'Personalizzato',
-};
-
-interface ScenarioWithResults extends Scenario {
-  computed_results: ProjectResults;
+interface RawData {
+  units: PropertyUnit[];
+  surfaces: UnitSurface[];
+  acquisitionCosts: AcquisitionCost[];
+  operationCosts: OperationCost[];
+  constructionItems: ConstructionItem[];
+  measurements: Measurement[];
 }
 
 export default function ScenariosPage() {
@@ -99,43 +103,36 @@ export default function ScenariosPage() {
   const supabase = createClient();
 
   const [project, setProject] = useState<Project | null>(null);
-  const [scenarios, setScenarios] = useState<ScenarioWithResults[]>([]);
   const [baseResults, setBaseResults] = useState<ProjectResults | null>(null);
+  const [rawData, setRawData] = useState<RawData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState<string | null>(null);
 
-  // Raw data for recalculation
-  const [rawData, setRawData] = useState<{
-    units: PropertyUnit[];
-    surfaces: UnitSurface[];
-    acquisitionCosts: AcquisitionCost[];
-    operationCosts: OperationCost[];
-    constructionItems: ConstructionItem[];
-    measurements: Measurement[];
-  } | null>(null);
+  // Custom simulation sliders
+  const [customSaleVariation, setCustomSaleVariation] = useState(0);
+  const [customConstructionVariation, setCustomConstructionVariation] = useState(0);
+  const [customAcquisitionVariation, setCustomAcquisitionVariation] = useState(0);
 
   const applyVariations = useCallback((
-    data: NonNullable<typeof rawData>,
-    scenario: Pick<Scenario, 'sale_price_variation' | 'construction_cost_variation' | 'acquisition_cost_variation'>
+    data: RawData,
+    saleVar: number,
+    constructionVar: number,
+    acquisitionVar: number,
   ): ProjectResults => {
-    const saleFactor = 1 + scenario.sale_price_variation / 100;
-    const constructionFactor = 1 + scenario.construction_cost_variation / 100;
-    const acquisitionFactor = 1 + scenario.acquisition_cost_variation / 100;
+    const saleFactor = 1 + saleVar / 100;
+    const constructionFactor = 1 + constructionVar / 100;
+    const acquisitionFactor = 1 + acquisitionVar / 100;
 
-    // Clone and adjust units (sale price variation)
     const adjustedUnits = data.units.map((u) => ({
       ...u,
       target_sale_price: Math.round(u.target_sale_price * saleFactor * 100) / 100,
       market_price_sqm: Math.round(u.market_price_sqm * saleFactor * 100) / 100,
     }));
 
-    // Clone and adjust construction items
     const adjustedItems = data.constructionItems.map((item) => ({
       ...item,
       unit_price: Math.round(item.unit_price * constructionFactor * 100) / 100,
     }));
 
-    // Clone and adjust acquisition costs
     const adjustedAcquisition = data.acquisitionCosts.map((cost) => ({
       ...cost,
       fixed_amount: Math.round(cost.fixed_amount * acquisitionFactor * 100) / 100,
@@ -164,7 +161,6 @@ export default function ScenariosPage() {
         { data: operationCosts },
         { data: constructionItems },
         { data: measurements },
-        { data: scenariosData },
       ] = await Promise.all([
         supabase.from('projects').select('*').eq('id', projectId).single(),
         supabase.from('property_units').select('*').eq('project_id', projectId).order('sort_order'),
@@ -173,7 +169,6 @@ export default function ScenariosPage() {
         supabase.from('operation_costs').select('*').eq('project_id', projectId).order('sort_order'),
         supabase.from('construction_items').select('*').eq('project_id', projectId).order('sort_order'),
         supabase.from('measurements').select('*').order('sort_order'),
-        supabase.from('scenarios').select('*').eq('project_id', projectId).order('created_at'),
       ]);
 
       if (projectData) setProject(projectData as Project);
@@ -183,7 +178,7 @@ export default function ScenariosPage() {
       const itemIds = (constructionItems || []).map((i: ConstructionItem) => i.id);
       const projectMeasurements = (measurements || []).filter((m: Measurement) => itemIds.includes(m.item_id));
 
-      const data = {
+      const data: RawData = {
         units: (units || []) as PropertyUnit[],
         surfaces: projectSurfaces as UnitSurface[],
         acquisitionCosts: (acquisitionCosts || []) as AcquisitionCost[],
@@ -193,46 +188,11 @@ export default function ScenariosPage() {
       };
       setRawData(data);
 
-      // Calculate base results (no variation)
       const base = calculateProjectResults(
         data.units, data.surfaces, data.acquisitionCosts,
         data.operationCosts, data.constructionItems, data.measurements
       );
       setBaseResults(base);
-
-      // If no scenarios exist, create the 3 default ones
-      const existingScenarios = (scenariosData || []) as Scenario[];
-      if (existingScenarios.length === 0) {
-        const created: ScenarioWithResults[] = [];
-        for (const preset of SCENARIO_PRESETS) {
-          const computed = applyVariations(data, preset);
-          const { data: inserted } = await supabase
-            .from('scenarios')
-            .insert({
-              project_id: projectId,
-              name: preset.name,
-              type: preset.type,
-              sale_price_variation: preset.sale_price_variation,
-              construction_cost_variation: preset.construction_cost_variation,
-              acquisition_cost_variation: preset.acquisition_cost_variation,
-              results_snapshot: computed as unknown as Record<string, unknown>,
-            })
-            .select()
-            .single();
-          if (inserted) {
-            created.push({ ...(inserted as Scenario), computed_results: computed });
-          }
-        }
-        setScenarios(created);
-      } else {
-        // Recalculate results for existing scenarios from current data
-        const withResults: ScenarioWithResults[] = existingScenarios.map((s) => ({
-          ...s,
-          computed_results: applyVariations(data, s),
-        }));
-        setScenarios(withResults);
-      }
-
       setLoading(false);
     }
 
@@ -240,66 +200,64 @@ export default function ScenariosPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);
 
-  const updateScenarioField = (
-    scenarioId: string,
-    field: 'sale_price_variation' | 'construction_cost_variation' | 'acquisition_cost_variation' | 'name',
-    value: string
-  ) => {
-    setScenarios((prev) =>
-      prev.map((s) => {
-        if (s.id !== scenarioId) return s;
-        if (field === 'name') return { ...s, name: value };
-        const numValue = parseFloat(value) || 0;
-        const updated = { ...s, [field]: numValue };
-        if (rawData) {
-          updated.computed_results = applyVariations(rawData, updated);
-        }
-        return updated;
-      })
-    );
-  };
+  // Compute predefined scenario results
+  const predefinedResults = useMemo(() => {
+    if (!rawData) return [];
+    return PREDEFINED_SCENARIOS.map((scenario) => ({
+      ...scenario,
+      results: applyVariations(rawData, scenario.sale_price_variation, scenario.construction_cost_variation, scenario.acquisition_cost_variation),
+    }));
+  }, [rawData, applyVariations]);
 
-  const saveScenario = async (scenario: ScenarioWithResults) => {
-    setSaving(scenario.id);
-    await supabase
-      .from('scenarios')
-      .update({
-        name: scenario.name,
-        sale_price_variation: scenario.sale_price_variation,
-        construction_cost_variation: scenario.construction_cost_variation,
-        acquisition_cost_variation: scenario.acquisition_cost_variation,
-        results_snapshot: scenario.computed_results as unknown as Record<string, unknown>,
-      })
-      .eq('id', scenario.id);
-    setSaving(null);
-  };
+  // Compute custom scenario results (reactive to slider changes)
+  const customResults = useMemo(() => {
+    if (!rawData) return null;
+    return applyVariations(rawData, customSaleVariation, customConstructionVariation, customAcquisitionVariation);
+  }, [rawData, customSaleVariation, customConstructionVariation, customAcquisitionVariation, applyVariations]);
 
-  const addCustomScenario = async () => {
-    if (!rawData) return;
-    const preset = { sale_price_variation: 0, construction_cost_variation: 0, acquisition_cost_variation: 0 };
-    const computed = applyVariations(rawData, preset);
-    const { data: inserted } = await supabase
-      .from('scenarios')
-      .insert({
-        project_id: projectId,
-        name: `Scenario ${scenarios.length + 1}`,
-        type: 'custom',
-        ...preset,
-        results_snapshot: computed as unknown as Record<string, unknown>,
-      })
-      .select()
-      .single();
-    if (inserted) {
-      setScenarios((prev) => [...prev, { ...(inserted as Scenario), computed_results: computed }]);
+  // Break-even calculation: find minimum sale price variation where margin >= 0
+  const breakEvenAnalysis = useMemo(() => {
+    if (!rawData || !baseResults) return null;
+
+    // Binary search for break-even sale price variation
+    let low = -100;
+    let high = 0;
+
+    // First check if base is already negative
+    if (baseResults.gross_margin < 0) {
+      high = 100;
     }
-  };
 
-  const deleteScenario = async (id: string) => {
-    await supabase.from('scenarios').delete().eq('id', id);
-    setScenarios((prev) => prev.filter((s) => s.id !== id));
-  };
+    for (let i = 0; i < 50; i++) {
+      const mid = (low + high) / 2;
+      const result = applyVariations(rawData, mid, 0, 0);
+      if (result.gross_margin > 0) {
+        high = mid;
+      } else {
+        low = mid;
+      }
+    }
 
-  if (loading || !baseResults) {
+    const breakEvenVariation = Math.round(high * 100) / 100;
+    const breakEvenResult = applyVariations(rawData, breakEvenVariation, 0, 0);
+
+    // Safety margin: how much can sale price drop before loss
+    const safetyMarginPercent = baseResults.total_revenue > 0
+      ? Math.round(Math.abs(breakEvenVariation) * 100) / 100
+      : 0;
+
+    // Break-even price (total revenue at break-even)
+    const breakEvenRevenue = breakEvenResult.total_revenue;
+
+    return {
+      breakEvenVariation,
+      breakEvenRevenue,
+      safetyMarginPercent,
+      totalCost: baseResults.total_cost,
+    };
+  }, [rawData, baseResults, applyVariations]);
+
+  if (loading || !baseResults || !project) {
     return (
       <div className="p-8 max-w-7xl">
         <div className="mb-8">
@@ -315,322 +273,438 @@ export default function ScenariosPage() {
     );
   }
 
-  // Build comparison chart data
-  const comparisonMetrics = [
-    { key: 'revenue', label: 'Ricavo Totale', getValue: (r: ProjectResults) => r.total_revenue },
-    { key: 'cost', label: 'Costo Totale', getValue: (r: ProjectResults) => r.total_cost },
-    { key: 'margin', label: 'Margine', getValue: (r: ProjectResults) => r.gross_margin },
+  // ============================================================
+  // CHART DATA
+  // ============================================================
+  const allScenarios = [
+    ...predefinedResults.map((s) => ({ name: s.name, results: s.results, color: s.color.bar, key: s.key })),
+    ...(customResults ? [{ name: 'Personalizzato', results: customResults, color: CUSTOM_COLOR.bar, key: 'custom' }] : []),
   ];
 
-  const chartData = comparisonMetrics.map((metric) => {
-    const row: Record<string, string | number> = { name: metric.label };
-    for (const s of scenarios) {
-      row[s.name] = Math.round(metric.getValue(s.computed_results));
-    }
-    return row;
-  });
-
-  const roiChartData = scenarios.map((s) => ({
+  // Bar chart: margin comparison
+  const marginChartData = allScenarios.map((s) => ({
     name: s.name,
-    ROI: s.computed_results.roi,
-    'Utile su Ricavi': s.computed_results.margin_on_revenue,
-    type: s.type,
+    Margine: Math.round(s.results.gross_margin),
+    fill: s.color,
   }));
 
+  // Bar chart: ROI comparison
+  const roiChartData = allScenarios.map((s) => ({
+    name: s.name,
+    ROI: Math.round(s.results.roi * 100) / 100,
+    fill: s.color,
+  }));
+
+  // Radar chart data
+  const radarData = [
+    {
+      metric: 'Margine',
+      ...Object.fromEntries(allScenarios.map((s) => [s.name, Math.max(0, s.results.gross_margin)])),
+    },
+    {
+      metric: 'ROI',
+      ...Object.fromEntries(allScenarios.map((s) => [s.name, Math.max(0, s.results.roi * 1000)])),
+    },
+    {
+      metric: 'Ricavo',
+      ...Object.fromEntries(allScenarios.map((s) => [s.name, s.results.total_revenue])),
+    },
+    {
+      metric: 'Efficienza Costi',
+      ...Object.fromEntries(allScenarios.map((s) => {
+        const efficiency = s.results.total_cost > 0 ? (s.results.total_revenue / s.results.total_cost) * 100000 : 0;
+        return [s.name, Math.max(0, efficiency)];
+      })),
+    },
+  ];
+
+  const formatVariation = (v: number) => `${v > 0 ? '+' : ''}${v}%`;
+
   return (
-    <div className="p-8 max-w-7xl">
-      {/* Header */}
-      <div className="mb-8 flex items-start justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Analisi Scenari</h1>
-          {project && (
-            <p className="mt-1 text-sm text-gray-500">
-              Confronta scenari economici per &ldquo;{project.name}&rdquo;
-            </p>
-          )}
-        </div>
-        <Button onClick={addCustomScenario} variant="outline" className="gap-2">
-          <Plus className="w-4 h-4" />
-          Aggiungi Scenario
-        </Button>
+    <div className="p-8 max-w-7xl space-y-8">
+
+      {/* ============================================================ */}
+      {/* SEZIONE 1: INTESTAZIONE OPERAZIONE                           */}
+      {/* ============================================================ */}
+      <div>
+        <Card className="border-gray-300">
+          <CardContent className="p-6">
+            {/* Project Info */}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
+              <div className="flex-1">
+                <h1 className="text-2xl font-bold text-gray-900">{project.name}</h1>
+                <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
+                  {project.location_city && (
+                    <span className="flex items-center gap-1">
+                      <MapPin className="w-4 h-4" />
+                      {project.location_city}{project.location_province ? ` (${project.location_province})` : ''}
+                    </span>
+                  )}
+                  <span className="flex items-center gap-1">
+                    <Building2 className="w-4 h-4" />
+                    {STRATEGY_LABELS[project.strategy] || project.strategy}
+                  </span>
+                </div>
+              </div>
+              <span className="text-xs font-medium uppercase tracking-wider text-gray-400 bg-gray-100 px-3 py-1 rounded-full">
+                Scenario Base
+              </span>
+            </div>
+
+            {/* Base KPIs */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+              <div className="bg-blue-50 rounded-xl p-4">
+                <p className="text-xs font-medium text-blue-600 uppercase tracking-wide">Ricavo Totale</p>
+                <p className="text-xl font-bold text-blue-900 mt-1">{formatCurrency(baseResults.total_revenue)}</p>
+              </div>
+              <div className="bg-gray-50 rounded-xl p-4">
+                <p className="text-xs font-medium text-gray-600 uppercase tracking-wide">Costo Totale</p>
+                <p className="text-xl font-bold text-gray-900 mt-1">{formatCurrency(baseResults.total_cost)}</p>
+              </div>
+              <div className={cn('rounded-xl p-4', baseResults.gross_margin >= 0 ? 'bg-emerald-50' : 'bg-red-50')}>
+                <p className={cn('text-xs font-medium uppercase tracking-wide', baseResults.gross_margin >= 0 ? 'text-emerald-600' : 'text-red-600')}>
+                  Margine
+                </p>
+                <p className={cn('text-xl font-bold mt-1', baseResults.gross_margin >= 0 ? 'text-emerald-900' : 'text-red-900')}>
+                  {formatCurrency(baseResults.gross_margin)}
+                </p>
+              </div>
+              <div className={cn('rounded-xl p-4', baseResults.roi >= 0 ? 'bg-emerald-50' : 'bg-red-50')}>
+                <p className={cn('text-xs font-medium uppercase tracking-wide', baseResults.roi >= 0 ? 'text-emerald-600' : 'text-red-600')}>
+                  ROI
+                </p>
+                <p className={cn('text-xl font-bold mt-1', baseResults.roi >= 0 ? 'text-emerald-900' : 'text-red-900')}>
+                  {formatPercentage(baseResults.roi)}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Base Reference */}
-      <Card className="mb-8 border-gray-300 bg-gray-50">
-        <CardContent className="p-5">
-          <div className="flex items-center gap-3 mb-3">
-            <BarChart3 className="w-5 h-5 text-gray-600" />
-            <span className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
-              Valori Base (dati attuali senza variazioni)
-            </span>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
-            <div>
-              <p className="text-xs text-gray-500">Ricavo Totale</p>
-              <p className="text-sm font-semibold text-gray-900">{formatCurrency(baseResults.total_revenue)}</p>
-            </div>
-            <div>
-              <p className="text-xs text-gray-500">Costo Totale</p>
-              <p className="text-sm font-semibold text-gray-900">{formatCurrency(baseResults.total_cost)}</p>
-            </div>
-            <div>
-              <p className="text-xs text-gray-500">Margine</p>
-              <p className="text-sm font-semibold text-gray-900">{formatCurrency(baseResults.gross_margin)}</p>
-            </div>
-            <div>
-              <p className="text-xs text-gray-500">ROI</p>
-              <p className="text-sm font-semibold text-gray-900">{formatPercentage(baseResults.roi)}</p>
-            </div>
-            <div>
-              <p className="text-xs text-gray-500">Utile su Ricavi</p>
-              <p className="text-sm font-semibold text-gray-900">{formatPercentage(baseResults.margin_on_revenue)}</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      {/* ============================================================ */}
+      {/* SEZIONE 2: SCENARI PREDEFINITI                                */}
+      {/* ============================================================ */}
+      <div>
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Scenari Predefiniti</h2>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {predefinedResults.map((scenario) => {
+            const Icon = scenario.icon;
+            const r = scenario.results;
+            const marginPositive = r.gross_margin >= 0;
+            const deltaMargin = r.gross_margin - baseResults.gross_margin;
 
-      {/* Scenario Cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        {scenarios.map((scenario) => {
-          const colors = SCENARIO_COLORS[scenario.type] || SCENARIO_COLORS.custom;
-          const Icon = SCENARIO_ICONS[scenario.type] || Sliders;
-          const r = scenario.computed_results;
-          const marginPositive = r.gross_margin >= 0;
-          const deltaMargin = r.gross_margin - baseResults.gross_margin;
-
-          return (
-            <Card key={scenario.id} className={cn('border-2', colors.border)}>
-              <CardHeader className={cn('pb-3', colors.bg)}>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Icon className={cn('w-5 h-5', colors.text)} />
-                    <Input
-                      value={scenario.name}
-                      onChange={(e) => updateScenarioField(scenario.id, 'name', e.target.value)}
-                      className="h-7 text-sm font-semibold border-none bg-transparent p-0 focus-visible:ring-0"
-                    />
+            return (
+              <Card key={scenario.key} className={cn('border-2 overflow-hidden', scenario.color.border)}>
+                {/* Header */}
+                <div className={cn('px-5 py-4', scenario.color.bg)}>
+                  <div className="flex items-center gap-3">
+                    <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center', scenario.color.badge)}>
+                      <Icon className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900">{scenario.name}</h3>
+                      <p className="text-xs text-gray-500">{scenario.description}</p>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => saveScenario(scenario)}
-                      disabled={saving === scenario.id}
-                      className="h-7 w-7 p-0"
-                      title="Salva"
-                    >
-                      {saving === scenario.id ? (
-                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      ) : (
-                        <Save className="w-3.5 h-3.5" />
-                      )}
-                    </Button>
-                    {scenario.type === 'custom' && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => deleteScenario(scenario.id)}
-                        className="h-7 w-7 p-0 text-red-500 hover:text-red-700"
-                        title="Elimina"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </Button>
+                </div>
+
+                {/* Variations applied */}
+                <div className="px-5 py-3 border-b border-gray-100">
+                  <div className="flex gap-3 text-xs">
+                    {scenario.sale_price_variation !== 0 && (
+                      <span className={cn('px-2 py-0.5 rounded-full font-medium',
+                        scenario.sale_price_variation > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
+                      )}>
+                        Vendita {formatVariation(scenario.sale_price_variation)}
+                      </span>
+                    )}
+                    {scenario.construction_cost_variation !== 0 && (
+                      <span className={cn('px-2 py-0.5 rounded-full font-medium',
+                        scenario.construction_cost_variation < 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
+                      )}>
+                        Lavori {formatVariation(scenario.construction_cost_variation)}
+                      </span>
+                    )}
+                    {scenario.sale_price_variation === 0 && scenario.construction_cost_variation === 0 && (
+                      <span className="px-2 py-0.5 rounded-full font-medium bg-blue-100 text-blue-700">
+                        Nessuna variazione
+                      </span>
                     )}
                   </div>
                 </div>
-                <span className={cn('text-xs font-medium', colors.text)}>
-                  {SCENARIO_TYPE_LABELS[scenario.type]}
-                </span>
-              </CardHeader>
-
-              <CardContent className="pt-4 space-y-4">
-                {/* Variation Sliders */}
-                <div className="space-y-3">
-                  <div>
-                    <label className="text-xs font-medium text-gray-600 flex justify-between">
-                      <span>Prezzo Vendita</span>
-                      <span className={cn(
-                        'font-semibold',
-                        scenario.sale_price_variation > 0 ? 'text-emerald-600' :
-                        scenario.sale_price_variation < 0 ? 'text-red-600' : 'text-gray-600'
-                      )}>
-                        {scenario.sale_price_variation > 0 ? '+' : ''}{scenario.sale_price_variation}%
-                      </span>
-                    </label>
-                    <Input
-                      type="range"
-                      min={-30}
-                      max={30}
-                      step={1}
-                      value={scenario.sale_price_variation}
-                      onChange={(e) => updateScenarioField(scenario.id, 'sale_price_variation', e.target.value)}
-                      className="h-2 p-0 mt-1 cursor-pointer"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-xs font-medium text-gray-600 flex justify-between">
-                      <span>Costi Costruzione</span>
-                      <span className={cn(
-                        'font-semibold',
-                        scenario.construction_cost_variation < 0 ? 'text-emerald-600' :
-                        scenario.construction_cost_variation > 0 ? 'text-red-600' : 'text-gray-600'
-                      )}>
-                        {scenario.construction_cost_variation > 0 ? '+' : ''}{scenario.construction_cost_variation}%
-                      </span>
-                    </label>
-                    <Input
-                      type="range"
-                      min={-30}
-                      max={30}
-                      step={1}
-                      value={scenario.construction_cost_variation}
-                      onChange={(e) => updateScenarioField(scenario.id, 'construction_cost_variation', e.target.value)}
-                      className="h-2 p-0 mt-1 cursor-pointer"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-xs font-medium text-gray-600 flex justify-between">
-                      <span>Costi Acquisizione</span>
-                      <span className={cn(
-                        'font-semibold',
-                        scenario.acquisition_cost_variation < 0 ? 'text-emerald-600' :
-                        scenario.acquisition_cost_variation > 0 ? 'text-red-600' : 'text-gray-600'
-                      )}>
-                        {scenario.acquisition_cost_variation > 0 ? '+' : ''}{scenario.acquisition_cost_variation}%
-                      </span>
-                    </label>
-                    <Input
-                      type="range"
-                      min={-30}
-                      max={30}
-                      step={1}
-                      value={scenario.acquisition_cost_variation}
-                      onChange={(e) => updateScenarioField(scenario.id, 'acquisition_cost_variation', e.target.value)}
-                      className="h-2 p-0 mt-1 cursor-pointer"
-                    />
-                  </div>
-                </div>
-
-                {/* Divider */}
-                <div className="border-t border-gray-200" />
 
                 {/* Results */}
-                <div className="space-y-2.5">
+                <CardContent className="pt-4 space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-xs text-gray-500">Ricavo Totale</span>
-                    <span className="text-sm font-semibold text-gray-900">
-                      {formatCurrency(r.total_revenue)}
-                    </span>
+                    <span className="text-sm text-gray-500">Ricavo</span>
+                    <span className="text-sm font-semibold text-gray-900">{formatCurrency(r.total_revenue)}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-xs text-gray-500">Costo Totale</span>
-                    <span className="text-sm font-semibold text-gray-900">
-                      {formatCurrency(r.total_cost)}
-                    </span>
+                    <span className="text-sm text-gray-500">Costo Totale</span>
+                    <span className="text-sm font-semibold text-gray-900">{formatCurrency(r.total_cost)}</span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs text-gray-500">Margine</span>
-                    <div className="flex items-center gap-1.5">
-                      {marginPositive ? (
-                        <TrendingUp className="w-3.5 h-3.5 text-emerald-500" />
-                      ) : (
-                        <TrendingDown className="w-3.5 h-3.5 text-red-500" />
-                      )}
-                      <span className={cn(
-                        'text-sm font-bold',
-                        marginPositive ? 'text-emerald-600' : 'text-red-600'
-                      )}>
-                        {formatCurrency(r.gross_margin)}
-                      </span>
+                  <div className="border-t border-gray-100 pt-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-medium text-gray-700">Margine</span>
+                      <div className="flex items-center gap-1.5">
+                        {marginPositive ? (
+                          <TrendingUp className="w-4 h-4 text-emerald-500" />
+                        ) : (
+                          <TrendingDown className="w-4 h-4 text-red-500" />
+                        )}
+                        <span className={cn('text-base font-bold', marginPositive ? 'text-emerald-600' : 'text-red-600')}>
+                          {formatCurrency(r.gross_margin)}
+                        </span>
+                      </div>
                     </div>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-xs text-gray-500">ROI</span>
-                    <span className={cn(
-                      'text-sm font-semibold',
-                      r.roi >= 0 ? 'text-emerald-600' : 'text-red-600'
-                    )}>
+                    <span className="text-sm font-medium text-gray-700">ROI</span>
+                    <span className={cn('text-base font-bold', r.roi >= 0 ? 'text-emerald-600' : 'text-red-600')}>
                       {formatPercentage(r.roi)}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs text-gray-500">Utile su Ricavi</span>
-                    <span className={cn(
-                      'text-sm font-semibold',
-                      r.margin_on_revenue >= 0 ? 'text-emerald-600' : 'text-red-600'
+
+                  {/* Delta from base */}
+                  {scenario.key !== 'realistic' && (
+                    <div className={cn(
+                      'rounded-lg p-3 text-center mt-2',
+                      deltaMargin > 0 ? 'bg-emerald-50' : deltaMargin < 0 ? 'bg-red-50' : 'bg-gray-50'
                     )}>
-                      {formatPercentage(r.margin_on_revenue)}
+                      <span className="text-xs text-gray-500 block">Differenza dal base</span>
+                      <p className={cn(
+                        'text-sm font-bold mt-0.5',
+                        deltaMargin > 0 ? 'text-emerald-600' : deltaMargin < 0 ? 'text-red-600' : 'text-gray-600'
+                      )}>
+                        {deltaMargin > 0 ? '+' : ''}{formatCurrency(deltaMargin)}
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ============================================================ */}
+      {/* SEZIONE 3: SIMULAZIONE PERSONALIZZATA                        */}
+      {/* ============================================================ */}
+      <div>
+        <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+          <Sliders className="w-5 h-5 text-purple-600" />
+          Simulazione Personalizzata
+        </h2>
+        <Card className={cn('border-2', CUSTOM_COLOR.border)}>
+          <CardContent className="p-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Left: Sliders */}
+              <div className="space-y-6">
+                <p className="text-sm text-gray-500">
+                  Modifica le variabili per simulare scenari personalizzati. I risultati si aggiornano in tempo reale.
+                </p>
+
+                {/* Sale Price Slider */}
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-sm font-medium text-gray-700">Prezzo di Vendita</label>
+                    <span className={cn(
+                      'text-sm font-bold px-2 py-0.5 rounded',
+                      customSaleVariation > 0 ? 'bg-emerald-100 text-emerald-700' :
+                      customSaleVariation < 0 ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700'
+                    )}>
+                      {formatVariation(customSaleVariation)}
                     </span>
+                  </div>
+                  <input
+                    type="range"
+                    min={-20}
+                    max={20}
+                    step={1}
+                    value={customSaleVariation}
+                    onChange={(e) => setCustomSaleVariation(Number(e.target.value))}
+                    className="w-full h-2 rounded-lg appearance-none cursor-pointer accent-purple-600 bg-gray-200"
+                  />
+                  <div className="flex justify-between text-xs text-gray-400 mt-1">
+                    <span>-20%</span>
+                    <span>0%</span>
+                    <span>+20%</span>
                   </div>
                 </div>
 
-                {/* Delta from base */}
-                <div className={cn(
-                  'rounded-lg p-2.5 text-center',
-                  deltaMargin > 0 ? 'bg-emerald-50' : deltaMargin < 0 ? 'bg-red-50' : 'bg-gray-50'
-                )}>
-                  <span className="text-xs text-gray-500">Δ Margine vs Base</span>
-                  <p className={cn(
-                    'text-sm font-bold',
-                    deltaMargin > 0 ? 'text-emerald-600' : deltaMargin < 0 ? 'text-red-600' : 'text-gray-600'
-                  )}>
-                    {deltaMargin > 0 ? '+' : ''}{formatCurrency(deltaMargin)}
-                  </p>
+                {/* Construction Cost Slider */}
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-sm font-medium text-gray-700">Costo Lavori</label>
+                    <span className={cn(
+                      'text-sm font-bold px-2 py-0.5 rounded',
+                      customConstructionVariation < 0 ? 'bg-emerald-100 text-emerald-700' :
+                      customConstructionVariation > 0 ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700'
+                    )}>
+                      {formatVariation(customConstructionVariation)}
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min={-20}
+                    max={20}
+                    step={1}
+                    value={customConstructionVariation}
+                    onChange={(e) => setCustomConstructionVariation(Number(e.target.value))}
+                    className="w-full h-2 rounded-lg appearance-none cursor-pointer accent-purple-600 bg-gray-200"
+                  />
+                  <div className="flex justify-between text-xs text-gray-400 mt-1">
+                    <span>-20%</span>
+                    <span>0%</span>
+                    <span>+20%</span>
+                  </div>
                 </div>
-              </CardContent>
-            </Card>
-          );
-        })}
+
+                {/* Acquisition Cost Slider */}
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-sm font-medium text-gray-700">Costo Acquisizione</label>
+                    <span className={cn(
+                      'text-sm font-bold px-2 py-0.5 rounded',
+                      customAcquisitionVariation < 0 ? 'bg-emerald-100 text-emerald-700' :
+                      customAcquisitionVariation > 0 ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700'
+                    )}>
+                      {formatVariation(customAcquisitionVariation)}
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min={-10}
+                    max={10}
+                    step={1}
+                    value={customAcquisitionVariation}
+                    onChange={(e) => setCustomAcquisitionVariation(Number(e.target.value))}
+                    className="w-full h-2 rounded-lg appearance-none cursor-pointer accent-purple-600 bg-gray-200"
+                  />
+                  <div className="flex justify-between text-xs text-gray-400 mt-1">
+                    <span>-10%</span>
+                    <span>0%</span>
+                    <span>+10%</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right: Live Results */}
+              {customResults && (
+                <div className={cn('rounded-xl p-6', CUSTOM_COLOR.bg)}>
+                  <div className="flex items-center gap-2 mb-5">
+                    <Sliders className={cn('w-5 h-5', CUSTOM_COLOR.text)} />
+                    <h3 className="font-semibold text-gray-900">Risultati Simulazione</h3>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">Ricavo</span>
+                      <span className="text-lg font-semibold text-gray-900">{formatCurrency(customResults.total_revenue)}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">Costo Totale</span>
+                      <span className="text-lg font-semibold text-gray-900">{formatCurrency(customResults.total_cost)}</span>
+                    </div>
+
+                    <div className="border-t border-purple-200 pt-4">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium text-gray-700">Margine</span>
+                        <div className="flex items-center gap-2">
+                          {customResults.gross_margin >= 0 ? (
+                            <TrendingUp className="w-5 h-5 text-emerald-500" />
+                          ) : (
+                            <TrendingDown className="w-5 h-5 text-red-500" />
+                          )}
+                          <span className={cn(
+                            'text-2xl font-bold',
+                            customResults.gross_margin >= 0 ? 'text-emerald-600' : 'text-red-600'
+                          )}>
+                            {formatCurrency(customResults.gross_margin)}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-medium text-gray-700">ROI</span>
+                      <span className={cn(
+                        'text-2xl font-bold',
+                        customResults.roi >= 0 ? 'text-emerald-600' : 'text-red-600'
+                      )}>
+                        {formatPercentage(customResults.roi)}
+                      </span>
+                    </div>
+
+                    {/* Delta from base */}
+                    <div className={cn(
+                      'rounded-lg p-3 text-center',
+                      customResults.gross_margin - baseResults.gross_margin > 0 ? 'bg-emerald-100' :
+                      customResults.gross_margin - baseResults.gross_margin < 0 ? 'bg-red-100' : 'bg-gray-100'
+                    )}>
+                      <span className="text-xs text-gray-500 block">Differenza dal piano base</span>
+                      <p className={cn(
+                        'text-sm font-bold mt-0.5',
+                        customResults.gross_margin - baseResults.gross_margin > 0 ? 'text-emerald-700' :
+                        customResults.gross_margin - baseResults.gross_margin < 0 ? 'text-red-700' : 'text-gray-700'
+                      )}>
+                        {customResults.gross_margin - baseResults.gross_margin > 0 ? '+' : ''}
+                        {formatCurrency(customResults.gross_margin - baseResults.gross_margin)}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Comparison Charts */}
-      {scenarios.length >= 2 && (
-        <>
-          {/* Revenue / Cost / Margin Bar Chart */}
-          <Card className="mb-8">
-            <CardHeader>
-              <CardTitle>Confronto Economico</CardTitle>
+      {/* ============================================================ */}
+      {/* SEZIONE 4: GRAFICI COMPARATIVI                               */}
+      {/* ============================================================ */}
+      <div>
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Confronto Scenari</h2>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Margin Bar Chart */}
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base">Margine per Scenario</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="h-80">
+              <div className="h-72">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={chartData} barGap={8}>
+                  <BarChart data={marginChartData} barSize={50}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                     <XAxis dataKey="name" tick={{ fontSize: 12 }} />
                     <YAxis
                       tick={{ fontSize: 11 }}
-                      tickFormatter={(v) => `€${(v / 1000).toFixed(0)}k`}
+                      tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`}
                     />
                     <RechartsTooltip
                       formatter={(value) => formatCurrency(Number(value))}
                     />
-                    <Legend />
-                    {scenarios.map((s) => {
-                      const color = SCENARIO_COLORS[s.type]?.bar || SCENARIO_COLORS.custom.bar;
-                      return (
-                        <Bar
-                          key={s.id}
-                          dataKey={s.name}
-                          fill={color}
-                          radius={[4, 4, 0, 0]}
-                        />
-                      );
-                    })}
+                    <Bar dataKey="Margine" radius={[6, 6, 0, 0]}>
+                      {marginChartData.map((entry, idx) => (
+                        <rect key={idx} fill={entry.fill} />
+                      ))}
+                    </Bar>
                   </BarChart>
                 </ResponsiveContainer>
               </div>
             </CardContent>
           </Card>
 
-          {/* ROI & Margin on Revenue Chart */}
-          <Card className="mb-8">
-            <CardHeader>
-              <CardTitle>ROI e Utile su Ricavi (%)</CardTitle>
+          {/* ROI Bar Chart */}
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base">ROI per Scenario (%)</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="h-72">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={roiChartData} barGap={8}>
+                  <BarChart data={roiChartData} barSize={50}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                     <XAxis dataKey="name" tick={{ fontSize: 12 }} />
                     <YAxis
@@ -640,22 +714,9 @@ export default function ScenariosPage() {
                     <RechartsTooltip
                       formatter={(value) => formatPercentage(Number(value))}
                     />
-                    <Legend />
-                    <Bar dataKey="ROI" radius={[4, 4, 0, 0]}>
+                    <Bar dataKey="ROI" radius={[6, 6, 0, 0]}>
                       {roiChartData.map((entry, idx) => (
-                        <Cell
-                          key={idx}
-                          fill={SCENARIO_COLORS[entry.type]?.bar || SCENARIO_COLORS.custom.bar}
-                        />
-                      ))}
-                    </Bar>
-                    <Bar dataKey="Utile su Ricavi" radius={[4, 4, 0, 0]}>
-                      {roiChartData.map((entry, idx) => (
-                        <Cell
-                          key={idx}
-                          fill={SCENARIO_COLORS[entry.type]?.bar || SCENARIO_COLORS.custom.bar}
-                          opacity={0.6}
-                        />
+                        <rect key={idx} fill={entry.fill} />
                       ))}
                     </Bar>
                   </BarChart>
@@ -664,10 +725,158 @@ export default function ScenariosPage() {
             </CardContent>
           </Card>
 
-          {/* Comparison Table */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Tabella Comparativa</CardTitle>
+          {/* Radar Chart */}
+          <Card className="lg:col-span-2">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base">Confronto Radar</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <RadarChart data={radarData}>
+                    <PolarGrid stroke="#e5e7eb" />
+                    <PolarAngleAxis dataKey="metric" tick={{ fontSize: 12 }} />
+                    <PolarRadiusAxis tick={false} axisLine={false} />
+                    {allScenarios.map((s) => (
+                      <Radar
+                        key={s.key}
+                        name={s.name}
+                        dataKey={s.name}
+                        stroke={s.color}
+                        fill={s.color}
+                        fillOpacity={0.15}
+                        strokeWidth={2}
+                      />
+                    ))}
+                    <Legend />
+                    <RechartsTooltip />
+                  </RadarChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      {/* ============================================================ */}
+      {/* SEZIONE 5: INDICATORI DI ROBUSTEZZA                          */}
+      {/* ============================================================ */}
+      {breakEvenAnalysis && (
+        <div>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <Shield className="w-5 h-5 text-gray-600" />
+            Indicatori di Robustezza
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Break-even Price */}
+            <Card className="border-2 border-orange-200">
+              <CardContent className="p-5">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center">
+                    <AlertTriangle className="w-5 h-5 text-orange-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900 text-sm">Break-even Price</h3>
+                    <p className="text-xs text-gray-500">Ricavo minimo per non andare in perdita</p>
+                  </div>
+                </div>
+                <p className="text-2xl font-bold text-orange-700">
+                  {formatCurrency(breakEvenAnalysis.breakEvenRevenue)}
+                </p>
+                <p className="text-xs text-gray-500 mt-2">
+                  Variazione prezzo vendita: {formatVariation(breakEvenAnalysis.breakEvenVariation)}
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Safety Margin */}
+            <Card className="border-2 border-emerald-200">
+              <CardContent className="p-5">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center">
+                    <Shield className="w-5 h-5 text-emerald-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900 text-sm">Margine di Sicurezza</h3>
+                    <p className="text-xs text-gray-500">Quanto il prezzo puo scendere</p>
+                  </div>
+                </div>
+                <p className={cn(
+                  'text-2xl font-bold',
+                  breakEvenAnalysis.safetyMarginPercent > 10 ? 'text-emerald-700' :
+                  breakEvenAnalysis.safetyMarginPercent > 5 ? 'text-amber-700' : 'text-red-700'
+                )}>
+                  {formatNumber(breakEvenAnalysis.safetyMarginPercent, 1)}%
+                </p>
+                <div className="mt-3">
+                  <div className="h-2 rounded-full bg-gray-200 overflow-hidden">
+                    <div
+                      className={cn(
+                        'h-full rounded-full transition-all',
+                        breakEvenAnalysis.safetyMarginPercent > 10 ? 'bg-emerald-500' :
+                        breakEvenAnalysis.safetyMarginPercent > 5 ? 'bg-amber-500' : 'bg-red-500'
+                      )}
+                      style={{ width: `${Math.min(breakEvenAnalysis.safetyMarginPercent * 5, 100)}%` }}
+                    />
+                  </div>
+                  <div className="flex justify-between text-xs text-gray-400 mt-1">
+                    <span>Rischioso</span>
+                    <span>Sicuro</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Robustness Verdict */}
+            <Card className={cn(
+              'border-2',
+              breakEvenAnalysis.safetyMarginPercent > 10 ? 'border-emerald-200' :
+              breakEvenAnalysis.safetyMarginPercent > 5 ? 'border-amber-200' : 'border-red-200'
+            )}>
+              <CardContent className="p-5">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className={cn(
+                    'w-10 h-10 rounded-lg flex items-center justify-center',
+                    breakEvenAnalysis.safetyMarginPercent > 10 ? 'bg-emerald-100' :
+                    breakEvenAnalysis.safetyMarginPercent > 5 ? 'bg-amber-100' : 'bg-red-100'
+                  )}>
+                    <ArrowDown className={cn(
+                      'w-5 h-5',
+                      breakEvenAnalysis.safetyMarginPercent > 10 ? 'text-emerald-600' :
+                      breakEvenAnalysis.safetyMarginPercent > 5 ? 'text-amber-600' : 'text-red-600'
+                    )} />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900 text-sm">Valutazione Operazione</h3>
+                    <p className="text-xs text-gray-500">Giudizio complessivo</p>
+                  </div>
+                </div>
+                <p className={cn(
+                  'text-lg font-bold',
+                  breakEvenAnalysis.safetyMarginPercent > 10 ? 'text-emerald-700' :
+                  breakEvenAnalysis.safetyMarginPercent > 5 ? 'text-amber-700' : 'text-red-700'
+                )}>
+                  {breakEvenAnalysis.safetyMarginPercent > 10
+                    ? 'Operazione Solida'
+                    : breakEvenAnalysis.safetyMarginPercent > 5
+                    ? 'Operazione Accettabile'
+                    : 'Operazione Rischiosa'}
+                </p>
+                <p className="text-sm text-gray-500 mt-2">
+                  {breakEvenAnalysis.safetyMarginPercent > 10
+                    ? "L'operazione resiste a un calo significativo del prezzo di vendita."
+                    : breakEvenAnalysis.safetyMarginPercent > 5
+                    ? 'Margine di sicurezza limitato. Valutare attentamente i rischi.'
+                    : 'Il margine di sicurezza e troppo basso. Alto rischio di perdita.'}
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Summary table */}
+          <Card className="mt-6">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base">Tabella Riepilogativa</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="overflow-x-auto">
@@ -675,8 +884,8 @@ export default function ScenariosPage() {
                   <thead>
                     <tr className="border-b border-gray-200">
                       <th className="text-left py-3 px-4 font-medium text-gray-600">Indicatore</th>
-                      {scenarios.map((s) => (
-                        <th key={s.id} className="text-right py-3 px-4 font-medium text-gray-600">
+                      {allScenarios.map((s) => (
+                        <th key={s.key} className="text-right py-3 px-4 font-medium text-gray-600">
                           {s.name}
                         </th>
                       ))}
@@ -684,16 +893,13 @@ export default function ScenariosPage() {
                   </thead>
                   <tbody>
                     {[
-                      { label: 'Variazione Prezzo Vendita', format: (s: ScenarioWithResults) => `${s.sale_price_variation > 0 ? '+' : ''}${s.sale_price_variation}%` },
-                      { label: 'Variazione Costi Costruzione', format: (s: ScenarioWithResults) => `${s.construction_cost_variation > 0 ? '+' : ''}${s.construction_cost_variation}%` },
-                      { label: 'Variazione Costi Acquisizione', format: (s: ScenarioWithResults) => `${s.acquisition_cost_variation > 0 ? '+' : ''}${s.acquisition_cost_variation}%` },
-                      { label: 'Ricavo Totale', format: (s: ScenarioWithResults) => formatCurrency(s.computed_results.total_revenue) },
-                      { label: 'Costo Totale', format: (s: ScenarioWithResults) => formatCurrency(s.computed_results.total_cost) },
-                      { label: 'Margine', format: (s: ScenarioWithResults) => formatCurrency(s.computed_results.gross_margin), highlight: true },
-                      { label: 'ROI', format: (s: ScenarioWithResults) => formatPercentage(s.computed_results.roi), highlight: true },
-                      { label: 'Utile su Ricavi', format: (s: ScenarioWithResults) => formatPercentage(s.computed_results.margin_on_revenue) },
-                      { label: 'Costo/mq', format: (s: ScenarioWithResults) => formatCurrency(s.computed_results.cost_per_sqm) },
-                      { label: 'Ricavo/mq', format: (s: ScenarioWithResults) => formatCurrency(s.computed_results.revenue_per_sqm) },
+                      { label: 'Ricavo Totale', format: (r: ProjectResults) => formatCurrency(r.total_revenue) },
+                      { label: 'Costo Totale', format: (r: ProjectResults) => formatCurrency(r.total_cost) },
+                      { label: 'Margine', format: (r: ProjectResults) => formatCurrency(r.gross_margin), highlight: true },
+                      { label: 'ROI', format: (r: ProjectResults) => formatPercentage(r.roi), highlight: true },
+                      { label: 'Utile su Ricavi', format: (r: ProjectResults) => formatPercentage(r.margin_on_revenue) },
+                      { label: 'Costo/mq', format: (r: ProjectResults) => formatCurrency(r.cost_per_sqm) },
+                      { label: 'Ricavo/mq', format: (r: ProjectResults) => formatCurrency(r.revenue_per_sqm) },
                     ].map((row, idx) => (
                       <tr
                         key={idx}
@@ -703,9 +909,9 @@ export default function ScenariosPage() {
                         )}
                       >
                         <td className="py-3 px-4 font-medium text-gray-900">{row.label}</td>
-                        {scenarios.map((s) => (
-                          <td key={s.id} className="py-3 px-4 text-right text-gray-700">
-                            {row.format(s)}
+                        {allScenarios.map((s) => (
+                          <td key={s.key} className="py-3 px-4 text-right text-gray-700">
+                            {row.format(s.results)}
                           </td>
                         ))}
                       </tr>
@@ -715,7 +921,7 @@ export default function ScenariosPage() {
               </div>
             </CardContent>
           </Card>
-        </>
+        </div>
       )}
     </div>
   );
