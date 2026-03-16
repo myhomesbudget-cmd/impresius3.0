@@ -115,7 +115,7 @@ export default function SummaryPage() {
 
   if (loading || !results) {
     return (
-      <div className="p-8 max-w-6xl">
+      <div className="p-4 md:p-8 max-w-6xl">
         <div className="mb-8">
           <div className="h-8 w-64 bg-gray-200 rounded animate-pulse" />
           <div className="h-4 w-48 bg-gray-100 rounded animate-pulse mt-2" />
@@ -177,7 +177,7 @@ export default function SummaryPage() {
   };
 
   return (
-    <div className="p-8 max-w-6xl">
+    <div className="p-4 md:p-8 max-w-6xl">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900">

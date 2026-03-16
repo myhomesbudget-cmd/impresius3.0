@@ -340,7 +340,7 @@ export default function ComputoMetricoPage() {
 
   return (
     <div className="flex flex-col min-h-[calc(100vh-4rem)]">
-      <div className="flex-1 p-8 pb-24 max-w-6xl">
+      <div className="flex-1 p-4 md:p-8 pb-24 max-w-6xl">
         {/* ---- Header ---- */}
         <div className="mb-8">
           <div className="flex items-center justify-between">

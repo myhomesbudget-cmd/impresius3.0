@@ -351,7 +351,7 @@ export default function ValuationPage() {
   }
 
   return (
-    <div className="p-8 max-w-7xl">
+    <div className="p-4 md:p-8 max-w-7xl">
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center justify-between">

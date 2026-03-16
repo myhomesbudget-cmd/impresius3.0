@@ -100,7 +100,7 @@ export default function DatiGeneraliPage() {
   }
 
   return (
-    <div className="p-8 max-w-3xl">
+    <div className="p-4 md:p-8 max-w-3xl">
       {/* Page Header */}
       <div className="mb-8">
         <div className="flex items-center justify-between">

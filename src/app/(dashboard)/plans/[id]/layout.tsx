@@ -1,6 +1,8 @@
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { ProjectSidebar } from '@/components/project/ProjectSidebar';
+import { ProjectHeader } from '@/components/project/ProjectHeader';
+import { MobileProjectSidebarProvider } from '@/components/project/MobileProjectSidebarContext';
 
 export default async function ProjectLayout({
   children,
@@ -23,11 +25,14 @@ export default async function ProjectLayout({
   }
 
   return (
-    <div className="flex min-h-screen">
-      <ProjectSidebar project={project} />
-      <div className="flex-1 ml-56">
-        {children}
+    <MobileProjectSidebarProvider>
+      <div className="flex min-h-screen">
+        <ProjectSidebar project={project} />
+        <div className="flex-1 lg:ml-56">
+          <ProjectHeader />
+          {children}
+        </div>
       </div>
-    </div>
+    </MobileProjectSidebarProvider>
   );
 }
