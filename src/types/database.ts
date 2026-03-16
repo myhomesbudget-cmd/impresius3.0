@@ -1,3 +1,7 @@
+// =============================================
+// IMPRESIUS 3.0 - Type Definitions
+// =============================================
+
 export interface Profile {
   id: string;
   email: string;
@@ -5,173 +9,326 @@ export interface Profile {
   company_name: string | null;
   phone: string | null;
   avatar_url: string | null;
+  subscription_plan: 'free' | 'pay_per_plan' | 'premium';
+  subscription_expires_at: string | null;
+  free_plan_used: boolean;
   created_at: string;
   updated_at: string;
 }
 
-export interface Plan {
+export interface Project {
   id: string;
   user_id: string;
   name: string;
   description: string | null;
-  status: "draft" | "active" | "archived";
-  payment_status: "pending" | "paid";
-  payment_id: string | null;
-  payment_provider: "stripe" | "paypal" | null;
-  data: PlanData;
-  results: PlanResults | null;
+  location_city: string | null;
+  location_province: string | null;
+  location_address: string | null;
+  property_type: 'residenziale' | 'commerciale' | 'misto';
+  strategy: 'ristrutturazione' | 'frazionamento' | 'nuova_costruzione' | 'rivendita';
+  status: 'draft' | 'active' | 'archived';
+  is_free_plan: boolean;
   created_at: string;
   updated_at: string;
+}
+
+export interface PropertyUnit {
+  id: string;
+  project_id: string;
+  name: string;
+  floor: string;
+  destination: string;
+  market_price_sqm: number;
+  target_sale_price: number;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface UnitSurface {
+  id: string;
+  unit_id: string;
+  surface_type: string;
+  gross_surface: number;
+  coefficient: number;
+  unit_price: number | null;
+  floor_reference: string | null;
+  sort_order: number;
+}
+
+export interface AcquisitionCost {
+  id: string;
+  project_id: string;
+  category: string;
+  label: string;
+  calculation_type: 'fixed' | 'percentage';
+  base_value: number;
+  percentage: number;
+  fixed_amount: number;
+  sort_order: number;
+}
+
+export type OperationCostSection = 'management' | 'utilities' | 'professionals' | 'permits';
+
+export interface OperationCost {
+  id: string;
+  project_id: string;
+  section: OperationCostSection;
+  category: string;
+  label: string;
+  calculation_type: 'fixed' | 'percentage' | 'unit_quantity';
+  base_value: number;
+  percentage: number;
+  unit_price: number;
+  quantity: number;
+  quantity_unit: string | null;
+  sort_order: number;
+}
+
+export interface ConstructionItem {
+  id: string;
+  project_id: string;
+  floor: string;
+  item_number: number;
+  code: string | null;
+  category: string;
+  title: string;
+  description: string | null;
+  unit_of_measure: string;
+  unit_price: number;
+  sort_order: number;
+  created_at: string;
+  // Computed / joined
+  measurements?: Measurement[];
+  total_quantity?: number;
+  total_price?: number;
+}
+
+export interface Measurement {
+  id: string;
+  item_id: string;
+  description: string | null;
+  parts: number;
+  length: number;
+  width: number;
+  height_weight: number;
+  sort_order: number;
+  // Computed
+  quantity?: number;
+}
+
+export interface Scenario {
+  id: string;
+  project_id: string;
+  name: string;
+  type: 'conservative' | 'realistic' | 'optimistic' | 'custom';
+  sale_price_variation: number;
+  construction_cost_variation: number;
+  acquisition_cost_variation: number;
+  results_snapshot: ProjectResults | null;
+  created_at: string;
+}
+
+export interface ActualCost {
+  id: string;
+  project_id: string;
+  reference_type: 'acquisition' | 'operation' | 'construction';
+  reference_id: string | null;
+  date: string | null;
+  description: string | null;
+  amount: number;
+  invoice_number: string | null;
+  notes: string | null;
+  created_at: string;
 }
 
 export interface Payment {
   id: string;
   user_id: string;
   plan_id: string;
+  type: 'single_plan' | 'subscription';
   amount: number;
   currency: string;
-  status: "pending" | "completed" | "failed" | "refunded";
-  provider: "stripe" | "paypal";
+  status: 'pending' | 'completed' | 'failed' | 'refunded';
+  provider: 'stripe' | 'paypal';
   provider_payment_id: string | null;
   created_at: string;
 }
 
-// Business Plan Data - Input fields for real estate investment analysis
-export interface PlanData {
-  // Property Information
-  property_type: string;
-  property_address: string;
-  property_city: string;
-  property_size_sqm: number;
-  num_units: number;
-
-  // Acquisition Costs
-  purchase_price: number;
-  notary_costs: number;
-  agency_commission: number;
-  registration_tax: number;
-  other_acquisition_costs: number;
-
-  // Renovation Costs
-  renovation_cost_per_sqm: number;
-  total_renovation_cost: number;
-  furniture_costs: number;
-  technical_expenses: number;
-
-  // Financing
-  equity_amount: number;
-  mortgage_amount: number;
-  mortgage_rate: number;
-  mortgage_years: number;
-
-  // Revenue (Rental)
-  monthly_rent_per_unit: number;
-  occupancy_rate: number;
-  annual_rent_increase: number;
-
-  // Revenue (Sale)
-  expected_sale_price: number;
-  sale_timeline_months: number;
-
-  // Operating Expenses
-  property_tax_annual: number;
-  insurance_annual: number;
-  maintenance_annual: number;
-  management_fee_percent: number;
-  condo_fees_annual: number;
-  other_expenses_annual: number;
-
-  // Analysis Settings
-  analysis_years: number;
-  investment_type: "rental" | "flip" | "both";
+export interface ProjectNote {
+  id: string;
+  project_id: string;
+  content: string | null;
+  created_at: string;
 }
 
-// Calculated Results
-export interface PlanResults {
-  // Summary
-  total_investment: number;
+// =============================================
+// Risultati calcolati dell'operazione
+// =============================================
+
+export interface ProjectResults {
+  // Ricavi
+  total_revenue: number;
+  units_summary: {
+    name: string;
+    floor: string;
+    calculated_value: number;
+    target_price: number;
+    adjusted_surface: number;
+  }[];
+
+  // Costi
   total_acquisition_cost: number;
-  total_renovation_cost: number;
-
-  // Rental Analysis
-  gross_annual_income: number;
-  net_annual_income: number;
-  annual_expenses: number;
-  monthly_mortgage_payment: number;
-  annual_mortgage_payment: number;
-  annual_cash_flow: number;
-  monthly_cash_flow: number;
-
-  // Key Metrics
-  gross_yield: number;
-  net_yield: number;
-  cap_rate: number;
-  cash_on_cash_return: number;
-  roi: number;
-  payback_period_years: number;
-  break_even_occupancy: number;
-
-  // Flip Analysis
+  total_operation_cost: number;
+  total_construction_cost: number;
   total_cost: number;
-  gross_profit: number;
-  net_profit: number;
-  profit_margin: number;
-  annualized_roi: number;
 
-  // Multi-year Projections
-  yearly_projections: YearlyProjection[];
+  // Dettaglio costi costruzione per piano
+  construction_by_floor: {
+    floor: string;
+    total: number;
+    item_count: number;
+  }[];
+
+  // Margini
+  gross_margin: number;
+  margin_percentage: number;
+  margin_on_revenue: number;
+  roi: number;
+
+  // Indicatori
+  cost_per_sqm: number;
+  revenue_per_sqm: number;
+  acquisition_incidence: number;
+  construction_incidence: number;
+  operation_incidence: number;
+
+  // Dettaglio operazione costi
+  operation_cost_by_section: {
+    section: string;
+    total: number;
+  }[];
 }
 
-export interface YearlyProjection {
-  year: number;
-  gross_income: number;
-  expenses: number;
-  mortgage_payment: number;
-  net_cash_flow: number;
-  cumulative_cash_flow: number;
-  property_value: number;
-  equity: number;
-  total_return: number;
+// =============================================
+// Unita con superfici caricate (join)
+// =============================================
+
+export interface PropertyUnitWithSurfaces extends PropertyUnit {
+  surfaces: UnitSurface[];
+  calculated_value: number;
+  total_adjusted_surface: number;
 }
 
-// Default values for a new plan
-export const defaultPlanData: PlanData = {
-  property_type: "appartamento",
-  property_address: "",
-  property_city: "",
-  property_size_sqm: 80,
-  num_units: 1,
+// =============================================
+// Costanti e default
+// =============================================
 
-  purchase_price: 100000,
-  notary_costs: 3000,
-  agency_commission: 3000,
-  registration_tax: 2000,
-  other_acquisition_costs: 0,
+export const SURFACE_TYPES = [
+  { value: 'appartamento', label: 'Appartamento', defaultCoefficient: 1.0 },
+  { value: 'portici', label: 'Portici', defaultCoefficient: 0.30 },
+  { value: 'balconi', label: 'Balconi', defaultCoefficient: 0.25 },
+  { value: 'terrazzi', label: 'Terrazzi', defaultCoefficient: 0.30 },
+  { value: 'accessori', label: 'Accessori', defaultCoefficient: 0.35 },
+  { value: 'giardino', label: 'Area Esterna - Giardino', defaultCoefficient: 0.03 },
+  { value: 'autorimessa', label: 'Autorimessa', defaultCoefficient: 0.50 },
+  { value: 'posto_auto', label: 'Posti Auto', defaultCoefficient: 0.20 },
+] as const;
 
-  renovation_cost_per_sqm: 400,
-  total_renovation_cost: 32000,
-  furniture_costs: 5000,
-  technical_expenses: 3000,
+export const CONSTRUCTION_CATEGORIES = [
+  { value: 'demolitions', label: 'Demolizioni e Rimozioni' },
+  { value: 'masonry', label: 'Murature e Tramezze' },
+  { value: 'plaster', label: 'Intonaci e Rasature' },
+  { value: 'flooring', label: 'Pavimentazioni' },
+  { value: 'tiling', label: 'Rivestimenti' },
+  { value: 'waterproofing', label: 'Impermeabilizzazioni' },
+  { value: 'drywall', label: 'Cartongesso' },
+  { value: 'doors_windows', label: 'Serramenti e Falsitelai' },
+  { value: 'painting', label: 'Imbiancature' },
+  { value: 'systems', label: 'Impianti e Assistenze' },
+  { value: 'balconies', label: 'Balconi e Terrazzi' },
+  { value: 'ironwork', label: 'Opere in Ferro' },
+  { value: 'other', label: 'Altre Lavorazioni' },
+] as const;
 
-  equity_amount: 50000,
-  mortgage_amount: 50000,
-  mortgage_rate: 3.5,
-  mortgage_years: 25,
+export const FLOORS = [
+  { value: 'PS1', label: 'Piano Seminterrato' },
+  { value: 'PT', label: 'Piano Terra' },
+  { value: 'P1', label: 'Piano Primo' },
+  { value: 'P2', label: 'Piano Secondo' },
+  { value: 'P3', label: 'Piano Terzo' },
+  { value: 'PSTT', label: 'Piano Sottotetto' },
+] as const;
 
-  monthly_rent_per_unit: 600,
-  occupancy_rate: 90,
-  annual_rent_increase: 2,
+export const PROPERTY_TYPES = [
+  { value: 'residenziale', label: 'Residenziale' },
+  { value: 'commerciale', label: 'Commerciale' },
+  { value: 'misto', label: 'Misto' },
+] as const;
 
-  expected_sale_price: 180000,
-  sale_timeline_months: 12,
+export const STRATEGIES = [
+  { value: 'ristrutturazione', label: 'Ristrutturazione e Rivendita' },
+  { value: 'frazionamento', label: 'Frazionamento' },
+  { value: 'nuova_costruzione', label: 'Nuova Costruzione' },
+  { value: 'rivendita', label: 'Rivendita Diretta' },
+] as const;
 
-  property_tax_annual: 800,
-  insurance_annual: 300,
-  maintenance_annual: 1000,
-  management_fee_percent: 0,
-  condo_fees_annual: 1200,
-  other_expenses_annual: 0,
+// Template voci acquisizione predefinite
+export const DEFAULT_ACQUISITION_COSTS = [
+  { category: 'purchase_price', label: 'Prezzo di Compravendita', calculation_type: 'fixed' as const, percentage: 0, sort_order: 0 },
+  { category: 'notary', label: 'Notaio - Onorario', calculation_type: 'percentage' as const, percentage: 1.0, sort_order: 1 },
+  { category: 'taxes', label: 'Imposte - Registro e Tasse', calculation_type: 'percentage' as const, percentage: 11.0, sort_order: 2 },
+  { category: 'agency', label: 'Agenzia Immobiliare', calculation_type: 'percentage' as const, percentage: 6.0, sort_order: 3 },
+  { category: 'referral', label: 'Segnalatore Operazione', calculation_type: 'percentage' as const, percentage: 4.0, sort_order: 4 },
+];
 
-  analysis_years: 10,
-  investment_type: "rental",
+// Template costi operativi predefiniti per sezione
+export const DEFAULT_OPERATION_COSTS: Record<OperationCostSection, Array<{
+  category: string;
+  label: string;
+  calculation_type: 'fixed' | 'percentage' | 'unit_quantity';
+  percentage?: number;
+  unit_price?: number;
+  quantity?: number;
+  quantity_unit?: string;
+  sort_order: number;
+}>> = {
+  management: [
+    { category: 'management_fee', label: 'Costi Fissi di Gestione MH', calculation_type: 'fixed', sort_order: 0 },
+    { category: 'insurance', label: 'Assicurazione POLIZZA CAR', calculation_type: 'percentage', percentage: 1.0, sort_order: 1 },
+    { category: 'imu', label: 'IMU - Annualizzata', calculation_type: 'fixed', sort_order: 2 },
+    { category: 'agency_resale', label: 'Agenzia Immobiliare - Rivendita', calculation_type: 'percentage', percentage: 1.5, sort_order: 3 },
+    { category: 'marketing', label: 'HOME STAGING - RENDER - Promozioni', calculation_type: 'percentage', percentage: 0.4, sort_order: 4 },
+  ],
+  utilities: [
+    { category: 'energy_connection', label: 'ENERGIA - Allacciamento Contatori', calculation_type: 'unit_quantity', unit_price: 250, quantity: 3, quantity_unit: 'cad/Uno', sort_order: 0 },
+    { category: 'energy_new', label: 'ENERGIA - Nuova Utenza', calculation_type: 'unit_quantity', unit_price: 750, quantity: 1, quantity_unit: 'cad/Uno', sort_order: 1 },
+    { category: 'energy_bills', label: 'ENERGIA - Bollette', calculation_type: 'unit_quantity', unit_price: 100, quantity: 12, quantity_unit: 'mesi', sort_order: 2 },
+    { category: 'water_connection', label: 'ACQUA - Allacciamento', calculation_type: 'unit_quantity', unit_price: 350, quantity: 3, quantity_unit: 'cad/Uno', sort_order: 3 },
+    { category: 'water_bills', label: 'ACQUA - Bollette', calculation_type: 'unit_quantity', unit_price: 25, quantity: 12, quantity_unit: 'mesi', sort_order: 4 },
+    { category: 'sewage', label: 'FOGNATURA - Allacciamento', calculation_type: 'unit_quantity', unit_price: 2500, quantity: 1, quantity_unit: 'cad/Uno', sort_order: 5 },
+  ],
+  professionals: [
+    { category: 'design', label: 'Progettazione + Direzione Lavori', calculation_type: 'unit_quantity', unit_price: 7500, quantity: 1, quantity_unit: 'cad/Uno', sort_order: 0 },
+    { category: 'safety', label: 'Coordinamento Sicurezza', calculation_type: 'unit_quantity', unit_price: 2500, quantity: 1, quantity_unit: 'cad/Uno', sort_order: 1 },
+    { category: 'energy_report', label: 'Relazione Ex-Legge 10', calculation_type: 'unit_quantity', unit_price: 1500, quantity: 1, quantity_unit: 'cad/Uno', sort_order: 2 },
+    { category: 'structural', label: 'Strutturista + Collaudo Statico', calculation_type: 'unit_quantity', unit_price: 2500, quantity: 1, quantity_unit: 'cad/Uno', sort_order: 3 },
+    { category: 'landscape', label: 'Relazione Paesaggistica', calculation_type: 'unit_quantity', unit_price: 1500, quantity: 1, quantity_unit: 'cad/Uno', sort_order: 4 },
+    { category: 'cadastral', label: 'Accatastamenti', calculation_type: 'unit_quantity', unit_price: 1500, quantity: 1, quantity_unit: 'cad/Uno', sort_order: 5 },
+    { category: 'ape', label: 'APE', calculation_type: 'unit_quantity', unit_price: 250, quantity: 3, quantity_unit: 'cad/Uno', sort_order: 6 },
+  ],
+  permits: [
+    { category: 'cila', label: 'CILA - Diritti di Segreteria', calculation_type: 'unit_quantity', unit_price: 200, quantity: 1, quantity_unit: 'cad/Uno', sort_order: 0 },
+    { category: 'scia', label: 'SCIA - Diritti di Segreteria', calculation_type: 'unit_quantity', unit_price: 200, quantity: 2, quantity_unit: 'cad/Uno', sort_order: 1 },
+    { category: 'pdc', label: 'PDC - Diritti di Segreteria', calculation_type: 'unit_quantity', unit_price: 300, quantity: 3, quantity_unit: 'cad/Uno', sort_order: 2 },
+    { category: 'cadastral_fees', label: 'CATASTO - Diritti e Schede', calculation_type: 'unit_quantity', unit_price: 70, quantity: 6, quantity_unit: 'cad/Uno', sort_order: 3 },
+  ],
 };
+
+// Sezioni operazione con label
+export const OPERATION_SECTIONS = [
+  { value: 'management' as const, label: 'Costi Fissi di Gestione - Vendite - Marketing' },
+  { value: 'utilities' as const, label: 'Costi di Utenze ed Allacciamenti' },
+  { value: 'professionals' as const, label: 'Costi Professionisti' },
+  { value: 'permits' as const, label: 'Costi e Spese Titoli Edilizi' },
+];

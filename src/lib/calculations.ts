@@ -1,162 +1,235 @@
-import { PlanData, PlanResults, YearlyProjection } from "@/types/database";
+// =============================================
+// IMPRESIUS 3.0 - Motore di Calcolo
+// =============================================
 
-export function calculatePlanResults(data: PlanData): PlanResults {
-  // Total Acquisition Costs
-  const total_acquisition_cost =
-    data.purchase_price +
-    data.notary_costs +
-    data.agency_commission +
-    data.registration_tax +
-    data.other_acquisition_costs;
+import type {
+  PropertyUnit,
+  UnitSurface,
+  AcquisitionCost,
+  OperationCost,
+  ConstructionItem,
+  Measurement,
+  ProjectResults,
+} from '@/types/database';
 
-  // Total Renovation Costs
-  const total_renovation_cost =
-    data.total_renovation_cost +
-    data.furniture_costs +
-    data.technical_expenses;
+/**
+ * Calcola la quantita di una singola misurazione.
+ * Logica: se un campo e 0, viene ignorato nel prodotto.
+ */
+export function calculateMeasurementQuantity(m: Measurement): number {
+  const parts = m.parts || 0;
+  const length = m.length || 0;
+  const width = m.width || 0;
+  const height = m.height_weight || 0;
 
-  // Total Investment
-  const total_investment = total_acquisition_cost + total_renovation_cost;
-
-  // Mortgage Calculation (French amortization)
-  const monthly_rate = data.mortgage_rate / 100 / 12;
-  const num_payments = data.mortgage_years * 12;
-  let monthly_mortgage_payment = 0;
-
-  if (data.mortgage_amount > 0 && monthly_rate > 0) {
-    monthly_mortgage_payment =
-      (data.mortgage_amount *
-        (monthly_rate * Math.pow(1 + monthly_rate, num_payments))) /
-      (Math.pow(1 + monthly_rate, num_payments) - 1);
+  // Se parts > 0 e tutti gli altri sono 0, la quantita e parts stessa
+  if (parts > 0 && length === 0 && width === 0 && height === 0) {
+    return parts;
   }
-  const annual_mortgage_payment = monthly_mortgage_payment * 12;
 
-  // Rental Income
-  const gross_monthly_income = data.monthly_rent_per_unit * data.num_units;
-  const gross_annual_income = gross_monthly_income * 12;
-  const effective_annual_income =
-    gross_annual_income * (data.occupancy_rate / 100);
+  // Altrimenti moltiplica solo i valori > 0
+  let result = 1;
+  let hasValue = false;
 
-  // Operating Expenses
-  const management_fees =
-    effective_annual_income * (data.management_fee_percent / 100);
-  const annual_expenses =
-    data.property_tax_annual +
-    data.insurance_annual +
-    data.maintenance_annual +
-    management_fees +
-    data.condo_fees_annual +
-    data.other_expenses_annual;
+  if (parts > 0) { result *= parts; hasValue = true; }
+  if (length > 0) { result *= length; hasValue = true; }
+  if (width > 0) { result *= width; hasValue = true; }
+  if (height > 0) { result *= height; hasValue = true; }
 
-  // Net Operating Income
-  const net_annual_income = effective_annual_income - annual_expenses;
+  return hasValue ? result : 0;
+}
 
-  // Cash Flow (after mortgage)
-  const annual_cash_flow = net_annual_income - annual_mortgage_payment;
-  const monthly_cash_flow = annual_cash_flow / 12;
+/**
+ * Calcola la quantita totale di una voce di computo (somma misurazioni)
+ */
+export function calculateItemQuantity(measurements: Measurement[]): number {
+  return measurements.reduce((sum, m) => sum + calculateMeasurementQuantity(m), 0);
+}
 
-  // Key Metrics - Rental
-  const gross_yield = (gross_annual_income / total_investment) * 100;
-  const net_yield = (net_annual_income / total_investment) * 100;
-  const cap_rate = (net_annual_income / data.purchase_price) * 100;
-  const cash_on_cash_return =
-    data.equity_amount > 0
-      ? (annual_cash_flow / data.equity_amount) * 100
-      : 0;
-  const roi = (net_annual_income / total_investment) * 100;
-  const payback_period_years =
-    annual_cash_flow > 0 ? data.equity_amount / annual_cash_flow : 0;
-  const break_even_occupancy =
-    gross_annual_income > 0
-      ? ((annual_expenses + annual_mortgage_payment) / gross_annual_income) * 100
-      : 0;
+/**
+ * Calcola il totale di una voce di computo
+ */
+export function calculateItemTotal(item: ConstructionItem, measurements: Measurement[]): number {
+  const quantity = calculateItemQuantity(measurements);
+  return Math.round(quantity * item.unit_price * 100) / 100;
+}
 
-  // Flip Analysis
-  const total_cost = total_investment;
-  const gross_profit = data.expected_sale_price - total_cost;
-  const selling_costs = data.expected_sale_price * 0.03; // ~3% selling costs
-  const net_profit = gross_profit - selling_costs;
-  const profit_margin =
-    data.expected_sale_price > 0
-      ? (net_profit / data.expected_sale_price) * 100
-      : 0;
-  const annualized_roi =
-    data.sale_timeline_months > 0
-      ? (net_profit / total_cost) * (12 / data.sale_timeline_months) * 100
-      : 0;
+/**
+ * Calcola la superficie ragguagliata
+ */
+export function calculateAdjustedSurface(surface: UnitSurface): number {
+  return Math.round(surface.gross_surface * surface.coefficient * 100) / 100;
+}
 
-  // Yearly Projections
-  const yearly_projections: YearlyProjection[] = [];
-  let cumulative_cash_flow = 0;
-  let remaining_mortgage = data.mortgage_amount;
-  const annual_appreciation = 0.02; // 2% annual property appreciation
+/**
+ * Calcola il valore di una superficie
+ */
+export function calculateSurfaceValue(surface: UnitSurface, marketPriceSqm: number): number {
+  const adjustedSurface = calculateAdjustedSurface(surface);
+  const price = surface.unit_price || marketPriceSqm;
+  return Math.round(adjustedSurface * price * 100) / 100;
+}
 
-  for (let year = 1; year <= data.analysis_years; year++) {
-    const year_rent_increase = Math.pow(
-      1 + data.annual_rent_increase / 100,
-      year - 1
-    );
-    const year_gross_income =
-      gross_annual_income * year_rent_increase * (data.occupancy_rate / 100);
-    const year_expenses = annual_expenses * Math.pow(1.02, year - 1); // 2% expense inflation
-    const year_mortgage = annual_mortgage_payment;
+/**
+ * Calcola il valore totale di un'unita immobiliare
+ */
+export function calculateUnitValue(unit: PropertyUnit, surfaces: UnitSurface[]): {
+  calculatedValue: number;
+  totalAdjustedSurface: number;
+} {
+  let calculatedValue = 0;
+  let totalAdjustedSurface = 0;
 
-    const year_net_cash_flow =
-      year_gross_income - year_expenses - year_mortgage;
-    cumulative_cash_flow += year_net_cash_flow;
-
-    const property_value =
-      data.purchase_price * Math.pow(1 + annual_appreciation, year) +
-      total_renovation_cost;
-
-    // Simplified remaining mortgage calculation
-    if (remaining_mortgage > 0) {
-      const principal_paid = annual_mortgage_payment - remaining_mortgage * (data.mortgage_rate / 100);
-      remaining_mortgage = Math.max(0, remaining_mortgage - Math.max(0, principal_paid));
-    }
-
-    const equity = property_value - remaining_mortgage;
-    const total_return =
-      ((equity - data.equity_amount + cumulative_cash_flow) /
-        data.equity_amount) *
-      100;
-
-    yearly_projections.push({
-      year,
-      gross_income: Math.round(year_gross_income * 100) / 100,
-      expenses: Math.round(year_expenses * 100) / 100,
-      mortgage_payment: Math.round(year_mortgage * 100) / 100,
-      net_cash_flow: Math.round(year_net_cash_flow * 100) / 100,
-      cumulative_cash_flow: Math.round(cumulative_cash_flow * 100) / 100,
-      property_value: Math.round(property_value * 100) / 100,
-      equity: Math.round(equity * 100) / 100,
-      total_return: Math.round(total_return * 100) / 100,
-    });
+  for (const surface of surfaces) {
+    const adjusted = calculateAdjustedSurface(surface);
+    totalAdjustedSurface += adjusted;
+    calculatedValue += calculateSurfaceValue(surface, unit.market_price_sqm);
   }
 
   return {
-    total_investment: Math.round(total_investment * 100) / 100,
-    total_acquisition_cost: Math.round(total_acquisition_cost * 100) / 100,
-    total_renovation_cost: Math.round(total_renovation_cost * 100) / 100,
-    gross_annual_income: Math.round(effective_annual_income * 100) / 100,
-    net_annual_income: Math.round(net_annual_income * 100) / 100,
-    annual_expenses: Math.round(annual_expenses * 100) / 100,
-    monthly_mortgage_payment: Math.round(monthly_mortgage_payment * 100) / 100,
-    annual_mortgage_payment: Math.round(annual_mortgage_payment * 100) / 100,
-    annual_cash_flow: Math.round(annual_cash_flow * 100) / 100,
-    monthly_cash_flow: Math.round(monthly_cash_flow * 100) / 100,
-    gross_yield: Math.round(gross_yield * 100) / 100,
-    net_yield: Math.round(net_yield * 100) / 100,
-    cap_rate: Math.round(cap_rate * 100) / 100,
-    cash_on_cash_return: Math.round(cash_on_cash_return * 100) / 100,
+    calculatedValue: Math.round(calculatedValue * 100) / 100,
+    totalAdjustedSurface: Math.round(totalAdjustedSurface * 100) / 100,
+  };
+}
+
+/**
+ * Calcola l'importo di un costo di acquisizione
+ */
+export function calculateAcquisitionAmount(cost: AcquisitionCost): number {
+  if (cost.calculation_type === 'percentage') {
+    return Math.round(cost.base_value * cost.percentage / 100 * 100) / 100;
+  }
+  return cost.fixed_amount;
+}
+
+/**
+ * Calcola l'importo di un costo operativo
+ */
+export function calculateOperationAmount(cost: OperationCost): number {
+  switch (cost.calculation_type) {
+    case 'percentage':
+      return Math.round(cost.base_value * cost.percentage / 100 * 100) / 100;
+    case 'unit_quantity':
+      return Math.round(cost.unit_price * cost.quantity * 100) / 100;
+    case 'fixed':
+    default:
+      return cost.unit_price || 0;
+  }
+}
+
+/**
+ * Calcola i risultati completi dell'operazione
+ */
+export function calculateProjectResults(
+  units: PropertyUnit[],
+  surfaces: UnitSurface[],
+  acquisitionCosts: AcquisitionCost[],
+  operationCosts: OperationCost[],
+  constructionItems: ConstructionItem[],
+  measurements: Measurement[],
+): ProjectResults {
+  // --- RICAVI ---
+  const unitsSummary: ProjectResults['units_summary'] = [];
+  let totalRevenue = 0;
+  let totalAdjustedSurface = 0;
+
+  for (const unit of units) {
+    const unitSurfaces = surfaces.filter(s => s.unit_id === unit.id);
+    const { calculatedValue, totalAdjustedSurface: adjSurf } = calculateUnitValue(unit, unitSurfaces);
+    totalRevenue += unit.target_sale_price || calculatedValue;
+    totalAdjustedSurface += adjSurf;
+    unitsSummary.push({
+      name: unit.name,
+      floor: unit.floor,
+      calculated_value: calculatedValue,
+      target_price: unit.target_sale_price,
+      adjusted_surface: adjSurf,
+    });
+  }
+
+  // --- COSTI ACQUISIZIONE ---
+  const totalAcquisitionCost = acquisitionCosts.reduce(
+    (sum, cost) => sum + calculateAcquisitionAmount(cost),
+    0
+  );
+
+  // --- COSTI OPERATIVI ---
+  const totalOperationCost = operationCosts.reduce(
+    (sum, cost) => sum + calculateOperationAmount(cost),
+    0
+  );
+
+  const operationBySection = ['management', 'utilities', 'professionals', 'permits'].map(section => ({
+    section,
+    total: operationCosts
+      .filter(c => c.section === section)
+      .reduce((sum, cost) => sum + calculateOperationAmount(cost), 0),
+  }));
+
+  // --- COSTI COSTRUZIONE ---
+  const measurementsByItem = new Map<string, Measurement[]>();
+  for (const m of measurements) {
+    const existing = measurementsByItem.get(m.item_id) || [];
+    existing.push(m);
+    measurementsByItem.set(m.item_id, existing);
+  }
+
+  let totalConstructionCost = 0;
+  const floorTotals = new Map<string, { total: number; count: number }>();
+
+  for (const item of constructionItems) {
+    const itemMeasurements = measurementsByItem.get(item.id) || [];
+    const itemTotal = calculateItemTotal(item, itemMeasurements);
+    totalConstructionCost += itemTotal;
+
+    const existing = floorTotals.get(item.floor) || { total: 0, count: 0 };
+    existing.total += itemTotal;
+    existing.count += 1;
+    floorTotals.set(item.floor, existing);
+  }
+
+  const constructionByFloor = Array.from(floorTotals.entries()).map(([floor, data]) => ({
+    floor,
+    total: Math.round(data.total * 100) / 100,
+    item_count: data.count,
+  }));
+
+  // --- TOTALI ---
+  const totalCost = totalAcquisitionCost + totalOperationCost + totalConstructionCost;
+
+  // --- MARGINI ---
+  const grossMargin = totalRevenue - totalCost;
+  const marginPercentage = totalCost > 0 ? (grossMargin / totalCost) * 100 : 0;
+  const marginOnRevenue = totalRevenue > 0 ? (grossMargin / totalRevenue) * 100 : 0;
+  const roi = totalCost > 0 ? (grossMargin / totalCost) * 100 : 0;
+
+  // --- INDICATORI ---
+  const costPerSqm = totalAdjustedSurface > 0 ? totalCost / totalAdjustedSurface : 0;
+  const revenuePerSqm = totalAdjustedSurface > 0 ? totalRevenue / totalAdjustedSurface : 0;
+  const acquisitionIncidence = totalCost > 0 ? (totalAcquisitionCost / totalCost) * 100 : 0;
+  const constructionIncidence = totalCost > 0 ? (totalConstructionCost / totalCost) * 100 : 0;
+  const operationIncidence = totalCost > 0 ? (totalOperationCost / totalCost) * 100 : 0;
+
+  return {
+    total_revenue: Math.round(totalRevenue * 100) / 100,
+    units_summary: unitsSummary,
+    total_acquisition_cost: Math.round(totalAcquisitionCost * 100) / 100,
+    total_operation_cost: Math.round(totalOperationCost * 100) / 100,
+    total_construction_cost: Math.round(totalConstructionCost * 100) / 100,
+    total_cost: Math.round(totalCost * 100) / 100,
+    construction_by_floor: constructionByFloor,
+    gross_margin: Math.round(grossMargin * 100) / 100,
+    margin_percentage: Math.round(marginPercentage * 100) / 100,
+    margin_on_revenue: Math.round(marginOnRevenue * 100) / 100,
     roi: Math.round(roi * 100) / 100,
-    payback_period_years: Math.round(payback_period_years * 100) / 100,
-    break_even_occupancy: Math.round(break_even_occupancy * 100) / 100,
-    total_cost: Math.round(total_cost * 100) / 100,
-    gross_profit: Math.round(gross_profit * 100) / 100,
-    net_profit: Math.round(net_profit * 100) / 100,
-    profit_margin: Math.round(profit_margin * 100) / 100,
-    annualized_roi: Math.round(annualized_roi * 100) / 100,
-    yearly_projections,
+    cost_per_sqm: Math.round(costPerSqm * 100) / 100,
+    revenue_per_sqm: Math.round(revenuePerSqm * 100) / 100,
+    acquisition_incidence: Math.round(acquisitionIncidence * 100) / 100,
+    construction_incidence: Math.round(constructionIncidence * 100) / 100,
+    operation_incidence: Math.round(operationIncidence * 100) / 100,
+    operation_cost_by_section: operationBySection.map(s => ({
+      ...s,
+      total: Math.round(s.total * 100) / 100,
+    })),
   };
 }
