@@ -135,7 +135,7 @@ export function Pricing() {
                 </Button>
               </Link>
               <p className="text-center text-xs text-gray-500 mt-3">
-                Prossimamente disponibile
+                Pagamento sicuro con Stripe
               </p>
             </div>
           </div>

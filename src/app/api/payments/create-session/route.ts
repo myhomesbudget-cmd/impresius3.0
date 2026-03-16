@@ -27,13 +27,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create pending payment record
+    // Create pending payment record (plan_id stays null until a project consumes this credit)
     const { data: payment, error: paymentError } = await supabase
       .from("payments")
       .insert({
         user_id: user.id,
-        plan_id: user.id, // placeholder — will be linked to project via webhook metadata if needed
-        amount: type === "single_plan" ? PLAN_PRICE : 0, // subscription amount comes from Stripe Price
+        amount: type === "single_plan" ? PLAN_PRICE : 0,
         currency: "EUR",
         status: "pending",
         type,

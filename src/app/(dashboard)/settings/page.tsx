@@ -21,13 +21,11 @@ import Link from 'next/link';
 
 const planLabels: Record<string, string> = {
   free: 'Gratuito',
-  pay_per_plan: 'Pay per Plan',
   premium: 'Premium',
 };
 
 const planColors: Record<string, string> = {
   free: 'bg-gray-100 text-gray-700',
-  pay_per_plan: 'bg-blue-100 text-blue-700',
   premium: 'bg-amber-100 text-amber-700',
 };
 

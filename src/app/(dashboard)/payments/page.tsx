@@ -1,8 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { cn, formatCurrency, formatDate } from '@/lib/utils';
 import type { Payment, Profile } from '@/types/database';
 import {
@@ -13,8 +15,9 @@ import {
   Clock,
   RefreshCw,
   Receipt,
-  Loader2,
   AlertCircle,
+  Sparkles,
+  ArrowRight,
 } from 'lucide-react';
 
 const STATUS_CONFIG: Record<string, { label: string; icon: typeof CheckCircle2; color: string }> = {
@@ -36,20 +39,19 @@ const PROVIDER_LABELS: Record<string, string> = {
 
 const PLAN_LABELS: Record<string, string> = {
   free: 'Gratuito',
-  pay_per_plan: 'Pay per Plan',
   premium: 'Premium',
 };
 
-const PLAN_COLORS: Record<string, string> = {
-  free: 'bg-gray-100 text-gray-700 border-gray-200',
-  pay_per_plan: 'bg-blue-100 text-blue-700 border-blue-200',
-  premium: 'bg-amber-100 text-amber-700 border-amber-200',
-};
-
 export default function PaymentsPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [payments, setPayments] = useState<Payment[]>([]);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [subscribing, setSubscribing] = useState(false);
+
+  const success = searchParams.get('success') === 'true';
+  const cancelled = searchParams.get('cancelled') === 'true';
 
   useEffect(() => {
     async function fetchData() {
@@ -71,6 +73,23 @@ export default function PaymentsPage() {
     fetchData();
   }, []);
 
+  const handleSubscribe = async () => {
+    setSubscribing(true);
+    try {
+      const res = await fetch('/api/payments/create-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'subscription' }),
+      });
+      const data = await res.json();
+      if (res.ok && data.sessionUrl) {
+        window.location.href = data.sessionUrl;
+      }
+    } catch {
+      setSubscribing(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="p-8 max-w-5xl">
@@ -89,6 +108,36 @@ export default function PaymentsPage() {
 
   return (
     <div className="p-8 max-w-5xl space-y-8">
+      {/* Success / Cancel Banners */}
+      {success && (
+        <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-4 flex items-start gap-3">
+          <CheckCircle2 className="w-5 h-5 text-emerald-600 mt-0.5 flex-shrink-0" />
+          <div>
+            <p className="text-sm font-medium text-emerald-800">Pagamento completato con successo!</p>
+            <p className="text-sm text-emerald-700 mt-1">
+              Il tuo acquisto e stato registrato.{' '}
+              <button
+                onClick={() => router.push('/plans/new')}
+                className="underline font-medium hover:text-emerald-900"
+              >
+                Crea una nuova operazione
+              </button>
+            </p>
+          </div>
+        </div>
+      )}
+      {cancelled && (
+        <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 flex items-start gap-3">
+          <AlertCircle className="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" />
+          <div>
+            <p className="text-sm font-medium text-amber-800">Pagamento annullato</p>
+            <p className="text-sm text-amber-700 mt-1">
+              Il pagamento non e stato completato. Puoi riprovare in qualsiasi momento.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Pagamenti</h1>
@@ -113,15 +162,28 @@ export default function PaymentsPage() {
                 </p>
               </div>
             </div>
-            {profile?.subscription_plan !== 'free' && profile?.subscription_expires_at && (
+            {profile?.subscription_plan === 'premium' && profile?.subscription_expires_at && (
               <p className="text-xs text-gray-500">
                 Scade il {formatDate(profile.subscription_expires_at)}
               </p>
             )}
             {profile?.subscription_plan === 'free' && (
-              <div className={cn('inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium mt-1', PLAN_COLORS.free)}>
+              <div className={cn('inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium mt-1', 'bg-gray-100 text-gray-700 border-gray-200')}>
                 {profile.free_plan_used ? 'Piano gratuito utilizzato' : 'Piano gratuito disponibile'}
               </div>
+            )}
+            {/* Premium upgrade button */}
+            {profile?.subscription_plan !== 'premium' && (
+              <Button
+                variant="gradient"
+                size="sm"
+                className="w-full mt-4"
+                onClick={handleSubscribe}
+                loading={subscribing}
+              >
+                <Sparkles className="w-3.5 h-3.5 mr-1.5" />
+                Passa a Premium — 10 &euro;/mese
+              </Button>
             )}
           </CardContent>
         </Card>

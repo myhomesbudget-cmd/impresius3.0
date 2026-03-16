@@ -9,7 +9,7 @@ export interface Profile {
   company_name: string | null;
   phone: string | null;
   avatar_url: string | null;
-  subscription_plan: 'free' | 'pay_per_plan' | 'premium';
+  subscription_plan: 'free' | 'premium';
   subscription_expires_at: string | null;
   free_plan_used: boolean;
   created_at: string;
@@ -145,7 +145,7 @@ export interface ActualCost {
 export interface Payment {
   id: string;
   user_id: string;
-  plan_id: string;
+  plan_id: string | null;
   type: 'single_plan' | 'subscription';
   amount: number;
   currency: string;

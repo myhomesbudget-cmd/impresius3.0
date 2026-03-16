@@ -112,13 +112,9 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     .eq("id", paymentId);
 
   if (type === "single_plan") {
-    // Single plan purchase: user remains on "free" plan,
-    // but now has pay_per_plan access (can create additional projects).
-    // We set subscription_plan to "pay_per_plan" to reflect purchased access.
-    await getSupabaseAdmin()
-      .from("profiles")
-      .update({ subscription_plan: "pay_per_plan" })
-      .eq("id", userId);
+    // Single plan purchase: profile stays unchanged.
+    // The completed payment with plan_id = NULL acts as an available credit.
+    // It will be consumed (linked to a project) when the user creates one.
   } else if (type === "subscription") {
     // Premium subscription: derive expiration from Stripe subscription data
     let expiresAt: string | null = null;
