@@ -273,16 +273,16 @@ export const STRATEGIES = [
   { value: 'rivendita', label: 'Rivendita Diretta' },
 ] as const;
 
-// Template voci acquisizione predefinite
+// Template voci acquisizione predefinite (importi e percentuali a zero — l'utente compila)
 export const DEFAULT_ACQUISITION_COSTS = [
   { category: 'purchase_price', label: 'Prezzo di Compravendita', calculation_type: 'fixed' as const, percentage: 0, sort_order: 0 },
-  { category: 'notary', label: 'Notaio - Onorario', calculation_type: 'percentage' as const, percentage: 1.0, sort_order: 1 },
-  { category: 'taxes', label: 'Imposte - Registro e Tasse', calculation_type: 'percentage' as const, percentage: 11.0, sort_order: 2 },
-  { category: 'agency', label: 'Agenzia Immobiliare', calculation_type: 'percentage' as const, percentage: 6.0, sort_order: 3 },
-  { category: 'referral', label: 'Segnalatore Operazione', calculation_type: 'percentage' as const, percentage: 4.0, sort_order: 4 },
+  { category: 'notary', label: 'Notaio - Onorario', calculation_type: 'percentage' as const, percentage: 0, sort_order: 1 },
+  { category: 'taxes', label: 'Imposte - Registro e Tasse', calculation_type: 'percentage' as const, percentage: 0, sort_order: 2 },
+  { category: 'agency', label: 'Agenzia Immobiliare', calculation_type: 'percentage' as const, percentage: 0, sort_order: 3 },
+  { category: 'referral', label: 'Segnalatore Operazione', calculation_type: 'percentage' as const, percentage: 0, sort_order: 4 },
 ];
 
-// Template costi operativi predefiniti per sezione
+// Template costi operativi predefiniti per sezione (importi a zero — l'utente compila)
 export const DEFAULT_OPERATION_COSTS: Record<OperationCostSection, Array<{
   category: string;
   label: string;
@@ -295,33 +295,33 @@ export const DEFAULT_OPERATION_COSTS: Record<OperationCostSection, Array<{
 }>> = {
   management: [
     { category: 'management_fee', label: 'Costi Fissi di Gestione MH', calculation_type: 'fixed', sort_order: 0 },
-    { category: 'insurance', label: 'Assicurazione POLIZZA CAR', calculation_type: 'percentage', percentage: 1.0, sort_order: 1 },
+    { category: 'insurance', label: 'Assicurazione POLIZZA CAR', calculation_type: 'percentage', percentage: 0, sort_order: 1 },
     { category: 'imu', label: 'IMU - Annualizzata', calculation_type: 'fixed', sort_order: 2 },
-    { category: 'agency_resale', label: 'Agenzia Immobiliare - Rivendita', calculation_type: 'percentage', percentage: 1.5, sort_order: 3 },
-    { category: 'marketing', label: 'HOME STAGING - RENDER - Promozioni', calculation_type: 'percentage', percentage: 0.4, sort_order: 4 },
+    { category: 'agency_resale', label: 'Agenzia Immobiliare - Rivendita', calculation_type: 'percentage', percentage: 0, sort_order: 3 },
+    { category: 'marketing', label: 'HOME STAGING - RENDER - Promozioni', calculation_type: 'percentage', percentage: 0, sort_order: 4 },
   ],
   utilities: [
-    { category: 'energy_connection', label: 'ENERGIA - Allacciamento Contatori', calculation_type: 'unit_quantity', unit_price: 250, quantity: 3, quantity_unit: 'cad/Uno', sort_order: 0 },
-    { category: 'energy_new', label: 'ENERGIA - Nuova Utenza', calculation_type: 'unit_quantity', unit_price: 750, quantity: 1, quantity_unit: 'cad/Uno', sort_order: 1 },
-    { category: 'energy_bills', label: 'ENERGIA - Bollette', calculation_type: 'unit_quantity', unit_price: 100, quantity: 12, quantity_unit: 'mesi', sort_order: 2 },
-    { category: 'water_connection', label: 'ACQUA - Allacciamento', calculation_type: 'unit_quantity', unit_price: 350, quantity: 3, quantity_unit: 'cad/Uno', sort_order: 3 },
-    { category: 'water_bills', label: 'ACQUA - Bollette', calculation_type: 'unit_quantity', unit_price: 25, quantity: 12, quantity_unit: 'mesi', sort_order: 4 },
-    { category: 'sewage', label: 'FOGNATURA - Allacciamento', calculation_type: 'unit_quantity', unit_price: 2500, quantity: 1, quantity_unit: 'cad/Uno', sort_order: 5 },
+    { category: 'energy_connection', label: 'ENERGIA - Allacciamento Contatori', calculation_type: 'unit_quantity', unit_price: 0, quantity: 0, quantity_unit: 'cad/Uno', sort_order: 0 },
+    { category: 'energy_new', label: 'ENERGIA - Nuova Utenza', calculation_type: 'unit_quantity', unit_price: 0, quantity: 0, quantity_unit: 'cad/Uno', sort_order: 1 },
+    { category: 'energy_bills', label: 'ENERGIA - Bollette', calculation_type: 'unit_quantity', unit_price: 0, quantity: 0, quantity_unit: 'mesi', sort_order: 2 },
+    { category: 'water_connection', label: 'ACQUA - Allacciamento', calculation_type: 'unit_quantity', unit_price: 0, quantity: 0, quantity_unit: 'cad/Uno', sort_order: 3 },
+    { category: 'water_bills', label: 'ACQUA - Bollette', calculation_type: 'unit_quantity', unit_price: 0, quantity: 0, quantity_unit: 'mesi', sort_order: 4 },
+    { category: 'sewage', label: 'FOGNATURA - Allacciamento', calculation_type: 'unit_quantity', unit_price: 0, quantity: 0, quantity_unit: 'cad/Uno', sort_order: 5 },
   ],
   professionals: [
-    { category: 'design', label: 'Progettazione + Direzione Lavori', calculation_type: 'unit_quantity', unit_price: 7500, quantity: 1, quantity_unit: 'cad/Uno', sort_order: 0 },
-    { category: 'safety', label: 'Coordinamento Sicurezza', calculation_type: 'unit_quantity', unit_price: 2500, quantity: 1, quantity_unit: 'cad/Uno', sort_order: 1 },
-    { category: 'energy_report', label: 'Relazione Ex-Legge 10', calculation_type: 'unit_quantity', unit_price: 1500, quantity: 1, quantity_unit: 'cad/Uno', sort_order: 2 },
-    { category: 'structural', label: 'Strutturista + Collaudo Statico', calculation_type: 'unit_quantity', unit_price: 2500, quantity: 1, quantity_unit: 'cad/Uno', sort_order: 3 },
-    { category: 'landscape', label: 'Relazione Paesaggistica', calculation_type: 'unit_quantity', unit_price: 1500, quantity: 1, quantity_unit: 'cad/Uno', sort_order: 4 },
-    { category: 'cadastral', label: 'Accatastamenti', calculation_type: 'unit_quantity', unit_price: 1500, quantity: 1, quantity_unit: 'cad/Uno', sort_order: 5 },
-    { category: 'ape', label: 'APE', calculation_type: 'unit_quantity', unit_price: 250, quantity: 3, quantity_unit: 'cad/Uno', sort_order: 6 },
+    { category: 'design', label: 'Progettazione + Direzione Lavori', calculation_type: 'unit_quantity', unit_price: 0, quantity: 0, quantity_unit: 'cad/Uno', sort_order: 0 },
+    { category: 'safety', label: 'Coordinamento Sicurezza', calculation_type: 'unit_quantity', unit_price: 0, quantity: 0, quantity_unit: 'cad/Uno', sort_order: 1 },
+    { category: 'energy_report', label: 'Relazione Ex-Legge 10', calculation_type: 'unit_quantity', unit_price: 0, quantity: 0, quantity_unit: 'cad/Uno', sort_order: 2 },
+    { category: 'structural', label: 'Strutturista + Collaudo Statico', calculation_type: 'unit_quantity', unit_price: 0, quantity: 0, quantity_unit: 'cad/Uno', sort_order: 3 },
+    { category: 'landscape', label: 'Relazione Paesaggistica', calculation_type: 'unit_quantity', unit_price: 0, quantity: 0, quantity_unit: 'cad/Uno', sort_order: 4 },
+    { category: 'cadastral', label: 'Accatastamenti', calculation_type: 'unit_quantity', unit_price: 0, quantity: 0, quantity_unit: 'cad/Uno', sort_order: 5 },
+    { category: 'ape', label: 'APE', calculation_type: 'unit_quantity', unit_price: 0, quantity: 0, quantity_unit: 'cad/Uno', sort_order: 6 },
   ],
   permits: [
-    { category: 'cila', label: 'CILA - Diritti di Segreteria', calculation_type: 'unit_quantity', unit_price: 200, quantity: 1, quantity_unit: 'cad/Uno', sort_order: 0 },
-    { category: 'scia', label: 'SCIA - Diritti di Segreteria', calculation_type: 'unit_quantity', unit_price: 200, quantity: 2, quantity_unit: 'cad/Uno', sort_order: 1 },
-    { category: 'pdc', label: 'PDC - Diritti di Segreteria', calculation_type: 'unit_quantity', unit_price: 300, quantity: 3, quantity_unit: 'cad/Uno', sort_order: 2 },
-    { category: 'cadastral_fees', label: 'CATASTO - Diritti e Schede', calculation_type: 'unit_quantity', unit_price: 70, quantity: 6, quantity_unit: 'cad/Uno', sort_order: 3 },
+    { category: 'cila', label: 'CILA - Diritti di Segreteria', calculation_type: 'unit_quantity', unit_price: 0, quantity: 0, quantity_unit: 'cad/Uno', sort_order: 0 },
+    { category: 'scia', label: 'SCIA - Diritti di Segreteria', calculation_type: 'unit_quantity', unit_price: 0, quantity: 0, quantity_unit: 'cad/Uno', sort_order: 1 },
+    { category: 'pdc', label: 'PDC - Diritti di Segreteria', calculation_type: 'unit_quantity', unit_price: 0, quantity: 0, quantity_unit: 'cad/Uno', sort_order: 2 },
+    { category: 'cadastral_fees', label: 'CATASTO - Diritti e Schede', calculation_type: 'unit_quantity', unit_price: 0, quantity: 0, quantity_unit: 'cad/Uno', sort_order: 3 },
   ],
 };
 

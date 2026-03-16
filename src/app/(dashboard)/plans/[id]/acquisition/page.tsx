@@ -475,7 +475,7 @@ export default function AcquisitionPage() {
   // ----------------------------------------------------------
 
   return (
-    <div className="mx-auto max-w-6xl space-y-8 pb-28">
+    <div className="mx-auto max-w-6xl space-y-6 md:space-y-8 pb-36 lg:pb-28">
       {/* Page Header */}
       <div className="space-y-1">
         <h1 className="text-2xl font-bold tracking-tight text-gray-900">
@@ -972,14 +972,14 @@ export default function AcquisitionPage() {
       {/* ====================================================== */}
       {/* Sticky Summary Bar                                      */}
       {/* ====================================================== */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-gray-200 bg-white/95 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] backdrop-blur-sm">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-8">
+      <div className="fixed bottom-16 lg:bottom-0 left-0 right-0 z-40 border-t border-gray-200 bg-white/95 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] backdrop-blur-sm">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 md:px-6 py-3 md:py-4">
+          <div className="flex items-center gap-4 md:gap-8">
             <div className="flex flex-col">
               <span className="text-[10px] font-medium uppercase tracking-wider text-gray-400">
                 Acquisizione
               </span>
-              <span className="text-sm font-semibold tabular-nums text-gray-700">
+              <span className="text-xs md:text-sm font-semibold tabular-nums text-gray-700">
                 {formatCurrency(totalAcquisition)}
               </span>
             </div>
@@ -988,7 +988,7 @@ export default function AcquisitionPage() {
               <span className="text-[10px] font-medium uppercase tracking-wider text-gray-400">
                 Operativi
               </span>
-              <span className="text-sm font-semibold tabular-nums text-gray-700">
+              <span className="text-xs md:text-sm font-semibold tabular-nums text-gray-700">
                 {formatCurrency(totalOperation)}
               </span>
             </div>
@@ -1000,9 +1000,9 @@ export default function AcquisitionPage() {
             )}
             <div className="flex flex-col items-end">
               <span className="text-[10px] font-medium uppercase tracking-wider text-gray-400">
-                Totale Generale
+                Totale
               </span>
-              <span className="text-lg font-bold tabular-nums text-gray-900">
+              <span className="text-base md:text-lg font-bold tabular-nums text-gray-900">
                 {formatCurrency(grandTotal)}
               </span>
             </div>
