@@ -11,6 +11,7 @@ import {
   LogOut,
   Plus,
   FolderOpen,
+  GitCompareArrows,
   Settings,
 } from "lucide-react";
 
@@ -18,6 +19,7 @@ const navItems = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
   { href: "/plans/new", icon: Plus, label: "Nuova Operazione" },
   { href: "/plans", icon: FolderOpen, label: "Le mie Operazioni" },
+  { href: "/plans/compare", icon: GitCompareArrows, label: "Confronta" },
   { href: "/payments", icon: CreditCard, label: "Pagamenti" },
   { href: "/settings", icon: Settings, label: "Impostazioni" },
 ];
@@ -50,7 +52,15 @@ export function Sidebar() {
         {navItems.map((item) => {
           const isActive =
             pathname === item.href ||
-            (item.href !== "/dashboard" && pathname.startsWith(item.href));
+            (item.href !== "/dashboard" &&
+              pathname.startsWith(item.href) &&
+              // Avoid /plans matching /plans/compare (more specific routes win)
+              !navItems.some(
+                (other) =>
+                  other.href !== item.href &&
+                  other.href.startsWith(item.href) &&
+                  pathname.startsWith(other.href)
+              ));
 
           return (
             <Link
