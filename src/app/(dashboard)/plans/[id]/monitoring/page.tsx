@@ -170,7 +170,7 @@ export default function MonitoringPage() {
 
   if (loading || !baseResults || !project) {
     return (
-      <div className="p-8 max-w-7xl">
+      <div className="p-4 md:p-8 max-w-7xl">
         <div className="h-8 w-48 bg-gray-200 rounded animate-pulse mb-6" />
         <div className="grid grid-cols-3 gap-6">
           {[...Array(3)].map((_, i) => (
@@ -201,7 +201,7 @@ export default function MonitoringPage() {
   }));
 
   return (
-    <div className="p-8 max-w-7xl space-y-8">
+    <div className="p-4 md:p-8 max-w-7xl space-y-8">
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>

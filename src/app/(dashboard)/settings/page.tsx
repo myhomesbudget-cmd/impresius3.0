@@ -126,7 +126,7 @@ export default function SettingsPage() {
 
   if (loading) {
     return (
-      <div className="p-8 max-w-3xl mx-auto flex items-center justify-center min-h-[50vh]">
+      <div className="p-4 md:p-8 max-w-3xl mx-auto flex items-center justify-center min-h-[50vh]">
         <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
       </div>
     );
@@ -142,7 +142,7 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="p-8 max-w-3xl mx-auto">
+    <div className="p-4 md:p-8 max-w-3xl mx-auto">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900">Impostazioni</h1>

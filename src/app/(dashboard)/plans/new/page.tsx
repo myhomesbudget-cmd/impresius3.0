@@ -210,7 +210,7 @@ export default function NewPlanPage() {
   // Show paywall if no access
   if (canCreate === false) {
     return (
-      <div className="p-8 max-w-lg mx-auto">
+      <div className="p-4 md:p-8 max-w-lg mx-auto">
         {cancelled && (
           <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
             Pagamento annullato. Puoi riprovare quando vuoi.
@@ -253,7 +253,7 @@ export default function NewPlanPage() {
   }
 
   return (
-    <div className="p-8 max-w-lg mx-auto">
+    <div className="p-4 md:p-8 max-w-lg mx-auto">
       {/* Page Header */}
       <div className="mb-8 text-center">
         <h1 className="text-2xl font-bold text-gray-900">Nuova Operazione</h1>

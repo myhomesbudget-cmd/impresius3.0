@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Sidebar } from "@/components/dashboard/Sidebar";
+import { MobileSidebarProvider } from "@/components/dashboard/MobileSidebarContext";
 
 export const dynamic = "force-dynamic";
 
@@ -19,9 +20,11 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Sidebar />
-      <div className="ml-64">{children}</div>
-    </div>
+    <MobileSidebarProvider>
+      <div className="min-h-screen bg-gray-50">
+        <Sidebar />
+        <div className="md:ml-64">{children}</div>
+      </div>
+    </MobileSidebarProvider>
   );
 }

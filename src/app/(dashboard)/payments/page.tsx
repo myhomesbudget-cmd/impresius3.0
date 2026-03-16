@@ -91,7 +91,7 @@ export default function PaymentsPage() {
 
   if (loading) {
     return (
-      <div className="p-8 max-w-5xl">
+      <div className="p-4 md:p-8 max-w-5xl">
         <div className="h-8 w-48 bg-gray-200 rounded animate-pulse mb-6" />
         <div className="space-y-4">
           {[...Array(3)].map((_, i) => (
@@ -106,7 +106,7 @@ export default function PaymentsPage() {
   const totalSpent = completedPayments.reduce((sum, p) => sum + p.amount, 0);
 
   return (
-    <div className="p-8 max-w-5xl space-y-8">
+    <div className="p-4 md:p-8 max-w-5xl space-y-8">
       {/* Success / Cancel Banners */}
       {success && (
         <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-4 flex items-start gap-3">

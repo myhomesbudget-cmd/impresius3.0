@@ -259,7 +259,7 @@ export default function ScenariosPage() {
 
   if (loading || !baseResults || !project) {
     return (
-      <div className="p-8 max-w-7xl">
+      <div className="p-4 md:p-8 max-w-7xl">
         <div className="mb-8">
           <div className="h-8 w-64 bg-gray-200 rounded animate-pulse" />
           <div className="h-4 w-96 bg-gray-100 rounded animate-pulse mt-2" />
@@ -321,7 +321,7 @@ export default function ScenariosPage() {
   const formatVariation = (v: number) => `${v > 0 ? '+' : ''}${v}%`;
 
   return (
-    <div className="p-8 max-w-7xl space-y-8">
+    <div className="p-4 md:p-8 max-w-7xl space-y-8">
 
       {/* ============================================================ */}
       {/* SEZIONE 1: INTESTAZIONE OPERAZIONE                           */}

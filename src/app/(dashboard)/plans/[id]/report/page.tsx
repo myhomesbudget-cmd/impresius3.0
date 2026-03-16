@@ -147,7 +147,7 @@ export default function ReportPage() {
 
   if (loading || !results || !project) {
     return (
-      <div className="p-8 max-w-5xl mx-auto flex items-center justify-center min-h-[60vh]">
+      <div className="p-4 md:p-8 max-w-5xl mx-auto flex items-center justify-center min-h-[60vh]">
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
           <p className="text-sm text-gray-500">Caricamento report...</p>
@@ -206,7 +206,7 @@ export default function ReportPage() {
         }
       `}</style>
 
-      <div className="p-8 max-w-5xl mx-auto">
+      <div className="p-4 md:p-8 max-w-5xl mx-auto">
         {/* Header bar */}
         <div className="no-print mb-8 flex items-center justify-between">
           <div>
