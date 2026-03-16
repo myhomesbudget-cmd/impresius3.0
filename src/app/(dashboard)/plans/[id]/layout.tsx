@@ -29,8 +29,8 @@ export default async function ProjectLayout({
       <div className="flex min-h-screen">
         <ProjectSidebar project={project} />
         <div className="flex-1 lg:ml-56">
-          <ProjectHeader />
-          {children}
+          <ProjectHeader projectId={id} />
+          <div className="pb-16 lg:pb-0">{children}</div>
         </div>
       </div>
     </MobileProjectSidebarProvider>
