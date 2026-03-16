@@ -7,18 +7,19 @@ import { cn } from "@/lib/utils";
 import {
   Building2,
   LayoutDashboard,
-  FileText,
   CreditCard,
-  Settings,
   LogOut,
   Plus,
+  FolderOpen,
+  Settings,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 const navItems = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
-  { href: "/plans/new", icon: Plus, label: "Nuovo Piano" },
+  { href: "/plans/new", icon: Plus, label: "Nuova Operazione" },
+  { href: "/plans", icon: FolderOpen, label: "Le mie Operazioni" },
   { href: "/payments", icon: CreditCard, label: "Pagamenti" },
+  { href: "/settings", icon: Settings, label: "Impostazioni" },
 ];
 
 export function Sidebar() {

@@ -127,7 +127,7 @@ export default function ValuationPage() {
     setSaving(true);
     setSaved(false);
 
-    const promises: Promise<unknown>[] = [];
+    const promises: PromiseLike<unknown>[] = [];
 
     for (const unit of units) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -160,6 +160,7 @@ export default function ValuationPage() {
               sort_order: s.sort_order,
             })
             .eq('id', s.id)
+            .then()
         );
       }
     }

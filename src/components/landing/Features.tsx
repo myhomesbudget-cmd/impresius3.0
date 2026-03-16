@@ -10,44 +10,44 @@ import {
 const features = [
   {
     icon: Calculator,
-    title: "Calcoli Automatici",
+    title: "Computo Metrico Integrato",
     description:
-      "Inserisci i dati dell'immobile e ottieni istantaneamente ROI, rendimento netto, cash flow e tutte le metriche chiave.",
+      "Costruisci il computo metrico delle opere per piano, con voci di lavorazione, misurazioni e calcoli automatici.",
     color: "blue",
   },
   {
     icon: BarChart3,
-    title: "Proiezioni Multi-Anno",
+    title: "Stima Valori Commerciali",
     description:
-      "Visualizza l'andamento del tuo investimento nel tempo con proiezioni fino a 30 anni, inclusa rivalutazione e inflazione.",
+      "Stima il valore di vendita con superfici ragguagliate, coefficienti correttivi e prezzo al mq per ogni unita immobiliare.",
     color: "indigo",
   },
   {
     icon: PieChart,
-    title: "Analisi Costi Dettagliata",
+    title: "Analisi Costi Completa",
     description:
-      "Costi di acquisizione, ristrutturazione, spese correnti e finanziamento: tutto calcolato con precisione professionale.",
+      "Acquisizione, professionisti, titoli edilizi, utenze, gestione: ogni voce di costo calcolata con percentuali e formule reali.",
     color: "purple",
   },
   {
     icon: TrendingUp,
-    title: "Metriche Professionali",
+    title: "Margini e ROI Istantanei",
     description:
-      "Cap Rate, Cash-on-Cash Return, Break-even Occupancy e tutte le metriche usate dai professionisti del settore.",
+      "Margine lordo, ROI, incidenza costi, costo al mq: tutti gli indicatori che servono per decidere se un'operazione conviene.",
     color: "green",
   },
   {
     icon: FileText,
-    title: "Piani Illimitati",
+    title: "Report PDF Professionali",
     description:
-      "Crea quanti business plan desideri. Confronta scenari diversi e trova l'investimento perfetto per te.",
+      "Genera report completi e professionali da condividere con investitori, partner e collaboratori.",
     color: "orange",
   },
   {
     icon: Lock,
-    title: "Dati Sicuri",
+    title: "Sicuro e Privato",
     description:
-      "I tuoi dati sono crittografati e protetti. Solo tu puoi accedere ai tuoi piani economici e alle tue analisi.",
+      "I tuoi dati sono crittografati e protetti. Solo tu puoi accedere alle tue operazioni e alle tue analisi.",
     color: "red",
   },
 ];

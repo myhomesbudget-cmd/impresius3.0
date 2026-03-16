@@ -461,7 +461,7 @@ export default function SummaryPage() {
                       ))}
                     </Pie>
                     <Tooltip
-                      formatter={(value: number) => formatCurrency(value)}
+                      formatter={(value) => formatCurrency(Number(value))}
                     />
                     <Legend />
                   </RechartsPieChart>

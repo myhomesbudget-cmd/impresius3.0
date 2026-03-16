@@ -1,22 +1,17 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-});
-
 export const metadata: Metadata = {
-  title: "Impresius - Business Plan Immobiliare",
+  title: "Impresius - Analisi Operazioni Immobiliari",
   description:
-    "Crea business plan professionali per i tuoi investimenti immobiliari. Analisi dettagliate, metriche di rendimento e proiezioni finanziarie.",
+    "Piattaforma professionale di analisi, simulazione e gestione economica delle operazioni immobiliari. Computo metrico, stima valori, margini e report PDF.",
   keywords: [
+    "operazione immobiliare",
     "business plan immobiliare",
+    "computo metrico",
+    "stima valore immobiliare",
     "investimento immobiliare",
-    "analisi rendimento",
-    "real estate investment",
-    "piano economico",
+    "analisi margini",
   ],
 };
 
@@ -27,7 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="it">
-      <body className={`${inter.variable} font-sans antialiased`}>
+      <body className="font-sans antialiased">
         {children}
       </body>
     </html>

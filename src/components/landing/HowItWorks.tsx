@@ -4,26 +4,26 @@ const steps = [
   {
     icon: UserPlus,
     step: "01",
-    title: "Registrati Gratis",
-    description: "Crea il tuo account in pochi secondi. Nessun costo di iscrizione, nessun abbonamento.",
+    title: "Crea l'Operazione",
+    description: "Registrati gratis e crea la tua prima operazione immobiliare. Inserisci localita, tipologia e strategia.",
   },
   {
     icon: ClipboardList,
     step: "02",
-    title: "Inserisci i Dati",
-    description: "Compila i campi con i dati dell'immobile: prezzo, costi, affitto previsto e parametri di finanziamento.",
+    title: "Compila le 3 Aree",
+    description: "Costi di acquisizione, computo metrico delle opere e stima del valore di vendita. Tutto guidato e strutturato.",
   },
   {
     icon: BarChart3,
     step: "03",
     title: "Analizza i Risultati",
-    description: "Ottieni istantaneamente rendimenti, cash flow, ROI e proiezioni multi-anno del tuo investimento.",
+    description: "Margini, ROI, incidenza costi, costo al mq: tutti gli indicatori per capire se l'operazione conviene.",
   },
   {
     icon: Download,
     step: "04",
-    title: "Decidi con i Dati",
-    description: "Confronta scenari, condividi i report e prendi decisioni informate per i tuoi investimenti.",
+    title: "Genera il Report",
+    description: "Esporta un report PDF professionale da condividere con investitori, partner e collaboratori.",
   },
 ];
 
