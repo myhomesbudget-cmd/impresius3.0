@@ -34,7 +34,6 @@ const TYPE_LABELS: Record<string, string> = {
 
 const PROVIDER_LABELS: Record<string, string> = {
   stripe: 'Carta di credito',
-  paypal: 'PayPal',
 };
 
 const PLAN_LABELS: Record<string, string> = {

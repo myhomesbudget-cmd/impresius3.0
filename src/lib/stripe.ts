@@ -11,4 +11,6 @@ export function getStripe(): Stripe {
   return _stripe;
 }
 
-export const PLAN_PRICE = 300; // €3.00 in cents
+export const PLAN_PRICE = Math.round(
+  parseFloat(process.env.PLAN_PRICE_EUR || "3.00") * 100
+); // EUR in cents

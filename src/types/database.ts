@@ -150,7 +150,7 @@ export interface Payment {
   amount: number;
   currency: string;
   status: 'pending' | 'completed' | 'failed' | 'refunded';
-  provider: 'stripe' | 'paypal';
+  provider: 'stripe';
   provider_payment_id: string | null;
   created_at: string;
 }

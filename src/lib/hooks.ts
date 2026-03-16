@@ -48,14 +48,3 @@ export function useAutoSave<T>(
 
   return { save, saving, lastSaved };
 }
-
-/**
- * Hook per generare ID temporanei client-side
- */
-export function useTempId(): () => string {
-  const counterRef = useRef(0);
-  return useCallback(() => {
-    counterRef.current += 1;
-    return `temp-${Date.now()}-${counterRef.current}`;
-  }, []);
-}
