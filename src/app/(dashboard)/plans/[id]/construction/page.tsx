@@ -574,7 +574,7 @@ export default function ComputoMetricoPage() {
                             type="number"
                             step="0.01"
                             min="0"
-                            suffix="EUR"
+                            suffix="€"
                             value={item.unit_price}
                             onChange={(e) =>
                               updateItem(

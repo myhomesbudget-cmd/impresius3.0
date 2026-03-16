@@ -440,7 +440,7 @@ export default function MonitoringPage() {
                   <XAxis dataKey="name" tick={{ fontSize: 12 }} />
                   <YAxis
                     tick={{ fontSize: 11 }}
-                    tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`}
+                    tickFormatter={(v) => `€ ${Math.round(v / 1000)}k`}
                   />
                   <RechartsTooltip
                     formatter={(value) => formatCurrency(Number(value))}
