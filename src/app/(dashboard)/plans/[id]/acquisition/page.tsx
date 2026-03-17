@@ -504,11 +504,11 @@ export default function AcquisitionPage() {
             </span>
           )}
         </CardHeader>
-        <CardContent className="space-y-0">
+        <CardContent className="space-y-0 overflow-x-auto mobile-scroll-hint">
           {/* Header Row */}
-          <div className="mb-2 flex items-center gap-3 border-b border-slate-100 px-2 pb-2 text-xs font-medium uppercase tracking-wider text-slate-400">
+          <div className="mb-2 flex items-center gap-3 border-b border-slate-100 px-2 pb-2 text-xs font-medium uppercase tracking-wider text-slate-400 min-w-[640px]">
             <div className="w-6" />
-            <div className="min-w-[220px] flex-1">Voce</div>
+            <div className="min-w-[180px] flex-1">Voce</div>
             <div className="w-16 text-center">Tipo</div>
             <div className="w-28 text-right">Percentuale</div>
             <div className="w-36 text-right">Importo fisso</div>
@@ -525,7 +525,7 @@ export default function AcquisitionPage() {
               <div
                 key={cost.id}
                 className={cn(
-                  'group flex items-center gap-3 rounded-lg px-2 py-2.5 transition-colors hover:bg-slate-50',
+                  'group flex items-center gap-3 rounded-lg px-2 py-2.5 transition-colors hover:bg-slate-50 min-w-[640px]',
                   isPurchasePrice && 'bg-blue-50/50',
                 )}
               >
@@ -747,11 +747,11 @@ export default function AcquisitionPage() {
 
               {/* Section content */}
               {isExpanded && (
-                <CardContent className="space-y-0 border-t border-slate-100 pt-4">
+                <CardContent className="space-y-0 border-t border-slate-100 pt-4 overflow-x-auto mobile-scroll-hint">
                   {/* Column headers */}
-                  <div className="mb-2 flex items-center gap-3 px-2 pb-2 text-xs font-medium uppercase tracking-wider text-slate-400">
+                  <div className="mb-2 flex items-center gap-3 px-2 pb-2 text-xs font-medium uppercase tracking-wider text-slate-400 min-w-[640px]">
                     <div className="w-6" />
-                    <div className="min-w-[200px] flex-1">Voce</div>
+                    <div className="min-w-[180px] flex-1">Voce</div>
                     <div className="w-20 text-center">Tipo</div>
                     <div className="w-28 text-right">Base / Prezzo U.</div>
                     <div className="w-20 text-right">% / Qty</div>
@@ -766,7 +766,7 @@ export default function AcquisitionPage() {
                     return (
                       <div
                         key={cost.id}
-                        className="group flex items-center gap-3 rounded-lg px-2 py-2.5 transition-colors hover:bg-slate-50"
+                        className="group flex items-center gap-3 rounded-lg px-2 py-2.5 transition-colors hover:bg-slate-50 min-w-[640px]"
                       >
                         {/* Icon */}
                         <div className="w-6 flex-shrink-0">
@@ -972,7 +972,7 @@ export default function AcquisitionPage() {
       {/* ====================================================== */}
       {/* Sticky Summary Bar                                      */}
       {/* ====================================================== */}
-      <div className="fixed bottom-16 lg:bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/95 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] backdrop-blur-sm">
+      <div className="fixed bottom-[4.5rem] lg:bottom-0 left-0 right-0 z-30 border-t border-slate-200 bg-white/95 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] backdrop-blur-sm">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 md:px-6 py-3 md:py-4">
           <div className="flex items-center gap-4 md:gap-8">
             <div className="flex flex-col">

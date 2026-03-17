@@ -22,7 +22,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="it">
-      <body className="font-sans antialiased">
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+      </head>
+      <body className="font-sans antialiased overflow-x-hidden">
         {/* Global background image applied to all screens */}
         <div className="hero-bg" aria-hidden="true" />
         <div className="hero-bg-overlay" aria-hidden="true" />
