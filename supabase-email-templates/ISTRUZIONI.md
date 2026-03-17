@@ -21,10 +21,12 @@
    - Invite user: `Sei stato invitato su Impresius`
 6. Clicca **Save** per ogni template
 
-## Configurazione Redirect URL
+## IMPORTANTE: Configurazione URL
 
-Assicurati che nella sezione **Authentication** → **URL Configuration**:
-- **Site URL**: `https://tuodominio.com` (il tuo dominio di produzione)
-- **Redirect URLs**: aggiungi `https://tuodominio.com/api/auth/callback`
+Nella sezione **Authentication** → **URL Configuration**:
+- **Site URL**: `https://tuodominio.com` (il tuo dominio di produzione Vercel)
 
-Questo è necessario affinché i link nelle email reindirizzino correttamente alla tua app.
+I template usano `{{ .SiteURL }}` per generare i link. Questo valore corrisponde al **Site URL** configurato sopra. I link nelle email puntano direttamente alla tua app (es. `https://tuodominio.com/auth/confirm?token_hash=...&type=...`) dove la route `/auth/confirm` verifica il token e reindirizza l'utente:
+- **Conferma email** → Pagina di login con messaggio "Account confermato!"
+- **Reset password** → Pagina "Nuova Password" (`/update-password`)
+- **Magic link** → Dashboard
