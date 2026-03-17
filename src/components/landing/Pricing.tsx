@@ -4,7 +4,7 @@ import { Check, ArrowRight, Sparkles, Crown } from "lucide-react";
 
 export function Pricing() {
   return (
-    <section id="pricing" className="py-28 bg-slate-50/60">
+    <section id="pricing" className="py-28 bg-white/40 backdrop-blur-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-20">
           <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-5 tracking-tight">
@@ -18,7 +18,7 @@ export function Pricing() {
 
         <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
           {/* Free Plan */}
-          <div className="bg-white rounded-2xl border border-slate-200/80 shadow-[0_1px_3px_rgb(0_0_0/0.03)] hover:shadow-[0_8px_24px_rgb(0_0_0/0.06)] transition-all duration-300 overflow-hidden">
+          <div className="bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-200/80 shadow-[0_1px_3px_rgb(0_0_0/0.03)] hover:shadow-[0_8px_24px_rgb(0_0_0/0.06)] transition-all duration-300 overflow-hidden">
             <div className="p-8">
               <p className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-3">Gratuito</p>
               <div className="flex items-baseline gap-1 mb-1">
@@ -53,7 +53,7 @@ export function Pricing() {
           </div>
 
           {/* Pay-per-plan */}
-          <div className="relative bg-white rounded-2xl border-2 border-blue-200 shadow-[0_4px_24px_rgb(59_130_246/0.12)] overflow-hidden">
+          <div className="relative bg-white/90 backdrop-blur-sm rounded-2xl border-2 border-blue-200 shadow-[0_4px_24px_rgb(59_130_246/0.12)] overflow-hidden">
             <div className="absolute top-0 right-0 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs font-bold px-4 py-1.5 rounded-bl-xl shadow-[0_2px_8px_rgb(37_99_235/0.3)]">
               <Sparkles className="w-3 h-3 inline mr-1" />
               Popolare

@@ -63,7 +63,7 @@ const colorClasses: Record<string, { bg: string; icon: string; border: string }>
 
 export function Features() {
   return (
-    <section id="features" className="py-28 bg-slate-50/60">
+    <section id="features" className="py-28 bg-white/40 backdrop-blur-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-20">
           <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-5 tracking-tight">
@@ -82,7 +82,7 @@ export function Features() {
             return (
               <div
                 key={idx}
-                className="group bg-white rounded-2xl p-8 border border-slate-200/60 shadow-[0_1px_3px_rgb(0_0_0/0.03)] hover:shadow-[0_8px_24px_rgb(0_0_0/0.06)] hover:border-slate-200 transition-all duration-300"
+                className="group bg-white/90 backdrop-blur-sm rounded-2xl p-8 border border-slate-200/60 shadow-[0_1px_3px_rgb(0_0_0/0.03)] hover:shadow-[0_8px_24px_rgb(0_0_0/0.06)] hover:border-slate-200 transition-all duration-300"
               >
                 <div
                   className={`w-12 h-12 rounded-xl ${colors.bg} ${colors.border} border flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}

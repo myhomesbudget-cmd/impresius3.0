@@ -37,7 +37,9 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-4">
+    <div className="min-h-screen relative flex items-center justify-center p-4">
+      <div className="hero-bg" aria-hidden="true" />
+      <div className="hero-bg-overlay" aria-hidden="true" />
       <div className="w-full max-w-md">
         {/* Logo */}
         <Link href="/" className="flex items-center justify-center gap-2 mb-8">
@@ -48,7 +50,7 @@ export default function LoginPage() {
         </Link>
 
         {/* Card */}
-        <div className="bg-white rounded-2xl shadow-xl border border-slate-100 p-8">
+        <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-xl border border-slate-100 p-8">
           <h1 className="text-2xl font-bold text-slate-900 text-center mb-2">
             Bentornato
           </h1>
