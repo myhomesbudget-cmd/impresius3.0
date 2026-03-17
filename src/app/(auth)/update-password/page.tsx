@@ -6,18 +6,17 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Building2, Mail, Lock, User } from "lucide-react";
+import { Building2, Lock, CheckCircle2 } from "lucide-react";
 
-export default function RegisterPage() {
+export default function UpdatePasswordPage() {
   const router = useRouter();
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
 
-  const handleRegister = async (e: React.FormEvent) => {
+  const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
@@ -28,20 +27,17 @@ export default function RegisterPage() {
       return;
     }
 
+    if (password !== confirmPassword) {
+      setError("Le password non corrispondono.");
+      setLoading(false);
+      return;
+    }
+
     const supabase = createClient();
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: fullName,
-        },
-        emailRedirectTo: `${window.location.origin}/api/auth/callback?next=/login?confirmed=true`,
-      },
-    });
+    const { error } = await supabase.auth.updateUser({ password });
 
     if (error) {
-      setError("Errore durante la registrazione. Riprova.");
+      setError("Errore nell'aggiornamento della password. Riprova.");
       setLoading(false);
       return;
     }
@@ -53,23 +49,20 @@ export default function RegisterPage() {
   if (success) {
     return (
       <div className="min-h-screen relative flex items-center justify-center p-4">
-        <div className="hero-bg" aria-hidden="true" />
-        <div className="hero-bg-overlay" aria-hidden="true" />
         <div className="w-full max-w-md text-center">
           <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-xl border border-slate-100 p-8">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Mail className="w-8 h-8 text-green-600" />
+            <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <CheckCircle2 className="w-8 h-8 text-emerald-600" />
             </div>
             <h1 className="text-2xl font-bold text-slate-900 mb-2">
-              Controlla la tua email
+              Password aggiornata
             </h1>
             <p className="text-slate-500 text-sm">
-              Ti abbiamo inviato un link di conferma a <strong>{email}</strong>.
-              Clicca sul link per attivare il tuo account.
+              La tua password è stata aggiornata con successo.
             </p>
-            <Link href="/login">
-              <Button variant="outline" className="mt-6">
-                Torna al Login
+            <Link href="/dashboard">
+              <Button variant="gradient" className="mt-6">
+                Vai alla Dashboard
               </Button>
             </Link>
           </div>
@@ -92,10 +85,10 @@ export default function RegisterPage() {
         {/* Card */}
         <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-xl border border-slate-100 p-8">
           <h1 className="text-2xl font-bold text-slate-900 text-center mb-2">
-            Crea il tuo account
+            Nuova Password
           </h1>
           <p className="text-slate-500 text-center text-sm mb-8">
-            Inizia a creare business plan professionali
+            Scegli una nuova password per il tuo account
           </p>
 
           {error && (
@@ -104,33 +97,23 @@ export default function RegisterPage() {
             </div>
           )}
 
-          <form onSubmit={handleRegister} className="space-y-5">
+          <form onSubmit={handleUpdate} className="space-y-5">
             <Input
-              label="Nome completo"
-              type="text"
-              placeholder="Mario Rossi"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              icon={<User className="w-4 h-4" />}
-              required
-            />
-
-            <Input
-              label="Email"
-              type="email"
-              placeholder="nome@email.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              icon={<Mail className="w-4 h-4" />}
-              required
-            />
-
-            <Input
-              label="Password"
+              label="Nuova Password"
               type="password"
               placeholder="Minimo 6 caratteri"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              icon={<Lock className="w-4 h-4" />}
+              required
+            />
+
+            <Input
+              label="Conferma Password"
+              type="password"
+              placeholder="Ripeti la password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
               icon={<Lock className="w-4 h-4" />}
               required
             />
@@ -142,17 +125,10 @@ export default function RegisterPage() {
               className="w-full"
               loading={loading}
             >
-              Registrati
+              Aggiorna Password
             </Button>
           </form>
         </div>
-
-        <p className="text-center text-sm text-slate-500 mt-6">
-          Hai gi&agrave; un account?{" "}
-          <Link href="/login" className="text-blue-600 font-medium hover:text-blue-700">
-            Accedi
-          </Link>
-        </p>
       </div>
     </div>
   );
