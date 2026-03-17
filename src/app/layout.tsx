@@ -23,6 +23,9 @@ export default function RootLayout({
   return (
     <html lang="it">
       <body className="font-sans antialiased">
+        {/* Global background image applied to all screens */}
+        <div className="hero-bg" aria-hidden="true" />
+        <div className="hero-bg-overlay" aria-hidden="true" />
         {children}
       </body>
     </html>

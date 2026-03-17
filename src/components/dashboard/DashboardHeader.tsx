@@ -28,7 +28,7 @@ export function DashboardHeader({ title }: { title: string }) {
   }, []);
 
   return (
-    <header className="h-16 border-b border-slate-200/80 bg-white/80 backdrop-blur-md flex items-center justify-between px-4 md:px-8 sticky top-0 z-30">
+    <header className="h-16 border-b border-slate-200/80 bg-white/85 backdrop-blur-md flex items-center justify-between px-4 md:px-8 sticky top-0 z-30">
       <div className="flex items-center gap-3">
         <button
           onClick={toggle}
@@ -43,7 +43,7 @@ export function DashboardHeader({ title }: { title: string }) {
         <div className="text-right hidden sm:block">
           <p className="text-sm font-semibold text-slate-800">{userName}</p>
         </div>
-        <div className="w-9 h-9 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full flex items-center justify-center shadow-[0_2px_6px_rgb(37_99_235/0.3)]">
+        <div className="w-9 h-9 icon-gradient rounded-full flex items-center justify-center shadow-[0_2px_6px_rgb(37_99_235/0.3)]">
           <span className="text-xs font-bold text-white">{initials}</span>
         </div>
       </div>

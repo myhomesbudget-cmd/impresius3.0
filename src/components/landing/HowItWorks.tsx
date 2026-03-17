@@ -50,7 +50,7 @@ export function HowItWorks() {
 
               <div className="relative z-10 inline-flex items-center justify-center w-24 h-24 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100/80 mb-7 group-hover:scale-105 group-hover:shadow-[0_8px_24px_rgb(59_130_246/0.12)] transition-all duration-300">
                 <item.icon className="w-10 h-10 text-blue-600" />
-                <span className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-[0_2px_8px_rgb(37_99_235/0.4)]">
+                <span className="absolute -top-2 -right-2 w-8 h-8 icon-gradient rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-[0_2px_8px_rgb(37_99_235/0.4)]">
                   {item.step}
                 </span>
               </div>

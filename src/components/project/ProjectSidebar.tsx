@@ -125,7 +125,7 @@ export function ProjectSidebar({ project }: ProjectSidebarProps) {
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className="hidden lg:flex fixed left-64 top-0 h-full w-56 bg-white border-r border-slate-200/80 flex-col z-30">
+      <aside className="hidden lg:flex fixed left-64 top-0 h-full w-56 bg-white/90 backdrop-blur-md border-r border-slate-200/80 flex-col z-30">
         <ProjectSidebarContent project={project} />
       </aside>
 
@@ -140,7 +140,7 @@ export function ProjectSidebar({ project }: ProjectSidebarProps) {
       {/* Mobile drawer */}
       <aside
         className={cn(
-          'lg:hidden fixed left-0 top-0 h-full w-72 bg-white border-r border-slate-200/80 flex flex-col z-50 transition-transform duration-300 ease-in-out shadow-2xl',
+          'lg:hidden fixed left-0 top-0 h-full w-72 bg-white/95 backdrop-blur-md border-r border-slate-200/80 flex flex-col z-50 transition-transform duration-300 ease-in-out shadow-2xl',
           isOpen ? 'translate-x-0' : '-translate-x-full'
         )}
       >
