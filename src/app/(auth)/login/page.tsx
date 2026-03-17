@@ -1,15 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Building2, Mail, Lock } from "lucide-react";
+import { Building2, Mail, Lock, CheckCircle2 } from "lucide-react";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const isConfirmed = searchParams.get("confirmed") === "true";
+  const hasAuthError = searchParams.get("error") === "auth";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -55,6 +58,19 @@ export default function LoginPage() {
           <p className="text-slate-500 text-center text-sm mb-8">
             Accedi al tuo account per gestire i tuoi piani
           </p>
+
+          {isConfirmed && (
+            <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm rounded-lg p-3 mb-6 flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 shrink-0" />
+              Account confermato con successo! Ora puoi accedere.
+            </div>
+          )}
+
+          {hasAuthError && (
+            <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg p-3 mb-6">
+              Errore di autenticazione. Riprova.
+            </div>
+          )}
 
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg p-3 mb-6">
@@ -112,5 +128,13 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
   );
 }
