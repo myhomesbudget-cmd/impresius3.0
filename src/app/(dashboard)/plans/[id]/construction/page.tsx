@@ -557,7 +557,7 @@ export default function ComputoMetricoPage() {
                           <textarea
                             className={cn(
                               'flex w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm transition-colors',
-                              'placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20',
+                              'placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-[3px] focus:ring-blue-500/15',
                               'min-h-[60px] resize-y'
                             )}
                             placeholder="Descrizione della lavorazione..."

@@ -205,11 +205,11 @@ export default function MonitoringPage() {
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
+          <h1 className="page-header-title flex items-center gap-2">
             <Activity className="w-6 h-6 text-blue-600" />
             Monitoring Costi
           </h1>
-          <p className="mt-1 text-sm text-slate-500">
+          <p className="page-header-subtitle">
             Confronta i costi effettivi con il preventivo per &ldquo;{project.name}&rdquo;
           </p>
         </div>
@@ -229,11 +229,11 @@ export default function MonitoringPage() {
             <h3 className="font-semibold text-slate-900 mb-4">Nuovo Costo Effettivo</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="text-xs font-medium text-slate-600 block mb-1">Categoria</label>
+                <label className="text-xs font-semibold text-slate-600 block mb-1.5">Categoria</label>
                 <select
                   value={form.reference_type}
                   onChange={(e) => setForm({ ...form, reference_type: e.target.value as ActualCostForm['reference_type'] })}
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-[3px] focus:ring-blue-500/15"
                 >
                   <option value="acquisition">Acquisizione</option>
                   <option value="operation">Operativi</option>
@@ -241,7 +241,7 @@ export default function MonitoringPage() {
                 </select>
               </div>
               <div>
-                <label className="text-xs font-medium text-slate-600 block mb-1">Descrizione</label>
+                <label className="text-xs font-semibold text-slate-600 block mb-1.5">Descrizione</label>
                 <Input
                   value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
@@ -249,7 +249,7 @@ export default function MonitoringPage() {
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-slate-600 block mb-1">Importo</label>
+                <label className="text-xs font-semibold text-slate-600 block mb-1.5">Importo</label>
                 <Input
                   type="number"
                   step="0.01"
@@ -259,7 +259,7 @@ export default function MonitoringPage() {
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-slate-600 block mb-1">Data</label>
+                <label className="text-xs font-semibold text-slate-600 block mb-1.5">Data</label>
                 <Input
                   type="date"
                   value={form.date}
@@ -267,7 +267,7 @@ export default function MonitoringPage() {
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-slate-600 block mb-1">Nr. Fattura</label>
+                <label className="text-xs font-semibold text-slate-600 block mb-1.5">Nr. Fattura</label>
                 <Input
                   value={form.invoice_number}
                   onChange={(e) => setForm({ ...form, invoice_number: e.target.value })}
@@ -275,7 +275,7 @@ export default function MonitoringPage() {
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-slate-600 block mb-1">Note</label>
+                <label className="text-xs font-semibold text-slate-600 block mb-1.5">Note</label>
                 <Input
                   value={form.notes}
                   onChange={(e) => setForm({ ...form, notes: e.target.value })}

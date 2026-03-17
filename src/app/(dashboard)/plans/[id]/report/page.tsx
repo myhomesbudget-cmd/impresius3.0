@@ -210,11 +210,11 @@ export default function ReportPage() {
         {/* Header bar */}
         <div className="no-print mb-8 flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
+            <h1 className="page-header-title flex items-center gap-2">
               <FileText className="w-6 h-6" />
               Genera Report
             </h1>
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="page-header-subtitle">
               Anteprima del report completo dell&apos;operazione
             </p>
           </div>

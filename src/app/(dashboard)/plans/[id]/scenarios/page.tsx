@@ -508,7 +508,7 @@ export default function ScenariosPage() {
                 {/* Sale Price Slider */}
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <label className="text-sm font-medium text-slate-700">Prezzo di Vendita</label>
+                    <label className="text-sm font-semibold text-slate-700">Prezzo di Vendita</label>
                     <span className={cn(
                       'text-sm font-bold px-2 py-0.5 rounded',
                       customSaleVariation > 0 ? 'bg-emerald-100 text-emerald-700' :
@@ -536,7 +536,7 @@ export default function ScenariosPage() {
                 {/* Construction Cost Slider */}
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <label className="text-sm font-medium text-slate-700">Costo Lavori</label>
+                    <label className="text-sm font-semibold text-slate-700">Costo Lavori</label>
                     <span className={cn(
                       'text-sm font-bold px-2 py-0.5 rounded',
                       customConstructionVariation < 0 ? 'bg-emerald-100 text-emerald-700' :
@@ -564,7 +564,7 @@ export default function ScenariosPage() {
                 {/* Acquisition Cost Slider */}
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <label className="text-sm font-medium text-slate-700">Costo Acquisizione</label>
+                    <label className="text-sm font-semibold text-slate-700">Costo Acquisizione</label>
                     <span className={cn(
                       'text-sm font-bold px-2 py-0.5 rounded',
                       customAcquisitionVariation < 0 ? 'bg-emerald-100 text-emerald-700' :

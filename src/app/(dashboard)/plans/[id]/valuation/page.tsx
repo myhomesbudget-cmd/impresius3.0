@@ -492,7 +492,7 @@ export default function ValuationPage() {
                       </label>
                       <select
                         className={cn(
-                          'flex h-10 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm transition-colors',
+                          'flex h-11 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 transition-colors',
                           'focus:border-blue-500 focus:outline-none focus:ring-[3px] focus:ring-blue-500/15'
                         )}
                         value={unit.floor}
