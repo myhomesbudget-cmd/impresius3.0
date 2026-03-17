@@ -51,9 +51,11 @@ export default function RegisterPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-4">
+      <div className="min-h-screen relative flex items-center justify-center p-4">
+        <div className="hero-bg" aria-hidden="true" />
+        <div className="hero-bg-overlay" aria-hidden="true" />
         <div className="w-full max-w-md text-center">
-          <div className="bg-white rounded-2xl shadow-xl border border-slate-100 p-8">
+          <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-xl border border-slate-100 p-8">
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <Mail className="w-8 h-8 text-green-600" />
             </div>
@@ -76,7 +78,9 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-4">
+    <div className="min-h-screen relative flex items-center justify-center p-4">
+      <div className="hero-bg" aria-hidden="true" />
+      <div className="hero-bg-overlay" aria-hidden="true" />
       <div className="w-full max-w-md">
         {/* Logo */}
         <Link href="/" className="flex items-center justify-center gap-2 mb-8">
@@ -87,7 +91,7 @@ export default function RegisterPage() {
         </Link>
 
         {/* Card */}
-        <div className="bg-white rounded-2xl shadow-xl border border-slate-100 p-8">
+        <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-xl border border-slate-100 p-8">
           <h1 className="text-2xl font-bold text-slate-900 text-center mb-2">
             Crea il tuo account
           </h1>

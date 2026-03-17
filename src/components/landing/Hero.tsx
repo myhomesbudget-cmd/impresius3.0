@@ -5,12 +5,6 @@ import { ArrowRight, TrendingUp, Shield, Zap, Calculator, BarChart3, FileText } 
 export function Hero() {
   return (
     <section className="relative pt-32 pb-20 overflow-hidden">
-      {/* Background decorations */}
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-blue-100/60 rounded-full blur-[100px]" />
-        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-indigo-100/60 rounded-full blur-[100px]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] bg-gradient-to-br from-blue-50/40 to-indigo-50/40 rounded-full blur-[120px]" />
-      </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-4xl mx-auto">
@@ -154,7 +148,7 @@ export function Hero() {
             </div>
           </div>
           {/* Gradient overlay at bottom */}
-          <div className="absolute -bottom-10 left-0 right-0 h-40 bg-gradient-to-t from-white to-transparent" />
+          <div className="absolute -bottom-10 left-0 right-0 h-40 bg-gradient-to-t from-white/60 to-transparent" />
         </div>
       </div>
     </section>
