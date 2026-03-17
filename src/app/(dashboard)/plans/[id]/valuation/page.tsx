@@ -470,7 +470,7 @@ export default function ValuationPage() {
               {/* Unit Header */}
               <CardHeader className="pb-4">
                 <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1 grid grid-cols-4 gap-4">
+                  <div className="flex-1 grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
                     {/* Name */}
                     <div>
                       <label className="block text-xs font-semibold text-slate-600 mb-1.5">

@@ -340,7 +340,7 @@ export default function ComputoMetricoPage() {
 
   return (
     <div className="flex flex-col min-h-[calc(100vh-4rem)]">
-      <div className="flex-1 p-4 md:p-8 pb-24 max-w-6xl">
+      <div className="flex-1 p-4 md:p-8 pb-32 lg:pb-24 max-w-6xl">
         {/* ---- Header ---- */}
         <div className="mb-8">
           <div className="flex items-center justify-between">
@@ -370,8 +370,8 @@ export default function ComputoMetricoPage() {
         </div>
 
         {/* ---- Floor Tabs ---- */}
-        <div className="flex items-center gap-2 mb-6">
-          <div className="flex items-center gap-1 rounded-xl bg-slate-100 p-1">
+        <div className="flex flex-wrap items-center gap-2 mb-6">
+          <div className="flex items-center gap-1 rounded-xl bg-slate-100 p-1 overflow-x-auto mobile-scroll-hint">
             {activeFloors.map((floor) => (
               <button
                 key={floor}
@@ -440,12 +440,12 @@ export default function ComputoMetricoPage() {
                 >
                   {/* ---- Collapsed Header ---- */}
                   <div
-                    className="flex items-center gap-4 px-5 py-4 cursor-pointer select-none"
+                    className="flex items-center gap-2 sm:gap-4 px-3 sm:px-5 py-3 sm:py-4 cursor-pointer select-none"
                     onClick={() =>
                       setExpandedItemId(isExpanded ? null : item.id)
                     }
                   >
-                    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-slate-100 text-slate-500 text-xs font-bold shrink-0">
+                    <div className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-slate-100 text-slate-500 text-xs font-bold shrink-0">
                       {item.item_number}
                     </div>
 
@@ -463,27 +463,27 @@ export default function ComputoMetricoPage() {
 
                     <span
                       className={cn(
-                        'shrink-0 px-2.5 py-0.5 rounded-full text-xs font-medium',
+                        'shrink-0 px-2 py-0.5 rounded-full text-[0.65rem] sm:text-xs font-medium hidden sm:inline-flex',
                         CATEGORY_COLORS[item.category] ?? CATEGORY_COLORS.other
                       )}
                     >
                       {getCategoryLabel(item.category)}
                     </span>
 
-                    <div className="shrink-0 text-right min-w-[80px]">
+                    <div className="shrink-0 text-right hidden md:block min-w-[80px]">
                       <p className="text-xs text-slate-400">
                         {formatNumber(totalQuantity)} {item.unit_of_measure}
                       </p>
                     </div>
 
-                    <div className="shrink-0 text-right min-w-[60px]">
+                    <div className="shrink-0 text-right hidden md:block min-w-[60px]">
                       <p className="text-xs text-slate-400">
                         {formatCurrency(item.unit_price)}
                       </p>
                     </div>
 
-                    <div className="shrink-0 text-right min-w-[100px]">
-                      <p className="text-sm font-semibold text-slate-900">
+                    <div className="shrink-0 text-right min-w-[70px] sm:min-w-[100px]">
+                      <p className="text-xs sm:text-sm font-semibold text-slate-900">
                         {formatCurrency(totalPrice)}
                       </p>
                     </div>
@@ -493,7 +493,7 @@ export default function ComputoMetricoPage() {
                   {isExpanded && (
                     <CardContent className="border-t border-slate-100 pt-5">
                       {/* Item Details */}
-                      <div className="grid grid-cols-2 gap-4 mb-6">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                         <Input
                           label="Titolo"
                           value={item.title}
@@ -604,23 +604,23 @@ export default function ComputoMetricoPage() {
                           </Button>
                         </div>
 
-                        <div className="border border-slate-200 rounded-lg overflow-hidden">
+                        <div className="border border-slate-200 rounded-lg overflow-hidden overflow-x-auto mobile-scroll-hint">
                           {/* Table Header */}
-                          <div className="grid grid-cols-[1fr_70px_80px_80px_80px_90px_32px] gap-px bg-slate-100 text-xs font-semibold text-slate-500 uppercase tracking-wide">
-                            <div className="bg-slate-50 px-3 py-2">Descrizione</div>
-                            <div className="bg-slate-50 px-2 py-2 text-center">
+                          <div className="grid grid-cols-[minmax(120px,1fr)_60px_70px_70px_70px_80px_32px] md:grid-cols-[1fr_70px_80px_80px_80px_90px_32px] gap-px bg-slate-100 text-xs font-semibold text-slate-500 uppercase tracking-wide min-w-[520px]">
+                            <div className="bg-slate-50 px-2 md:px-3 py-2">Descrizione</div>
+                            <div className="bg-slate-50 px-1 md:px-2 py-2 text-center">
                               Par.ug
                             </div>
-                            <div className="bg-slate-50 px-2 py-2 text-center">
+                            <div className="bg-slate-50 px-1 md:px-2 py-2 text-center">
                               Lung.
                             </div>
-                            <div className="bg-slate-50 px-2 py-2 text-center">
+                            <div className="bg-slate-50 px-1 md:px-2 py-2 text-center">
                               Larg.
                             </div>
-                            <div className="bg-slate-50 px-2 py-2 text-center">
+                            <div className="bg-slate-50 px-1 md:px-2 py-2 text-center">
                               H/peso
                             </div>
-                            <div className="bg-slate-50 px-2 py-2 text-right">
+                            <div className="bg-slate-50 px-1 md:px-2 py-2 text-right">
                               Quantita
                             </div>
                             <div className="bg-slate-50" />
@@ -638,7 +638,7 @@ export default function ComputoMetricoPage() {
                               return (
                                 <div
                                   key={m.id}
-                                  className="grid grid-cols-[1fr_70px_80px_80px_80px_90px_32px] gap-px border-t border-slate-100 bg-white"
+                                  className="grid grid-cols-[minmax(120px,1fr)_60px_70px_70px_70px_80px_32px] md:grid-cols-[1fr_70px_80px_80px_80px_90px_32px] gap-px border-t border-slate-100 bg-white min-w-[520px]"
                                 >
                                   <div className="px-2 py-1">
                                     <input
@@ -738,7 +738,7 @@ export default function ComputoMetricoPage() {
                           )}
 
                           {/* SOMMANO Row */}
-                          <div className="grid grid-cols-[1fr_70px_80px_80px_80px_90px_32px] gap-px border-t-2 border-blue-200 bg-blue-50/60">
+                          <div className="grid grid-cols-[minmax(120px,1fr)_60px_70px_70px_70px_80px_32px] md:grid-cols-[1fr_70px_80px_80px_80px_90px_32px] gap-px border-t-2 border-blue-200 bg-blue-50/60 min-w-[520px]">
                             <div className="px-3 py-2.5 text-sm font-bold text-blue-800 uppercase tracking-wide col-span-5">
                               Sommano
                             </div>
@@ -820,9 +820,9 @@ export default function ComputoMetricoPage() {
       </div>
 
       {/* ---- Sticky Grand Total Bar ---- */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-slate-200 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] z-40">
-        <div className="max-w-6xl mx-auto px-8 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-6">
+      <div className="fixed bottom-[4.5rem] lg:bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-slate-200 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] z-30">
+        <div className="max-w-6xl mx-auto px-4 md:px-8 py-2.5 flex items-center justify-between">
+          <div className="hidden sm:flex items-center gap-6">
             {activeFloors.map((floor) => {
               const floorItems = itemsByFloor.get(floor) ?? [];
               const ft = floorItems.reduce(
@@ -840,11 +840,11 @@ export default function ComputoMetricoPage() {
               );
             })}
           </div>
-          <div className="text-right">
-            <p className="text-xs text-slate-400 uppercase tracking-wide font-medium">
-              Totale Computo Metrico
+          <div className="text-right ml-auto">
+            <p className="text-[0.65rem] text-slate-400 uppercase tracking-wide font-medium">
+              Totale Computo
             </p>
-            <p className="text-xl font-bold text-slate-900">
+            <p className="text-lg md:text-xl font-bold text-slate-900">
               {formatCurrency(grandTotal)}
             </p>
           </div>

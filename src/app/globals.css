@@ -492,3 +492,36 @@ html {
 .stat-neutral {
   color: #475569;
 }
+
+/* ===== iPhone Safe Area & Mobile Fixes ===== */
+body {
+  -webkit-text-size-adjust: 100%;
+  overflow-x: hidden;
+}
+
+/* Safe area padding for notched iPhones */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Prevent horizontal overflow on all pages */
+html, body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+/* Touch-friendly tap targets */
+@media (max-width: 640px) {
+  input, select, textarea, button {
+    font-size: 16px !important; /* Prevents iOS zoom on focus */
+  }
+}
+
+/* Mobile table scroll hint */
+.mobile-scroll-hint {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.mobile-scroll-hint::-webkit-scrollbar {
+  display: none;
+}

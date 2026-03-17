@@ -78,13 +78,13 @@ export default async function DashboardPage() {
   return (
     <div className="p-4 md:p-8 max-w-6xl mx-auto">
       {/* Header */}
-      <div className="flex items-center justify-between mb-10">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 sm:mb-10">
         <div>
           <h1 className="page-header-title">Dashboard</h1>
           <p className="page-header-subtitle">{greeting}</p>
         </div>
         <Link href="/plans/new">
-          <Button variant="gradient" className="gap-2">
+          <Button variant="gradient" className="gap-2 w-full sm:w-auto">
             <Plus className="w-4 h-4" />
             Nuova Operazione
           </Button>
