@@ -104,11 +104,11 @@ export function Sidebar() {
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className="hidden md:flex fixed left-0 top-0 h-full w-64 bg-white border-r border-slate-200/80 flex-col z-40">
+      <aside className="hidden md:flex fixed left-0 top-0 h-full w-64 bg-white/90 backdrop-blur-md border-r border-slate-200/80 flex-col z-40">
         {/* Logo Area */}
         <div className="h-16 flex items-center px-5 border-b border-slate-100">
           <Link href="/dashboard" className="flex items-center gap-2.5">
-            <div className="w-9 h-9 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-[0_2px_8px_rgb(37_99_235/0.35)]">
+            <div className="w-9 h-9 icon-gradient rounded-xl flex items-center justify-center shadow-[0_2px_8px_rgb(37_99_235/0.35)]">
               <Building2 className="w-4.5 h-4.5 text-white" />
             </div>
             <div className="flex flex-col">
@@ -131,13 +131,13 @@ export function Sidebar() {
       {/* Mobile drawer */}
       <aside
         className={cn(
-          "md:hidden fixed left-0 top-0 h-full w-72 bg-white border-r border-slate-200/80 flex flex-col z-50 transition-transform duration-300 ease-in-out shadow-2xl",
+          "md:hidden fixed left-0 top-0 h-full w-72 bg-white/95 backdrop-blur-md border-r border-slate-200/80 flex flex-col z-50 transition-transform duration-300 ease-in-out shadow-2xl",
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
         <div className="h-16 flex items-center justify-between px-5 border-b border-slate-100">
           <Link href="/dashboard" className="flex items-center gap-2.5" onClick={close}>
-            <div className="w-9 h-9 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-[0_2px_8px_rgb(37_99_235/0.35)]">
+            <div className="w-9 h-9 icon-gradient rounded-xl flex items-center justify-center shadow-[0_2px_8px_rgb(37_99_235/0.35)]">
               <Building2 className="w-4.5 h-4.5 text-white" />
             </div>
             <div className="flex flex-col">

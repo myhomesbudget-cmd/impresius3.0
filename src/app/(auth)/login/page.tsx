@@ -38,12 +38,10 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen relative flex items-center justify-center p-4">
-      <div className="hero-bg" aria-hidden="true" />
-      <div className="hero-bg-overlay" aria-hidden="true" />
       <div className="w-full max-w-md">
         {/* Logo */}
         <Link href="/" className="flex items-center justify-center gap-2 mb-8">
-          <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center">
+          <div className="w-10 h-10 icon-gradient rounded-xl flex items-center justify-center">
             <Building2 className="w-6 h-6 text-white" />
           </div>
           <span className="text-2xl font-bold text-gradient">Impresius</span>

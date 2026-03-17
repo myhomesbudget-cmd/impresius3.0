@@ -14,7 +14,7 @@ export function Navbar() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5">
-            <div className="w-9 h-9 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-[0_2px_8px_rgb(37_99_235/0.35)]">
+            <div className="w-9 h-9 icon-gradient rounded-xl flex items-center justify-center shadow-[0_2px_8px_rgb(37_99_235/0.35)]">
               <Building2 className="w-5 h-5 text-white" />
             </div>
             <span className="text-xl font-extrabold text-gradient">Impresius</span>

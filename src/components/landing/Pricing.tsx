@@ -54,7 +54,7 @@ export function Pricing() {
 
           {/* Pay-per-plan */}
           <div className="relative bg-white/90 backdrop-blur-sm rounded-2xl border-2 border-blue-200 shadow-[0_4px_24px_rgb(59_130_246/0.12)] overflow-hidden">
-            <div className="absolute top-0 right-0 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs font-bold px-4 py-1.5 rounded-bl-xl shadow-[0_2px_8px_rgb(37_99_235/0.3)]">
+            <div className="absolute top-0 right-0 badge-gradient text-xs font-bold px-4 py-1.5 rounded-bl-xl shadow-[0_2px_8px_rgb(37_99_235/0.3)]">
               <Sparkles className="w-3 h-3 inline mr-1" />
               Popolare
             </div>
@@ -134,7 +134,7 @@ export function Pricing() {
                   Prova Premium
                 </Button>
               </Link>
-              <p className="text-center text-xs text-slate-500 mt-3 font-medium">
+              <p className="text-center text-xs text-slate-400 mt-3 font-medium">
                 Pagamento sicuro con Stripe
               </p>
             </div>

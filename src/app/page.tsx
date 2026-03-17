@@ -8,9 +8,6 @@ import { Footer } from "@/components/landing/Footer";
 export default function Home() {
   return (
     <main className="min-h-screen relative">
-      {/* Responsive background image */}
-      <div className="hero-bg" aria-hidden="true" />
-      <div className="hero-bg-overlay" aria-hidden="true" />
       <Navbar />
       <Hero />
       <Features />
