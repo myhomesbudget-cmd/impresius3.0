@@ -465,7 +465,7 @@ export default function AcquisitionPage() {
     return (
       <div className="flex h-[60vh] items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-        <span className="ml-3 text-gray-500">Caricamento costi...</span>
+        <span className="ml-3 text-slate-500">Caricamento costi...</span>
       </div>
     );
   }
@@ -478,10 +478,10 @@ export default function AcquisitionPage() {
     <div className="mx-auto max-w-6xl space-y-6 md:space-y-8 pb-36 lg:pb-28">
       {/* Page Header */}
       <div className="space-y-1">
-        <h1 className="text-2xl font-bold tracking-tight text-gray-900">
+        <h1 className="page-header-title">
           Area 1 — Costi di Acquisizione e Spese Accessorie
         </h1>
-        <p className="text-sm text-gray-500">
+        <p className="page-header-subtitle">
           Gestisci i costi di acquisizione e le spese operative dell&apos;operazione immobiliare.
         </p>
       </div>
@@ -498,7 +498,7 @@ export default function AcquisitionPage() {
             Costi di Acquisizione
           </CardTitle>
           {saving && (
-            <span className="flex items-center gap-1.5 text-xs text-gray-400">
+            <span className="flex items-center gap-1.5 text-xs text-slate-400">
               <Loader2 className="h-3 w-3 animate-spin" />
               Salvataggio...
             </span>
@@ -506,7 +506,7 @@ export default function AcquisitionPage() {
         </CardHeader>
         <CardContent className="space-y-0">
           {/* Header Row */}
-          <div className="mb-2 flex items-center gap-3 border-b border-gray-100 px-2 pb-2 text-xs font-medium uppercase tracking-wider text-gray-400">
+          <div className="mb-2 flex items-center gap-3 border-b border-slate-100 px-2 pb-2 text-xs font-medium uppercase tracking-wider text-slate-400">
             <div className="w-6" />
             <div className="min-w-[220px] flex-1">Voce</div>
             <div className="w-16 text-center">Tipo</div>
@@ -525,7 +525,7 @@ export default function AcquisitionPage() {
               <div
                 key={cost.id}
                 className={cn(
-                  'group flex items-center gap-3 rounded-lg px-2 py-2.5 transition-colors hover:bg-gray-50',
+                  'group flex items-center gap-3 rounded-lg px-2 py-2.5 transition-colors hover:bg-slate-50',
                   isPurchasePrice && 'bg-blue-50/50',
                 )}
               >
@@ -536,14 +536,14 @@ export default function AcquisitionPage() {
                   ) : cost.calculation_type === 'percentage' ? (
                     <Percent className="h-4 w-4 text-amber-500" />
                   ) : (
-                    <Hash className="h-4 w-4 text-gray-400" />
+                    <Hash className="h-4 w-4 text-slate-400" />
                   )}
                 </div>
 
                 {/* Label */}
                 <div className="min-w-[220px] flex-1">
                   {isPurchasePrice ? (
-                    <span className="text-sm font-semibold text-gray-900">
+                    <span className="text-sm font-semibold text-slate-900">
                       {cost.label}
                     </span>
                   ) : (
@@ -554,7 +554,7 @@ export default function AcquisitionPage() {
                           label: e.target.value,
                         })
                       }
-                      className="h-8 border-transparent bg-transparent text-sm hover:border-gray-300 focus:border-blue-500 focus:bg-white"
+                      className="h-8 border-transparent bg-transparent text-sm hover:border-slate-300 focus:border-blue-500 focus:bg-white"
                     />
                   )}
                 </div>
@@ -576,7 +576,7 @@ export default function AcquisitionPage() {
                             newType === 'percentage' ? purchasePrice : 0,
                         });
                       }}
-                      className="h-6 rounded border border-gray-200 bg-white px-1 text-[10px] font-medium text-gray-600 focus:border-blue-400 focus:outline-none"
+                      className="h-6 rounded border border-slate-200 bg-white px-1 text-[10px] font-medium text-slate-600 focus:border-blue-400 focus:outline-none"
                     >
                       <option value="percentage">%</option>
                       <option value="fixed">Fisso</option>
@@ -601,7 +601,7 @@ export default function AcquisitionPage() {
                       className="h-8 text-right text-sm"
                     />
                   ) : (
-                    <div className="text-right text-sm text-gray-300">--</div>
+                    <div className="text-right text-sm text-slate-300">--</div>
                   )}
                 </div>
 
@@ -634,7 +634,7 @@ export default function AcquisitionPage() {
                       placeholder="0"
                     />
                   ) : (
-                    <div className="text-right text-sm text-gray-300">--</div>
+                    <div className="text-right text-sm text-slate-300">--</div>
                   )}
                 </div>
 
@@ -645,7 +645,7 @@ export default function AcquisitionPage() {
                       'text-sm font-medium tabular-nums',
                       isPurchasePrice
                         ? 'font-semibold text-blue-700'
-                        : 'text-gray-900',
+                        : 'text-slate-900',
                     )}
                   >
                     {formatCurrency(amount)}
@@ -657,7 +657,7 @@ export default function AcquisitionPage() {
                   {!isPurchasePrice && (
                     <button
                       onClick={() => deleteAcquisitionRow(cost.id)}
-                      className="rounded p-1 text-gray-300 opacity-0 transition-all hover:bg-red-50 hover:text-red-500 group-hover:opacity-100"
+                      className="rounded p-1 text-slate-300 opacity-0 transition-all hover:bg-red-50 hover:text-red-500 group-hover:opacity-100"
                       title="Elimina voce"
                     >
                       <X className="h-4 w-4" />
@@ -669,12 +669,12 @@ export default function AcquisitionPage() {
           })}
 
           {/* Add row */}
-          <div className="mt-2 border-t border-gray-100 pt-3">
+          <div className="mt-2 border-t border-slate-100 pt-3">
             <Button
               variant="ghost"
               size="sm"
               onClick={addAcquisitionRow}
-              className="text-gray-500 hover:text-blue-600"
+              className="text-slate-500 hover:text-blue-600"
             >
               <Plus className="mr-1.5 h-4 w-4" />
               Aggiungi voce
@@ -682,11 +682,11 @@ export default function AcquisitionPage() {
           </div>
 
           {/* Subtotal */}
-          <div className="mt-4 flex items-center justify-between rounded-lg bg-gray-50 px-4 py-3">
-            <span className="text-sm font-semibold text-gray-700">
+          <div className="mt-4 flex items-center justify-between rounded-lg bg-slate-50 px-4 py-3">
+            <span className="text-sm font-semibold text-slate-700">
               Totale Acquisizione
             </span>
-            <span className="text-base font-bold tabular-nums text-gray-900">
+            <span className="text-base font-bold tabular-nums text-slate-900">
               {formatCurrency(totalAcquisition)}
             </span>
           </div>
@@ -701,7 +701,7 @@ export default function AcquisitionPage() {
           <span className="flex h-7 w-7 items-center justify-center rounded-md bg-emerald-100 text-xs font-bold text-emerald-700">
             B
           </span>
-          <h2 className="text-xl font-semibold text-gray-900">
+          <h2 className="text-xl font-semibold text-slate-900">
             Costi Operativi
           </h2>
         </div>
@@ -720,36 +720,36 @@ export default function AcquisitionPage() {
               {/* Section header - collapsible */}
               <button
                 onClick={() => toggleSection(section.value)}
-                className="flex w-full items-center justify-between p-6 text-left transition-colors hover:bg-gray-50/50"
+                className="flex w-full items-center justify-between p-6 text-left transition-colors hover:bg-slate-50/50"
               >
                 <div className="flex items-center gap-3">
                   <span className="flex h-6 w-6 items-center justify-center rounded bg-emerald-50 text-xs font-bold text-emerald-600">
                     {sectionIdx + 1}
                   </span>
-                  <h3 className="text-base font-semibold text-gray-900">
+                  <h3 className="text-base font-semibold text-slate-900">
                     {section.label}
                   </h3>
-                  <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-500">
+                  <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-500">
                     {sectionCosts.length} voci
                   </span>
                 </div>
                 <div className="flex items-center gap-4">
-                  <span className="text-sm font-semibold tabular-nums text-gray-700">
+                  <span className="text-sm font-semibold tabular-nums text-slate-700">
                     {formatCurrency(sectionTotal)}
                   </span>
                   {isExpanded ? (
-                    <ChevronDown className="h-5 w-5 text-gray-400" />
+                    <ChevronDown className="h-5 w-5 text-slate-400" />
                   ) : (
-                    <ChevronRight className="h-5 w-5 text-gray-400" />
+                    <ChevronRight className="h-5 w-5 text-slate-400" />
                   )}
                 </div>
               </button>
 
               {/* Section content */}
               {isExpanded && (
-                <CardContent className="space-y-0 border-t border-gray-100 pt-4">
+                <CardContent className="space-y-0 border-t border-slate-100 pt-4">
                   {/* Column headers */}
-                  <div className="mb-2 flex items-center gap-3 px-2 pb-2 text-xs font-medium uppercase tracking-wider text-gray-400">
+                  <div className="mb-2 flex items-center gap-3 px-2 pb-2 text-xs font-medium uppercase tracking-wider text-slate-400">
                     <div className="w-6" />
                     <div className="min-w-[200px] flex-1">Voce</div>
                     <div className="w-20 text-center">Tipo</div>
@@ -766,7 +766,7 @@ export default function AcquisitionPage() {
                     return (
                       <div
                         key={cost.id}
-                        className="group flex items-center gap-3 rounded-lg px-2 py-2.5 transition-colors hover:bg-gray-50"
+                        className="group flex items-center gap-3 rounded-lg px-2 py-2.5 transition-colors hover:bg-slate-50"
                       >
                         {/* Icon */}
                         <div className="w-6 flex-shrink-0">
@@ -775,7 +775,7 @@ export default function AcquisitionPage() {
                           ) : cost.calculation_type === 'unit_quantity' ? (
                             <Hash className="h-4 w-4 text-emerald-500" />
                           ) : (
-                            <Euro className="h-4 w-4 text-gray-400" />
+                            <Euro className="h-4 w-4 text-slate-400" />
                           )}
                         </div>
 
@@ -788,7 +788,7 @@ export default function AcquisitionPage() {
                                 label: e.target.value,
                               })
                             }
-                            className="h-8 border-transparent bg-transparent text-sm hover:border-gray-300 focus:border-blue-500 focus:bg-white"
+                            className="h-8 border-transparent bg-transparent text-sm hover:border-slate-300 focus:border-blue-500 focus:bg-white"
                           />
                         </div>
 
@@ -805,7 +805,7 @@ export default function AcquisitionPage() {
                                 calculation_type: newType,
                               });
                             }}
-                            className="h-7 w-full rounded border border-gray-200 bg-white px-1 text-[10px] font-medium text-gray-600 focus:border-blue-400 focus:outline-none"
+                            className="h-7 w-full rounded border border-slate-200 bg-white px-1 text-[10px] font-medium text-slate-600 focus:border-blue-400 focus:outline-none"
                           >
                             <option value="fixed">Fisso</option>
                             <option value="percentage">%</option>
@@ -885,7 +885,7 @@ export default function AcquisitionPage() {
                               className="h-8 text-right text-sm"
                             />
                           ) : (
-                            <div className="text-right text-sm text-gray-300">
+                            <div className="text-right text-sm text-slate-300">
                               --
                             </div>
                           )}
@@ -901,17 +901,17 @@ export default function AcquisitionPage() {
                                   quantity_unit: e.target.value || null,
                                 })
                               }
-                              className="h-8 border-transparent bg-transparent text-center text-xs text-gray-500 hover:border-gray-300 focus:border-blue-500 focus:bg-white"
+                              className="h-8 border-transparent bg-transparent text-center text-xs text-slate-500 hover:border-slate-300 focus:border-blue-500 focus:bg-white"
                               placeholder="unita"
                             />
                           ) : (
-                            <span className="text-xs text-gray-300">--</span>
+                            <span className="text-xs text-slate-300">--</span>
                           )}
                         </div>
 
                         {/* Calculated amount */}
                         <div className="w-36 text-right">
-                          <span className="text-sm font-medium tabular-nums text-gray-900">
+                          <span className="text-sm font-medium tabular-nums text-slate-900">
                             {formatCurrency(amount)}
                           </span>
                         </div>
@@ -920,7 +920,7 @@ export default function AcquisitionPage() {
                         <div className="w-8 flex-shrink-0">
                           <button
                             onClick={() => deleteOperationRow(cost.id)}
-                            className="rounded p-1 text-gray-300 opacity-0 transition-all hover:bg-red-50 hover:text-red-500 group-hover:opacity-100"
+                            className="rounded p-1 text-slate-300 opacity-0 transition-all hover:bg-red-50 hover:text-red-500 group-hover:opacity-100"
                             title="Elimina voce"
                           >
                             <X className="h-4 w-4" />
@@ -931,12 +931,12 @@ export default function AcquisitionPage() {
                   })}
 
                   {/* Add row */}
-                  <div className="mt-2 border-t border-gray-100 pt-3">
+                  <div className="mt-2 border-t border-slate-100 pt-3">
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => addOperationRow(section.value)}
-                      className="text-gray-500 hover:text-emerald-600"
+                      className="text-slate-500 hover:text-emerald-600"
                     >
                       <Plus className="mr-1.5 h-4 w-4" />
                       Aggiungi voce
@@ -944,11 +944,11 @@ export default function AcquisitionPage() {
                   </div>
 
                   {/* Section subtotal */}
-                  <div className="mt-4 flex items-center justify-between rounded-lg bg-gray-50 px-4 py-3">
-                    <span className="text-sm font-semibold text-gray-700">
+                  <div className="mt-4 flex items-center justify-between rounded-lg bg-slate-50 px-4 py-3">
+                    <span className="text-sm font-semibold text-slate-700">
                       Subtotale {section.label}
                     </span>
-                    <span className="text-sm font-bold tabular-nums text-gray-900">
+                    <span className="text-sm font-bold tabular-nums text-slate-900">
                       {formatCurrency(sectionTotal)}
                     </span>
                   </div>
@@ -972,23 +972,23 @@ export default function AcquisitionPage() {
       {/* ====================================================== */}
       {/* Sticky Summary Bar                                      */}
       {/* ====================================================== */}
-      <div className="fixed bottom-16 lg:bottom-0 left-0 right-0 z-40 border-t border-gray-200 bg-white/95 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] backdrop-blur-sm">
+      <div className="fixed bottom-16 lg:bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/95 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] backdrop-blur-sm">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 md:px-6 py-3 md:py-4">
           <div className="flex items-center gap-4 md:gap-8">
             <div className="flex flex-col">
-              <span className="text-[10px] font-medium uppercase tracking-wider text-gray-400">
+              <span className="text-[10px] font-medium uppercase tracking-wider text-slate-400">
                 Acquisizione
               </span>
-              <span className="text-xs md:text-sm font-semibold tabular-nums text-gray-700">
+              <span className="text-xs md:text-sm font-semibold tabular-nums text-slate-700">
                 {formatCurrency(totalAcquisition)}
               </span>
             </div>
-            <div className="h-8 w-px bg-gray-200" />
+            <div className="h-8 w-px bg-slate-200" />
             <div className="flex flex-col">
-              <span className="text-[10px] font-medium uppercase tracking-wider text-gray-400">
+              <span className="text-[10px] font-medium uppercase tracking-wider text-slate-400">
                 Operativi
               </span>
-              <span className="text-xs md:text-sm font-semibold tabular-nums text-gray-700">
+              <span className="text-xs md:text-sm font-semibold tabular-nums text-slate-700">
                 {formatCurrency(totalOperation)}
               </span>
             </div>
@@ -996,13 +996,13 @@ export default function AcquisitionPage() {
 
           <div className="flex items-center gap-3">
             {saving && (
-              <Loader2 className="h-4 w-4 animate-spin text-gray-400" />
+              <Loader2 className="h-4 w-4 animate-spin text-slate-400" />
             )}
             <div className="flex flex-col items-end">
-              <span className="text-[10px] font-medium uppercase tracking-wider text-gray-400">
+              <span className="text-[10px] font-medium uppercase tracking-wider text-slate-400">
                 Totale
               </span>
-              <span className="text-base md:text-lg font-bold tabular-nums text-gray-900">
+              <span className="text-base md:text-lg font-bold tabular-nums text-slate-900">
                 {formatCurrency(grandTotal)}
               </span>
             </div>

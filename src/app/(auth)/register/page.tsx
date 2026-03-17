@@ -53,14 +53,14 @@ export default function RegisterPage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-4">
         <div className="w-full max-w-md text-center">
-          <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
+          <div className="bg-white rounded-2xl shadow-xl border border-slate-100 p-8">
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <Mail className="w-8 h-8 text-green-600" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            <h1 className="text-2xl font-bold text-slate-900 mb-2">
               Controlla la tua email
             </h1>
-            <p className="text-gray-500 text-sm">
+            <p className="text-slate-500 text-sm">
               Ti abbiamo inviato un link di conferma a <strong>{email}</strong>.
               Clicca sul link per attivare il tuo account.
             </p>
@@ -87,11 +87,11 @@ export default function RegisterPage() {
         </Link>
 
         {/* Card */}
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
-          <h1 className="text-2xl font-bold text-gray-900 text-center mb-2">
+        <div className="bg-white rounded-2xl shadow-xl border border-slate-100 p-8">
+          <h1 className="text-2xl font-bold text-slate-900 text-center mb-2">
             Crea il tuo account
           </h1>
-          <p className="text-gray-500 text-center text-sm mb-8">
+          <p className="text-slate-500 text-center text-sm mb-8">
             Inizia a creare business plan professionali
           </p>
 
@@ -144,7 +144,7 @@ export default function RegisterPage() {
           </form>
         </div>
 
-        <p className="text-center text-sm text-gray-500 mt-6">
+        <p className="text-center text-sm text-slate-500 mt-6">
           Hai gi&agrave; un account?{" "}
           <Link href="/login" className="text-blue-600 font-medium hover:text-blue-700">
             Accedi

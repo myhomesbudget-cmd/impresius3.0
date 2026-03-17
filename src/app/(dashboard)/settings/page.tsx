@@ -25,8 +25,8 @@ const planLabels: Record<string, string> = {
 };
 
 const planColors: Record<string, string> = {
-  free: 'bg-gray-100 text-gray-700',
-  premium: 'bg-amber-100 text-amber-700',
+  free: 'bg-slate-50 text-slate-700 border border-slate-200',
+  premium: 'bg-amber-50 text-amber-700 border border-amber-200',
 };
 
 export default function SettingsPage() {
@@ -40,7 +40,6 @@ export default function SettingsPage() {
   const [userEmail, setUserEmail] = useState('');
   const [profile, setProfile] = useState<Profile | null>(null);
 
-  // Form state
   const [fullName, setFullName] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [phone, setPhone] = useState('');
@@ -127,7 +126,7 @@ export default function SettingsPage() {
   if (loading) {
     return (
       <div className="p-4 md:p-8 max-w-3xl mx-auto flex items-center justify-center min-h-[50vh]">
-        <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+        <Loader2 className="w-6 h-6 animate-spin text-slate-400" />
       </div>
     );
   }
@@ -144,29 +143,31 @@ export default function SettingsPage() {
   return (
     <div className="p-4 md:p-8 max-w-3xl mx-auto">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Impostazioni</h1>
-        <p className="mt-1 text-sm text-gray-500">
+      <div className="mb-10">
+        <h1 className="page-header-title">Impostazioni</h1>
+        <p className="page-header-subtitle">
           Gestisci il tuo profilo e il tuo abbonamento
         </p>
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-8">
         {/* Card 1 - Profilo Personale */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <User className="w-5 h-5 text-blue-500" />
-              Profilo Personale
-            </CardTitle>
+            <div className="flex items-center gap-2.5">
+              <div className="icon-container icon-container-sm rounded-lg bg-blue-50">
+                <User className="w-4 h-4 text-blue-600" />
+              </div>
+              <CardTitle>Profilo Personale</CardTitle>
+            </div>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
                 Nome completo
               </label>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 <Input
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
@@ -177,11 +178,11 @@ export default function SettingsPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
                 Azienda
               </label>
               <div className="relative">
-                <Building className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Building className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 <Input
                   value={companyName}
                   onChange={(e) => setCompanyName(e.target.value)}
@@ -192,11 +193,11 @@ export default function SettingsPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
                 Telefono
               </label>
               <div className="relative">
-                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 <Input
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
@@ -207,33 +208,33 @@ export default function SettingsPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
                 Email
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 <Input
                   value={userEmail}
                   readOnly
                   disabled
-                  className="pl-10 bg-gray-50"
+                  className="pl-10 bg-slate-50"
                 />
               </div>
             </div>
 
-            <div className="flex items-center gap-3 pt-2">
-              <Button onClick={handleSaveProfile} disabled={saving}>
+            <div className="flex items-center gap-3 pt-3 border-t border-slate-100">
+              <Button onClick={handleSaveProfile} disabled={saving} className="gap-2">
                 {saving ? (
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <Loader2 className="w-4 h-4 animate-spin" />
                 ) : saved ? (
-                  <Check className="w-4 h-4 mr-2" />
+                  <Check className="w-4 h-4" />
                 ) : (
-                  <Save className="w-4 h-4 mr-2" />
+                  <Save className="w-4 h-4" />
                 )}
                 {saved ? 'Salvato!' : 'Salva Modifiche'}
               </Button>
               {saved && (
-                <span className="text-sm text-emerald-600 font-medium">
+                <span className="text-sm text-emerald-600 font-semibold">
                   Profilo aggiornato con successo
                 </span>
               )}
@@ -244,18 +245,20 @@ export default function SettingsPage() {
         {/* Card 2 - Piano e Abbonamento */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Crown className="w-5 h-5 text-amber-500" />
-              Piano e Abbonamento
-            </CardTitle>
+            <div className="flex items-center gap-2.5">
+              <div className="icon-container icon-container-sm rounded-lg bg-amber-50">
+                <Crown className="w-4 h-4 text-amber-600" />
+              </div>
+              <CardTitle>Piano e Abbonamento</CardTitle>
+            </div>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-gray-700">
+          <CardContent className="space-y-5">
+            <div className="flex items-center justify-between py-3 px-4 rounded-xl bg-slate-50 border border-slate-100">
+              <span className="text-sm font-semibold text-slate-700">
                 Piano attuale
               </span>
               <span
-                className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-medium ${
+                className={`badge-premium ${
                   planColors[profile?.subscription_plan || 'free']
                 }`}
               >
@@ -267,15 +270,15 @@ export default function SettingsPage() {
             </div>
 
             {profile?.subscription_plan === 'free' && (
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-700">
+              <div className="flex items-center justify-between py-3 px-4 rounded-xl bg-slate-50 border border-slate-100">
+                <span className="text-sm font-semibold text-slate-700">
                   Piano gratuito utilizzato
                 </span>
                 <span
-                  className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-medium ${
+                  className={`badge-premium ${
                     profile.free_plan_used
-                      ? 'bg-red-100 text-red-700'
-                      : 'bg-emerald-100 text-emerald-700'
+                      ? 'bg-red-50 text-red-700 border border-red-200'
+                      : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                   }`}
                 >
                   {profile.free_plan_used ? 'Utilizzato' : 'Disponibile'}
@@ -285,11 +288,11 @@ export default function SettingsPage() {
 
             {profile?.subscription_plan === 'premium' &&
               profile.subscription_expires_at && (
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-700">
+                <div className="flex items-center justify-between py-3 px-4 rounded-xl bg-slate-50 border border-slate-100">
+                  <span className="text-sm font-semibold text-slate-700">
                     Scadenza abbonamento
                   </span>
-                  <span className="text-sm text-gray-600">
+                  <span className="text-sm font-medium text-slate-600">
                     {formatDate(profile.subscription_expires_at)}
                   </span>
                 </div>
@@ -297,15 +300,15 @@ export default function SettingsPage() {
 
             <div className="pt-2">
               {profile?.subscription_plan === 'premium' ? (
-                <Button disabled variant="outline">
-                  <Crown className="w-4 h-4 mr-2" />
+                <Button disabled variant="outline" className="gap-2">
+                  <Crown className="w-4 h-4" />
                   Piano Premium attivo
                 </Button>
               ) : (
                 <Link href="/pricing">
-                  <Button>
-                    <Crown className="w-4 h-4 mr-2" />
-                    Upgrade
+                  <Button variant="gradient" className="gap-2">
+                    <Crown className="w-4 h-4" />
+                    Upgrade a Premium
                   </Button>
                 </Link>
               )}
@@ -316,37 +319,39 @@ export default function SettingsPage() {
         {/* Card 3 - Account */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Shield className="w-5 h-5 text-gray-500" />
-              Account
-            </CardTitle>
+            <div className="flex items-center gap-2.5">
+              <div className="icon-container icon-container-sm rounded-lg bg-slate-100">
+                <Shield className="w-4 h-4 text-slate-600" />
+              </div>
+              <CardTitle>Account</CardTitle>
+            </div>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-5">
             <div>
               <div className="flex items-center gap-3">
                 <Button variant="outline" onClick={handleResetPassword}>
                   Cambia Password
                 </Button>
                 {passwordSent && (
-                  <span className="text-sm text-emerald-600 font-medium">
+                  <span className="text-sm text-emerald-600 font-semibold">
                     Email inviata! Controlla la tua casella di posta.
                   </span>
                 )}
               </div>
-              <p className="mt-1.5 text-xs text-gray-500">
+              <p className="mt-2 text-xs text-slate-500">
                 Riceverai un&apos;email con il link per reimpostare la password.
               </p>
             </div>
 
-            <div className="border-t border-gray-100 pt-4">
-              <Button variant="outline" disabled className="text-red-500">
+            <div className="border-t border-slate-100 pt-5">
+              <Button variant="outline" disabled className="text-red-500 gap-2">
                 Elimina Account
               </Button>
-              <p className="mt-1.5 text-xs text-gray-500">
+              <p className="mt-2 text-xs text-slate-500">
                 Per eliminare il tuo account, contattaci all&apos;indirizzo{' '}
                 <a
                   href="mailto:supporto@impresius.com"
-                  className="text-blue-600 hover:underline"
+                  className="text-blue-600 font-medium hover:underline"
                 >
                   supporto@impresius.com
                 </a>

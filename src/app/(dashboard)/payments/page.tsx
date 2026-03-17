@@ -17,14 +17,13 @@ import {
   Receipt,
   AlertCircle,
   Sparkles,
-  ArrowRight,
 } from 'lucide-react';
 
 const STATUS_CONFIG: Record<string, { label: string; icon: typeof CheckCircle2; color: string }> = {
-  completed: { label: 'Completato', icon: CheckCircle2, color: 'text-emerald-600 bg-emerald-50' },
-  pending: { label: 'In attesa', icon: Clock, color: 'text-amber-600 bg-amber-50' },
-  failed: { label: 'Fallito', icon: XCircle, color: 'text-red-600 bg-red-50' },
-  refunded: { label: 'Rimborsato', icon: RefreshCw, color: 'text-blue-600 bg-blue-50' },
+  completed: { label: 'Completato', icon: CheckCircle2, color: 'text-emerald-700 bg-emerald-50 border border-emerald-200' },
+  pending: { label: 'In attesa', icon: Clock, color: 'text-amber-700 bg-amber-50 border border-amber-200' },
+  failed: { label: 'Fallito', icon: XCircle, color: 'text-red-700 bg-red-50 border border-red-200' },
+  refunded: { label: 'Rimborsato', icon: RefreshCw, color: 'text-blue-700 bg-blue-50 border border-blue-200' },
 };
 
 const TYPE_LABELS: Record<string, string> = {
@@ -92,12 +91,14 @@ export default function PaymentsPage() {
   if (loading) {
     return (
       <div className="p-4 md:p-8 max-w-5xl">
-        <div className="h-8 w-48 bg-gray-200 rounded animate-pulse mb-6" />
-        <div className="space-y-4">
+        <div className="h-9 w-48 rounded-lg animate-shimmer mb-3" />
+        <div className="h-5 w-64 rounded-lg animate-shimmer mb-10" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-10">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-24 bg-gray-100 rounded-xl animate-pulse" />
+            <div key={i} className="h-36 rounded-xl animate-shimmer" />
           ))}
         </div>
+        <div className="h-64 rounded-xl animate-shimmer" />
       </div>
     );
   }
@@ -106,18 +107,20 @@ export default function PaymentsPage() {
   const totalSpent = completedPayments.reduce((sum, p) => sum + p.amount, 0);
 
   return (
-    <div className="p-4 md:p-8 max-w-5xl space-y-8">
+    <div className="p-4 md:p-8 max-w-5xl space-y-10">
       {/* Success / Cancel Banners */}
       {success && (
-        <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-4 flex items-start gap-3">
-          <CheckCircle2 className="w-5 h-5 text-emerald-600 mt-0.5 flex-shrink-0" />
+        <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 flex items-start gap-3 shadow-sm">
+          <div className="icon-container icon-container-sm rounded-lg bg-emerald-100 mt-0.5">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+          </div>
           <div>
-            <p className="text-sm font-medium text-emerald-800">Pagamento completato con successo!</p>
+            <p className="text-sm font-bold text-emerald-800">Pagamento completato con successo!</p>
             <p className="text-sm text-emerald-700 mt-1">
               Il tuo acquisto e stato registrato.{' '}
               <button
                 onClick={() => router.push('/plans/new')}
-                className="underline font-medium hover:text-emerald-900"
+                className="underline font-semibold hover:text-emerald-900"
               >
                 Crea una nuova operazione
               </button>
@@ -126,10 +129,12 @@ export default function PaymentsPage() {
         </div>
       )}
       {cancelled && (
-        <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 flex items-start gap-3">
-          <AlertCircle className="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" />
+        <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 flex items-start gap-3 shadow-sm">
+          <div className="icon-container icon-container-sm rounded-lg bg-amber-100 mt-0.5">
+            <AlertCircle className="w-4 h-4 text-amber-600" />
+          </div>
           <div>
-            <p className="text-sm font-medium text-amber-800">Pagamento annullato</p>
+            <p className="text-sm font-bold text-amber-800">Pagamento annullato</p>
             <p className="text-sm text-amber-700 mt-1">
               Il pagamento non e stato completato. Puoi riprovare in qualsiasi momento.
             </p>
@@ -139,113 +144,119 @@ export default function PaymentsPage() {
 
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Pagamenti</h1>
-        <p className="mt-1 text-sm text-gray-500">
+        <h1 className="page-header-title">Pagamenti</h1>
+        <p className="page-header-subtitle">
           Gestisci il tuo abbonamento e visualizza lo storico dei pagamenti
         </p>
       </div>
 
       {/* Plan & Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         {/* Current Plan */}
-        <Card className="border-2 border-indigo-200">
-          <CardContent className="p-5">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center">
+        <div className="kpi-card kpi-card-indigo">
+          <div className="p-5">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="icon-container icon-container-md rounded-xl bg-indigo-50">
                 <Crown className="w-5 h-5 text-indigo-600" />
               </div>
               <div>
-                <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Piano Attuale</p>
-                <p className="text-lg font-bold text-gray-900">
+                <p className="metric-label">Piano Attuale</p>
+                <p className="text-lg font-bold text-slate-900">
                   {profile ? PLAN_LABELS[profile.subscription_plan] || profile.subscription_plan : '—'}
                 </p>
               </div>
             </div>
             {profile?.subscription_plan === 'premium' && profile?.subscription_expires_at && (
-              <p className="text-xs text-gray-500">
+              <p className="text-xs font-medium text-slate-500">
                 Scade il {formatDate(profile.subscription_expires_at)}
               </p>
             )}
             {profile?.subscription_plan === 'free' && (
-              <div className={cn('inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium mt-1', 'bg-gray-100 text-gray-700 border-gray-200')}>
+              <div className={cn('badge-premium mt-1', 'bg-slate-50 text-slate-600 border border-slate-200')}>
                 {profile.free_plan_used ? 'Piano gratuito utilizzato' : 'Piano gratuito disponibile'}
               </div>
             )}
-            {/* Premium upgrade button */}
             {profile?.subscription_plan !== 'premium' && (
               <Button
                 variant="gradient"
                 size="sm"
-                className="w-full mt-4"
+                className="w-full mt-4 gap-1.5"
                 onClick={handleSubscribe}
                 loading={subscribing}
               >
-                <Sparkles className="w-3.5 h-3.5 mr-1.5" />
+                <Sparkles className="w-3.5 h-3.5" />
                 Passa a Premium — 10 &euro;/mese
               </Button>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Total Spent */}
-        <Card>
-          <CardContent className="p-5">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center">
+        <div className="kpi-card kpi-card-emerald">
+          <div className="p-5">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="icon-container icon-container-md rounded-xl bg-emerald-50">
                 <CreditCard className="w-5 h-5 text-emerald-600" />
               </div>
               <div>
-                <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Totale Speso</p>
-                <p className="text-lg font-bold text-gray-900">{formatCurrency(totalSpent / 100)}</p>
+                <p className="metric-label">Totale Speso</p>
+                <p className="text-lg font-bold text-slate-900">{formatCurrency(totalSpent / 100)}</p>
               </div>
             </div>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs font-medium text-slate-500">
               {completedPayments.length} pagament{completedPayments.length === 1 ? 'o' : 'i'} completat{completedPayments.length === 1 ? 'o' : 'i'}
             </p>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Transactions Count */}
-        <Card>
-          <CardContent className="p-5">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
+        <div className="kpi-card kpi-card-blue">
+          <div className="p-5">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="icon-container icon-container-md rounded-xl bg-blue-50">
                 <Receipt className="w-5 h-5 text-blue-600" />
               </div>
               <div>
-                <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Transazioni</p>
-                <p className="text-lg font-bold text-gray-900">{payments.length}</p>
+                <p className="metric-label">Transazioni</p>
+                <p className="text-lg font-bold text-slate-900">{payments.length}</p>
               </div>
             </div>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs font-medium text-slate-500">
               Totale operazioni registrate
             </p>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
 
       {/* Payments History */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Storico Pagamenti</CardTitle>
+          <div className="flex items-center gap-2.5">
+            <div className="icon-container icon-container-sm rounded-lg bg-slate-100">
+              <Receipt className="w-4 h-4 text-slate-600" />
+            </div>
+            <CardTitle>Storico Pagamenti</CardTitle>
+          </div>
         </CardHeader>
         <CardContent>
           {payments.length === 0 ? (
-            <div className="text-center py-12">
-              <AlertCircle className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500 font-medium">Nessun pagamento registrato</p>
-              <p className="text-sm text-gray-400 mt-1">I tuoi pagamenti appariranno qui</p>
+            <div className="text-center py-16">
+              <div className="empty-state-icon mx-auto">
+                <Receipt className="w-9 h-9 text-slate-400" />
+              </div>
+              <p className="text-slate-600 font-semibold">Nessun pagamento registrato</p>
+              <p className="text-sm text-slate-400 mt-1">I tuoi pagamenti appariranno qui</p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+            <div className="overflow-x-auto -mx-6">
+              <table className="w-full table-premium">
                 <thead>
-                  <tr className="border-b border-gray-200">
-                    <th className="text-left py-3 px-4 font-medium text-gray-600">Data</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600">Tipo</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600">Metodo</th>
-                    <th className="text-right py-3 px-4 font-medium text-gray-600">Importo</th>
-                    <th className="text-center py-3 px-4 font-medium text-gray-600">Stato</th>
+                  <tr>
+                    <th className="text-left">Data</th>
+                    <th className="text-left">Tipo</th>
+                    <th className="text-left">Metodo</th>
+                    <th className="text-right">Importo</th>
+                    <th className="text-center">Stato</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -254,23 +265,23 @@ export default function PaymentsPage() {
                     const StatusIcon = statusConfig.icon;
 
                     return (
-                      <tr key={payment.id} className="border-b border-gray-100 hover:bg-gray-50">
-                        <td className="py-3 px-4 text-gray-900">
+                      <tr key={payment.id}>
+                        <td className="font-medium text-slate-900">
                           {formatDate(payment.created_at)}
                         </td>
-                        <td className="py-3 px-4 text-gray-700">
+                        <td className="text-slate-700">
                           {TYPE_LABELS[payment.type] || payment.type}
                         </td>
-                        <td className="py-3 px-4 text-gray-700">
+                        <td className="text-slate-700">
                           {PROVIDER_LABELS[payment.provider] || payment.provider}
                         </td>
-                        <td className="py-3 px-4 text-right font-semibold text-gray-900">
+                        <td className="text-right font-bold text-slate-900">
                           {formatCurrency(payment.amount / 100)}
                         </td>
-                        <td className="py-3 px-4">
+                        <td>
                           <div className="flex justify-center">
                             <span className={cn(
-                              'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium',
+                              'badge-premium',
                               statusConfig.color
                             )}>
                               <StatusIcon className="w-3.5 h-3.5" />

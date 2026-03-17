@@ -25,6 +25,7 @@ import {
   Loader2,
   AlertCircle,
   GitCompareArrows,
+  Trophy,
 } from 'lucide-react';
 
 interface ProjectWithResults {
@@ -59,7 +60,6 @@ export default function ComparePage() {
   const [loadingProjects, setLoadingProjects] = useState(true);
   const [loadingResults, setLoadingResults] = useState(false);
 
-  // Fetch all user projects
   useEffect(() => {
     async function fetchProjects() {
       const {
@@ -95,8 +95,6 @@ export default function ComparePage() {
     setLoadingResults(true);
 
     const ids = Array.from(selected);
-
-    // Fetch all data in parallel for all selected projects
     const results: ProjectWithResults[] = [];
 
     for (const projectId of ids) {
@@ -159,7 +157,6 @@ export default function ComparePage() {
     setLoadingResults(false);
   };
 
-  // Compute best value per indicator for highlighting
   const bestValues = useMemo(() => {
     if (compared.length === 0) return {};
 
@@ -183,10 +180,10 @@ export default function ComparePage() {
   // --- PHASE: SELECT ---
   if (phase === 'select') {
     return (
-      <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
+      <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Confronta Operazioni</h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <h1 className="page-header-title">Confronta Operazioni</h1>
+          <p className="page-header-subtitle">
             Seleziona almeno 2 operazioni da confrontare
           </p>
         </div>
@@ -196,13 +193,15 @@ export default function ComparePage() {
             <Loader2 className="w-6 h-6 text-blue-600 animate-spin" />
           </div>
         ) : projects.length < 2 ? (
-          <Card>
-            <CardContent className="py-12 text-center">
-              <AlertCircle className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500 font-medium">
+          <Card className="border-dashed border-2 border-slate-200 bg-slate-50/50 hover:shadow-none">
+            <CardContent className="py-16 text-center">
+              <div className="empty-state-icon mx-auto">
+                <AlertCircle className="w-9 h-9 text-slate-400" />
+              </div>
+              <p className="text-slate-600 font-semibold">
                 Servono almeno 2 operazioni per il confronto
               </p>
-              <p className="text-sm text-gray-400 mt-1">
+              <p className="text-sm text-slate-400 mt-1">
                 Crea altre operazioni per poterle confrontare
               </p>
             </CardContent>
@@ -211,7 +210,7 @@ export default function ComparePage() {
           <>
             <Card>
               <CardContent className="p-0">
-                <div className="divide-y divide-gray-100">
+                <div className="divide-y divide-slate-100">
                   {projects.map((project) => {
                     const isSelected = selected.has(project.id);
                     return (
@@ -219,22 +218,25 @@ export default function ComparePage() {
                         key={project.id}
                         onClick={() => toggleProject(project.id)}
                         className={cn(
-                          'w-full flex items-center gap-4 px-5 py-4 text-left transition-colors',
+                          'w-full flex items-center gap-4 px-5 py-4 text-left transition-all duration-150',
                           isSelected
-                            ? 'bg-blue-50 hover:bg-blue-100'
-                            : 'hover:bg-gray-50'
+                            ? 'bg-blue-50/80 hover:bg-blue-50'
+                            : 'hover:bg-slate-50'
                         )}
                       >
                         {isSelected ? (
                           <CheckSquare className="w-5 h-5 text-blue-600 flex-shrink-0" />
                         ) : (
-                          <Square className="w-5 h-5 text-gray-300 flex-shrink-0" />
+                          <Square className="w-5 h-5 text-slate-300 flex-shrink-0" />
                         )}
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-gray-900 truncate">
+                          <p className={cn(
+                            "text-sm font-semibold truncate",
+                            isSelected ? "text-blue-900" : "text-slate-900"
+                          )}>
                             {project.name}
                           </p>
-                          <p className="text-xs text-gray-500 mt-0.5">
+                          <p className="text-xs text-slate-500 mt-0.5">
                             {project.location_city
                               ? `${project.location_city}${project.location_province ? ` (${project.location_province})` : ''}`
                               : 'Localita non specificata'}
@@ -244,12 +246,12 @@ export default function ComparePage() {
                         </div>
                         <span
                           className={cn(
-                            'text-xs font-medium px-2 py-0.5 rounded-full',
+                            'badge-premium',
                             project.status === 'active'
-                              ? 'bg-emerald-100 text-emerald-700'
+                              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                               : project.status === 'draft'
-                                ? 'bg-amber-100 text-amber-700'
-                                : 'bg-gray-100 text-gray-600'
+                                ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                                : 'bg-slate-50 text-slate-600 border border-slate-200'
                           )}
                         >
                           {project.status === 'active'
@@ -272,8 +274,9 @@ export default function ComparePage() {
                 onClick={handleCompare}
                 disabled={selected.size < 2}
                 loading={loadingResults}
+                className="gap-2"
               >
-                <GitCompareArrows className="w-4 h-4 mr-2" />
+                <GitCompareArrows className="w-4 h-4" />
                 Confronta ({selected.size})
               </Button>
             </div>
@@ -285,42 +288,51 @@ export default function ComparePage() {
 
   // --- PHASE: COMPARE ---
   return (
-    <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
+    <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-8">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Confronto Operazioni</h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <h1 className="page-header-title">Confronto Operazioni</h1>
+          <p className="page-header-subtitle">
             {compared.length} operazioni a confronto
           </p>
         </div>
         <Button
           variant="outline"
           onClick={() => setPhase('select')}
+          className="gap-2"
         >
-          <ArrowLeft className="w-4 h-4 mr-2" />
+          <ArrowLeft className="w-4 h-4" />
           Modifica selezione
         </Button>
       </div>
 
       {/* Comparison Table */}
       <Card>
+        <CardHeader>
+          <div className="flex items-center gap-2.5">
+            <div className="icon-container icon-container-sm rounded-lg bg-blue-50">
+              <BarChart3 className="w-4 h-4 text-blue-600" />
+            </div>
+            <CardTitle>Indicatori a Confronto</CardTitle>
+          </div>
+        </CardHeader>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full table-premium">
               <thead>
-                <tr className="border-b border-gray-200">
-                  <th className="text-left py-4 px-5 font-medium text-gray-600 sticky left-0 bg-white min-w-[180px]">
+                <tr>
+                  <th className="text-left sticky left-0 bg-slate-50 min-w-[180px] z-10">
                     Indicatore
                   </th>
                   {compared.map((c) => (
                     <th
                       key={c.project.id}
-                      className="text-right py-4 px-5 font-semibold text-gray-900 min-w-[160px]"
+                      className="text-right min-w-[160px]"
                     >
-                      <div className="truncate max-w-[200px] ml-auto">{c.project.name}</div>
+                      <div className="truncate max-w-[200px] ml-auto font-bold">{c.project.name}</div>
                       {c.project.location_city && (
-                        <div className="text-xs font-normal text-gray-500 mt-0.5 truncate">
+                        <div className="text-[0.6875rem] font-normal text-slate-500 mt-0.5 truncate">
                           {c.project.location_city}
                         </div>
                       )}
@@ -330,11 +342,8 @@ export default function ComparePage() {
               </thead>
               <tbody>
                 {INDICATORS.map((ind) => (
-                  <tr
-                    key={ind.key}
-                    className="border-b border-gray-100 hover:bg-gray-50"
-                  >
-                    <td className="py-3.5 px-5 font-medium text-gray-700 sticky left-0 bg-white">
+                  <tr key={ind.key}>
+                    <td className="font-semibold text-slate-700 sticky left-0 bg-white z-10">
                       {ind.label}
                     </td>
                     {compared.map((c) => {
@@ -346,13 +355,16 @@ export default function ComparePage() {
                         <td
                           key={c.project.id}
                           className={cn(
-                            'py-3.5 px-5 text-right font-semibold tabular-nums',
+                            'text-right font-bold tabular-nums',
                             isBest
-                              ? 'text-emerald-700 bg-emerald-50'
-                              : 'text-gray-900'
+                              ? 'text-emerald-700 bg-emerald-50/60'
+                              : 'text-slate-900'
                           )}
                         >
-                          {formatValue(ind.key, value)}
+                          <div className="flex items-center justify-end gap-1.5">
+                            {isBest && <Trophy className="w-3.5 h-3.5 text-emerald-500" />}
+                            {formatValue(ind.key, value)}
+                          </div>
                         </td>
                       );
                     })}
@@ -367,22 +379,27 @@ export default function ComparePage() {
       {/* Cost breakdown comparison */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Composizione Costi</CardTitle>
+          <div className="flex items-center gap-2.5">
+            <div className="icon-container icon-container-sm rounded-lg bg-indigo-50">
+              <BarChart3 className="w-4 h-4 text-indigo-600" />
+            </div>
+            <CardTitle>Composizione Costi</CardTitle>
+          </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full table-premium">
               <thead>
-                <tr className="border-b border-gray-200">
-                  <th className="text-left py-3 px-5 font-medium text-gray-600 sticky left-0 bg-white min-w-[180px]">
+                <tr>
+                  <th className="text-left sticky left-0 bg-slate-50 min-w-[180px] z-10">
                     Voce
                   </th>
                   {compared.map((c) => (
                     <th
                       key={c.project.id}
-                      className="text-right py-3 px-5 font-semibold text-gray-900 min-w-[160px]"
+                      className="text-right min-w-[160px]"
                     >
-                      <span className="truncate block max-w-[200px] ml-auto">
+                      <span className="truncate block max-w-[200px] ml-auto font-bold">
                         {c.project.name}
                       </span>
                     </th>
@@ -390,40 +407,49 @@ export default function ComparePage() {
                 </tr>
               </thead>
               <tbody>
-                <tr className="border-b border-gray-100 hover:bg-gray-50">
-                  <td className="py-3 px-5 font-medium text-gray-700 sticky left-0 bg-white">
-                    Acquisizione
+                <tr>
+                  <td className="font-semibold text-slate-700 sticky left-0 bg-white z-10">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2.5 h-2.5 rounded-full bg-blue-500" />
+                      Acquisizione
+                    </div>
                   </td>
                   {compared.map((c) => (
-                    <td key={c.project.id} className="py-3 px-5 text-right text-gray-700 tabular-nums">
-                      {formatCurrency(c.results.total_acquisition_cost)}
-                      <span className="block text-xs text-gray-400">
+                    <td key={c.project.id} className="text-right tabular-nums">
+                      <span className="font-semibold text-slate-900">{formatCurrency(c.results.total_acquisition_cost)}</span>
+                      <span className="block text-xs font-medium text-slate-400 mt-0.5">
                         {formatPercentage(c.results.acquisition_incidence)}
                       </span>
                     </td>
                   ))}
                 </tr>
-                <tr className="border-b border-gray-100 hover:bg-gray-50">
-                  <td className="py-3 px-5 font-medium text-gray-700 sticky left-0 bg-white">
-                    Costi Operativi
+                <tr>
+                  <td className="font-semibold text-slate-700 sticky left-0 bg-white z-10">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2.5 h-2.5 rounded-full bg-amber-500" />
+                      Costi Operativi
+                    </div>
                   </td>
                   {compared.map((c) => (
-                    <td key={c.project.id} className="py-3 px-5 text-right text-gray-700 tabular-nums">
-                      {formatCurrency(c.results.total_operation_cost)}
-                      <span className="block text-xs text-gray-400">
+                    <td key={c.project.id} className="text-right tabular-nums">
+                      <span className="font-semibold text-slate-900">{formatCurrency(c.results.total_operation_cost)}</span>
+                      <span className="block text-xs font-medium text-slate-400 mt-0.5">
                         {formatPercentage(c.results.operation_incidence)}
                       </span>
                     </td>
                   ))}
                 </tr>
-                <tr className="border-b border-gray-100 hover:bg-gray-50">
-                  <td className="py-3 px-5 font-medium text-gray-700 sticky left-0 bg-white">
-                    Costruzione / Lavori
+                <tr>
+                  <td className="font-semibold text-slate-700 sticky left-0 bg-white z-10">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+                      Costruzione / Lavori
+                    </div>
                   </td>
                   {compared.map((c) => (
-                    <td key={c.project.id} className="py-3 px-5 text-right text-gray-700 tabular-nums">
-                      {formatCurrency(c.results.total_construction_cost)}
-                      <span className="block text-xs text-gray-400">
+                    <td key={c.project.id} className="text-right tabular-nums">
+                      <span className="font-semibold text-slate-900">{formatCurrency(c.results.total_construction_cost)}</span>
+                      <span className="block text-xs font-medium text-slate-400 mt-0.5">
                         {formatPercentage(c.results.construction_incidence)}
                       </span>
                     </td>
@@ -431,12 +457,12 @@ export default function ComparePage() {
                 </tr>
               </tbody>
               <tfoot>
-                <tr className="border-t-2 border-gray-300 bg-gray-50">
-                  <td className="py-3 px-5 font-semibold text-gray-900 sticky left-0 bg-gray-50">
+                <tr>
+                  <td className="font-bold text-slate-900 sticky left-0 z-10">
                     Totale
                   </td>
                   {compared.map((c) => (
-                    <td key={c.project.id} className="py-3 px-5 text-right font-semibold text-gray-900 tabular-nums">
+                    <td key={c.project.id} className="text-right font-extrabold text-slate-900 tabular-nums text-base">
                       {formatCurrency(c.results.total_cost)}
                     </td>
                   ))}

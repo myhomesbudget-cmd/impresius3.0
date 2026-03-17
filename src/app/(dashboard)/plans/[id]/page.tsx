@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { PROPERTY_TYPES, STRATEGIES } from '@/types/database';
 import type { Project } from '@/types/database';
-import { CheckCircle2, Loader2 } from 'lucide-react';
+import { CheckCircle2, Loader2, FileText, MapPin, Settings2 } from 'lucide-react';
 
 type ProjectFormData = Pick<
   Project,
@@ -31,7 +31,6 @@ export default function DatiGeneraliPage() {
   const [saved, setSaved] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Fetch project on mount
   useEffect(() => {
     async function fetchProject() {
       const { data } = await supabase
@@ -49,7 +48,6 @@ export default function DatiGeneraliPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
-  // Auto-save with debounce
   const saveProject = useCallback(
     async (data: ProjectFormData) => {
       setSaving(true);
@@ -79,7 +77,6 @@ export default function DatiGeneraliPage() {
         if (!prev) return prev;
         const updated = { ...prev, [field]: value };
 
-        // Debounced save
         if (debounceRef.current) clearTimeout(debounceRef.current);
         debounceRef.current = setTimeout(() => {
           saveProject(updated);
@@ -102,23 +99,23 @@ export default function DatiGeneraliPage() {
   return (
     <div className="p-4 md:p-8 max-w-3xl">
       {/* Page Header */}
-      <div className="mb-8">
+      <div className="mb-10">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Dati Generali</h1>
-            <p className="mt-1 text-sm text-gray-500">
+            <h1 className="page-header-title">Dati Generali</h1>
+            <p className="page-header-subtitle">
               Informazioni principali dell&apos;operazione immobiliare
             </p>
           </div>
           <div className="flex items-center gap-2 text-sm">
             {saving && (
-              <span className="flex items-center gap-1.5 text-gray-400">
+              <span className="flex items-center gap-1.5 text-slate-400 font-medium">
                 <Loader2 className="w-4 h-4 animate-spin" />
                 Salvataggio...
               </span>
             )}
             {saved && (
-              <span className="flex items-center gap-1.5 text-emerald-600">
+              <span className="flex items-center gap-1.5 text-emerald-600 font-semibold">
                 <CheckCircle2 className="w-4 h-4" />
                 Salvato
               </span>
@@ -128,13 +125,18 @@ export default function DatiGeneraliPage() {
       </div>
 
       {/* Form */}
-      <div className="space-y-6">
+      <div className="space-y-8">
         {/* Operazione */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Operazione</CardTitle>
+            <div className="flex items-center gap-2.5">
+              <div className="icon-container icon-container-sm rounded-lg bg-blue-50">
+                <FileText className="w-4 h-4 text-blue-600" />
+              </div>
+              <CardTitle>Operazione</CardTitle>
+            </div>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-5">
             <Input
               label="Nome Operazione"
               placeholder="Es. Ristrutturazione Via Roma 12"
@@ -142,13 +144,13 @@ export default function DatiGeneraliPage() {
               onChange={(e) => handleChange('name', e.target.value)}
             />
             <div className="w-full">
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
                 Descrizione
               </label>
               <textarea
                 className={cn(
-                  'flex w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm transition-colors',
-                  'placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20',
+                  'flex w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 transition-all duration-200',
+                  'placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-[3px] focus:ring-blue-500/15',
                   'disabled:cursor-not-allowed disabled:opacity-50',
                   'min-h-[100px] resize-y'
                 )}
@@ -163,9 +165,14 @@ export default function DatiGeneraliPage() {
         {/* Localizzazione */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Localizzazione</CardTitle>
+            <div className="flex items-center gap-2.5">
+              <div className="icon-container icon-container-sm rounded-lg bg-emerald-50">
+                <MapPin className="w-4 h-4 text-emerald-600" />
+              </div>
+              <CardTitle>Localizzazione</CardTitle>
+            </div>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-5">
             <div className="grid grid-cols-3 gap-4">
               <div className="col-span-2">
                 <Input
@@ -194,17 +201,22 @@ export default function DatiGeneraliPage() {
         {/* Tipologia e Strategia */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Tipologia e Strategia</CardTitle>
+            <div className="flex items-center gap-2.5">
+              <div className="icon-container icon-container-sm rounded-lg bg-indigo-50">
+                <Settings2 className="w-4 h-4 text-indigo-600" />
+              </div>
+              <CardTitle>Tipologia e Strategia</CardTitle>
+            </div>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-5">
             <div className="w-full">
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
                 Tipologia Immobile
               </label>
               <select
                 className={cn(
-                  'flex h-10 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm transition-colors',
-                  'focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20'
+                  'flex h-11 w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 transition-all duration-200',
+                  'focus:border-blue-500 focus:outline-none focus:ring-[3px] focus:ring-blue-500/15'
                 )}
                 value={form.property_type}
                 onChange={(e) => handleChange('property_type', e.target.value)}
@@ -218,13 +230,13 @@ export default function DatiGeneraliPage() {
             </div>
 
             <div className="w-full">
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
                 Strategia
               </label>
               <select
                 className={cn(
-                  'flex h-10 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm transition-colors',
-                  'focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20'
+                  'flex h-11 w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 transition-all duration-200',
+                  'focus:border-blue-500 focus:outline-none focus:ring-[3px] focus:ring-blue-500/15'
                 )}
                 value={form.strategy}
                 onChange={(e) => handleChange('strategy', e.target.value)}

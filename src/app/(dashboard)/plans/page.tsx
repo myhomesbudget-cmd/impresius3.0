@@ -19,7 +19,6 @@ import {
   Copy,
   Archive,
   ExternalLink,
-  Filter,
 } from 'lucide-react';
 
 const strategyLabels: Record<string, string> = {
@@ -30,10 +29,10 @@ const strategyLabels: Record<string, string> = {
 };
 
 const strategyColors: Record<string, string> = {
-  ristrutturazione: 'bg-blue-100 text-blue-700',
-  frazionamento: 'bg-purple-100 text-purple-700',
-  nuova_costruzione: 'bg-emerald-100 text-emerald-700',
-  rivendita: 'bg-amber-100 text-amber-700',
+  ristrutturazione: 'bg-blue-50 text-blue-700 border border-blue-200',
+  frazionamento: 'bg-purple-50 text-purple-700 border border-purple-200',
+  nuova_costruzione: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
+  rivendita: 'bg-amber-50 text-amber-700 border border-amber-200',
 };
 
 const statusLabels: Record<string, string> = {
@@ -43,9 +42,9 @@ const statusLabels: Record<string, string> = {
 };
 
 const statusColors: Record<string, string> = {
-  draft: 'bg-gray-100 text-gray-600',
-  active: 'bg-emerald-100 text-emerald-700',
-  archived: 'bg-red-100 text-red-600',
+  draft: 'bg-slate-50 text-slate-600 border border-slate-200',
+  active: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
+  archived: 'bg-red-50 text-red-600 border border-red-200',
 };
 
 type StatusFilter = 'all' | 'active' | 'draft' | 'archived';
@@ -67,7 +66,6 @@ export default function PlansPage() {
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  // Fetch projects on mount
   useEffect(() => {
     async function fetchProjects() {
       const {
@@ -92,7 +90,6 @@ export default function PlansPage() {
     fetchProjects();
   }, []);
 
-  // Close dropdown on outside click
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
@@ -103,7 +100,6 @@ export default function PlansPage() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Filter projects
   const filteredProjects = useMemo(() => {
     let result = projects;
 
@@ -124,7 +120,6 @@ export default function PlansPage() {
     return result;
   }, [projects, statusFilter, searchQuery]);
 
-  // Duplicate project
   async function handleDuplicate(project: Project) {
     setOpenMenuId(null);
 
@@ -155,7 +150,6 @@ export default function PlansPage() {
     }
   }
 
-  // Archive project
   async function handleArchive(project: Project) {
     setOpenMenuId(null);
 
@@ -176,9 +170,15 @@ export default function PlansPage() {
   if (loading) {
     return (
       <div className="p-4 md:p-8 max-w-6xl mx-auto">
-        <div className="flex items-center justify-center py-20">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
+        <div className="mb-10">
+          <div className="h-9 w-64 rounded-lg animate-shimmer" />
+          <div className="h-5 w-48 rounded-lg animate-shimmer mt-3" />
         </div>
+        <div className="flex gap-4 mb-6">
+          <div className="h-10 w-64 rounded-lg animate-shimmer" />
+          <div className="h-10 w-48 rounded-lg animate-shimmer" />
+        </div>
+        <div className="h-96 rounded-xl animate-shimmer" />
       </div>
     );
   }
@@ -186,35 +186,33 @@ export default function PlansPage() {
   return (
     <div className="p-4 md:p-8 max-w-6xl mx-auto">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between mb-10">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
-            Le mie Operazioni
-          </h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <h1 className="page-header-title">Le mie Operazioni</h1>
+          <p className="page-header-subtitle">
             Gestisci tutte le tue operazioni immobiliari
           </p>
         </div>
         <Link href="/plans/new">
-          <Button>
-            <Plus className="w-4 h-4 mr-2" />
+          <Button variant="gradient" className="gap-2">
+            <Plus className="w-4 h-4" />
             Nuova Operazione
           </Button>
         </Link>
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-8">
         {/* Status Tabs */}
-        <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+        <div className="flex items-center gap-1 bg-slate-100/80 rounded-xl p-1 border border-slate-200/50">
           {tabs.map((tab) => (
             <button
               key={tab.value}
               onClick={() => setStatusFilter(tab.value)}
-              className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+              className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-200 ${
                 statusFilter === tab.value
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? 'bg-white text-slate-900 shadow-[0_1px_3px_rgb(0_0_0/0.08)]'
+                  : 'text-slate-500 hover:text-slate-700'
               }`}
             >
               {tab.label}
@@ -224,7 +222,7 @@ export default function PlansPage() {
 
         {/* Search */}
         <div className="relative flex-1 w-full sm:max-w-xs">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <Input
             placeholder="Cerca per nome o citta..."
             value={searchQuery}
@@ -236,23 +234,23 @@ export default function PlansPage() {
 
       {/* Projects Table / List */}
       {filteredProjects.length === 0 ? (
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center py-16">
-            <div className="w-16 h-16 rounded-full bg-blue-50 flex items-center justify-center mb-4">
-              <Building2 className="w-8 h-8 text-blue-500" />
+        <Card className="border-dashed border-2 border-slate-200 bg-slate-50/50 hover:shadow-none">
+          <CardContent className="flex flex-col items-center justify-center py-20">
+            <div className="empty-state-icon">
+              <Building2 className="w-9 h-9 text-blue-500" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <h3 className="text-lg font-bold text-slate-900 mb-2">
               Nessuna operazione trovata
             </h3>
-            <p className="text-sm text-gray-500 mb-6 text-center max-w-sm">
+            <p className="text-sm text-slate-500 mb-8 text-center max-w-sm leading-relaxed">
               {projects.length === 0
                 ? 'Crea la tua prima operazione immobiliare per iniziare ad analizzare costi, ricavi e margini.'
                 : 'Nessuna operazione corrisponde ai filtri selezionati.'}
             </p>
             {projects.length === 0 && (
               <Link href="/plans/new">
-                <Button>
-                  <Plus className="w-4 h-4 mr-2" />
+                <Button variant="gradient" className="gap-2">
+                  <Plus className="w-4 h-4" />
                   Nuova Operazione
                 </Button>
               </Link>
@@ -262,50 +260,38 @@ export default function PlansPage() {
       ) : (
         <Card>
           <div className="overflow-x-auto">
-            <table className="w-full">
+            <table className="w-full table-premium">
               <thead>
-                <tr className="border-b border-gray-200">
-                  <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-5 py-3">
-                    Nome
-                  </th>
-                  <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-5 py-3 hidden sm:table-cell">
-                    Localita
-                  </th>
-                  <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-5 py-3 hidden md:table-cell">
-                    Strategia
-                  </th>
-                  <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-5 py-3">
-                    Stato
-                  </th>
-                  <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-5 py-3 hidden lg:table-cell">
-                    Data
-                  </th>
-                  <th className="text-right text-xs font-medium text-gray-500 uppercase tracking-wider px-5 py-3">
-                    Azioni
-                  </th>
+                <tr>
+                  <th className="text-left">Nome</th>
+                  <th className="text-left hidden sm:table-cell">Localita</th>
+                  <th className="text-left hidden md:table-cell">Strategia</th>
+                  <th className="text-left">Stato</th>
+                  <th className="text-left hidden lg:table-cell">Data</th>
+                  <th className="text-right">Azioni</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody>
                 {filteredProjects.map((project) => (
                   <tr
                     key={project.id}
-                    className="hover:bg-gray-50 transition-colors cursor-pointer"
+                    className="cursor-pointer"
                     onClick={() => router.push(`/plans/${project.id}`)}
                   >
-                    <td className="px-5 py-4">
+                    <td>
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
-                          <FolderOpen className="w-4 h-4 text-blue-500" />
+                        <div className="icon-container icon-container-sm rounded-lg bg-blue-50">
+                          <FolderOpen className="w-4 h-4 text-blue-600" />
                         </div>
-                        <span className="font-medium text-gray-900 line-clamp-1">
+                        <span className="font-semibold text-slate-900 line-clamp-1">
                           {project.name}
                         </span>
                       </div>
                     </td>
-                    <td className="px-5 py-4 hidden sm:table-cell">
+                    <td className="hidden sm:table-cell">
                       {project.location_city || project.location_province ? (
-                        <div className="flex items-center gap-1 text-sm text-gray-500">
-                          <MapPin className="w-3.5 h-3.5 shrink-0" />
+                        <div className="flex items-center gap-1.5 text-sm text-slate-500">
+                          <MapPin className="w-3.5 h-3.5 shrink-0 text-slate-400" />
                           <span className="line-clamp-1">
                             {[project.location_city, project.location_province]
                               .filter(Boolean)
@@ -313,35 +299,35 @@ export default function PlansPage() {
                           </span>
                         </div>
                       ) : (
-                        <span className="text-sm text-gray-400">-</span>
+                        <span className="text-sm text-slate-300">-</span>
                       )}
                     </td>
-                    <td className="px-5 py-4 hidden md:table-cell">
+                    <td className="hidden md:table-cell">
                       <span
-                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                        className={`badge-premium ${
                           strategyColors[project.strategy] ||
-                          'bg-gray-100 text-gray-600'
+                          'bg-slate-50 text-slate-600 border border-slate-200'
                         }`}
                       >
                         {strategyLabels[project.strategy] || project.strategy}
                       </span>
                     </td>
-                    <td className="px-5 py-4">
+                    <td>
                       <span
-                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                        className={`badge-premium ${
                           statusColors[project.status] ||
-                          'bg-gray-100 text-gray-600'
+                          'bg-slate-50 text-slate-600 border border-slate-200'
                         }`}
                       >
                         {statusLabels[project.status] || project.status}
                       </span>
                     </td>
-                    <td className="px-5 py-4 hidden lg:table-cell">
-                      <span className="text-sm text-gray-500">
+                    <td className="hidden lg:table-cell">
+                      <span className="text-sm font-medium text-slate-500">
                         {formatDate(project.updated_at)}
                       </span>
                     </td>
-                    <td className="px-5 py-4 text-right">
+                    <td className="text-right">
                       <div className="relative inline-block" ref={openMenuId === project.id ? menuRef : undefined}>
                         <button
                           onClick={(e) => {
@@ -350,19 +336,19 @@ export default function PlansPage() {
                               openMenuId === project.id ? null : project.id
                             );
                           }}
-                          className="p-1.5 rounded-md hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
+                          className="p-2 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-all"
                         >
                           <MoreVertical className="w-4 h-4" />
                         </button>
 
                         {openMenuId === project.id && (
-                          <div className="absolute right-0 top-full mt-1 w-44 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+                          <div className="absolute right-0 top-full mt-1.5 w-48 bg-white rounded-xl shadow-[0_4px_12px_rgb(0_0_0/0.1),0_1px_3px_rgb(0_0_0/0.06)] border border-slate-200/80 py-1.5 z-50 animate-scale-in">
                             <Link
                               href={`/plans/${project.id}`}
                               onClick={(e) => e.stopPropagation()}
-                              className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                              className="flex items-center gap-2.5 px-3.5 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
                             >
-                              <ExternalLink className="w-4 h-4" />
+                              <ExternalLink className="w-4 h-4 text-slate-400" />
                               Apri
                             </Link>
                             <button
@@ -370,22 +356,25 @@ export default function PlansPage() {
                                 e.stopPropagation();
                                 handleDuplicate(project);
                               }}
-                              className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors w-full text-left"
+                              className="flex items-center gap-2.5 px-3.5 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors w-full text-left"
                             >
-                              <Copy className="w-4 h-4" />
+                              <Copy className="w-4 h-4 text-slate-400" />
                               Duplica
                             </button>
                             {project.status !== 'archived' && (
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleArchive(project);
-                                }}
-                                className="flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors w-full text-left"
-                              >
-                                <Archive className="w-4 h-4" />
-                                Archivia
-                              </button>
+                              <>
+                                <div className="mx-3 my-1 border-t border-slate-100" />
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleArchive(project);
+                                  }}
+                                  className="flex items-center gap-2.5 px-3.5 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors w-full text-left"
+                                >
+                                  <Archive className="w-4 h-4" />
+                                  Archivia
+                                </button>
+                              </>
                             )}
                           </div>
                         )}

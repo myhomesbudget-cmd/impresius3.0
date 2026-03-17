@@ -261,12 +261,12 @@ export default function ScenariosPage() {
     return (
       <div className="p-4 md:p-8 max-w-7xl">
         <div className="mb-8">
-          <div className="h-8 w-64 bg-gray-200 rounded animate-pulse" />
-          <div className="h-4 w-96 bg-gray-100 rounded animate-pulse mt-2" />
+          <div className="h-8 w-64 bg-slate-200 rounded animate-pulse" />
+          <div className="h-4 w-96 bg-slate-100 rounded animate-pulse mt-2" />
         </div>
         <div className="grid grid-cols-3 gap-6">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-80 bg-gray-100 rounded-xl animate-pulse" />
+            <div key={i} className="h-80 bg-slate-100 rounded-xl animate-pulse" />
           ))}
         </div>
       </div>
@@ -327,13 +327,13 @@ export default function ScenariosPage() {
       {/* SEZIONE 1: INTESTAZIONE OPERAZIONE                           */}
       {/* ============================================================ */}
       <div>
-        <Card className="border-gray-300">
+        <Card className="border-slate-300">
           <CardContent className="p-6">
             {/* Project Info */}
             <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
               <div className="flex-1">
-                <h1 className="text-2xl font-bold text-gray-900">{project.name}</h1>
-                <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
+                <h1 className="text-2xl font-bold text-slate-900">{project.name}</h1>
+                <div className="flex items-center gap-4 mt-2 text-sm text-slate-500">
                   {project.location_city && (
                     <span className="flex items-center gap-1">
                       <MapPin className="w-4 h-4" />
@@ -346,7 +346,7 @@ export default function ScenariosPage() {
                   </span>
                 </div>
               </div>
-              <span className="text-xs font-medium uppercase tracking-wider text-gray-400 bg-gray-100 px-3 py-1 rounded-full">
+              <span className="text-xs font-medium uppercase tracking-wider text-slate-400 bg-slate-100 px-3 py-1 rounded-full">
                 Scenario Base
               </span>
             </div>
@@ -357,9 +357,9 @@ export default function ScenariosPage() {
                 <p className="text-xs font-medium text-blue-600 uppercase tracking-wide">Ricavo Totale</p>
                 <p className="text-xl font-bold text-blue-900 mt-1">{formatCurrency(baseResults.total_revenue)}</p>
               </div>
-              <div className="bg-gray-50 rounded-xl p-4">
-                <p className="text-xs font-medium text-gray-600 uppercase tracking-wide">Costo Totale</p>
-                <p className="text-xl font-bold text-gray-900 mt-1">{formatCurrency(baseResults.total_cost)}</p>
+              <div className="bg-slate-50 rounded-xl p-4">
+                <p className="text-xs font-medium text-slate-600 uppercase tracking-wide">Costo Totale</p>
+                <p className="text-xl font-bold text-slate-900 mt-1">{formatCurrency(baseResults.total_cost)}</p>
               </div>
               <div className={cn('rounded-xl p-4', baseResults.gross_margin >= 0 ? 'bg-emerald-50' : 'bg-red-50')}>
                 <p className={cn('text-xs font-medium uppercase tracking-wide', baseResults.gross_margin >= 0 ? 'text-emerald-600' : 'text-red-600')}>
@@ -386,7 +386,7 @@ export default function ScenariosPage() {
       {/* SEZIONE 2: SCENARI PREDEFINITI                                */}
       {/* ============================================================ */}
       <div>
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Scenari Predefiniti</h2>
+        <h2 className="text-lg font-semibold text-slate-900 mb-4">Scenari Predefiniti</h2>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {predefinedResults.map((scenario) => {
             const Icon = scenario.icon;
@@ -403,14 +403,14 @@ export default function ScenariosPage() {
                       <Icon className="w-5 h-5" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-900">{scenario.name}</h3>
-                      <p className="text-xs text-gray-500">{scenario.description}</p>
+                      <h3 className="font-semibold text-slate-900">{scenario.name}</h3>
+                      <p className="text-xs text-slate-500">{scenario.description}</p>
                     </div>
                   </div>
                 </div>
 
                 {/* Variations applied */}
-                <div className="px-5 py-3 border-b border-gray-100">
+                <div className="px-5 py-3 border-b border-slate-100">
                   <div className="flex gap-3 text-xs">
                     {scenario.sale_price_variation !== 0 && (
                       <span className={cn('px-2 py-0.5 rounded-full font-medium',
@@ -437,16 +437,16 @@ export default function ScenariosPage() {
                 {/* Results */}
                 <CardContent className="pt-4 space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-500">Ricavo</span>
-                    <span className="text-sm font-semibold text-gray-900">{formatCurrency(r.total_revenue)}</span>
+                    <span className="text-sm text-slate-500">Ricavo</span>
+                    <span className="text-sm font-semibold text-slate-900">{formatCurrency(r.total_revenue)}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-500">Costo Totale</span>
-                    <span className="text-sm font-semibold text-gray-900">{formatCurrency(r.total_cost)}</span>
+                    <span className="text-sm text-slate-500">Costo Totale</span>
+                    <span className="text-sm font-semibold text-slate-900">{formatCurrency(r.total_cost)}</span>
                   </div>
-                  <div className="border-t border-gray-100 pt-3">
+                  <div className="border-t border-slate-100 pt-3">
                     <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium text-gray-700">Margine</span>
+                      <span className="text-sm font-medium text-slate-700">Margine</span>
                       <div className="flex items-center gap-1.5">
                         {marginPositive ? (
                           <TrendingUp className="w-4 h-4 text-emerald-500" />
@@ -460,7 +460,7 @@ export default function ScenariosPage() {
                     </div>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium text-gray-700">ROI</span>
+                    <span className="text-sm font-medium text-slate-700">ROI</span>
                     <span className={cn('text-base font-bold', r.roi >= 0 ? 'text-emerald-600' : 'text-red-600')}>
                       {formatPercentage(r.roi)}
                     </span>
@@ -470,12 +470,12 @@ export default function ScenariosPage() {
                   {scenario.key !== 'realistic' && (
                     <div className={cn(
                       'rounded-lg p-3 text-center mt-2',
-                      deltaMargin > 0 ? 'bg-emerald-50' : deltaMargin < 0 ? 'bg-red-50' : 'bg-gray-50'
+                      deltaMargin > 0 ? 'bg-emerald-50' : deltaMargin < 0 ? 'bg-red-50' : 'bg-slate-50'
                     )}>
-                      <span className="text-xs text-gray-500 block">Differenza dal base</span>
+                      <span className="text-xs text-slate-500 block">Differenza dal base</span>
                       <p className={cn(
                         'text-sm font-bold mt-0.5',
-                        deltaMargin > 0 ? 'text-emerald-600' : deltaMargin < 0 ? 'text-red-600' : 'text-gray-600'
+                        deltaMargin > 0 ? 'text-emerald-600' : deltaMargin < 0 ? 'text-red-600' : 'text-slate-600'
                       )}>
                         {deltaMargin > 0 ? '+' : ''}{formatCurrency(deltaMargin)}
                       </p>
@@ -492,7 +492,7 @@ export default function ScenariosPage() {
       {/* SEZIONE 3: SIMULAZIONE PERSONALIZZATA                        */}
       {/* ============================================================ */}
       <div>
-        <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+        <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
           <Sliders className="w-5 h-5 text-purple-600" />
           Simulazione Personalizzata
         </h2>
@@ -501,18 +501,18 @@ export default function ScenariosPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* Left: Sliders */}
               <div className="space-y-6">
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-slate-500">
                   Modifica le variabili per simulare scenari personalizzati. I risultati si aggiornano in tempo reale.
                 </p>
 
                 {/* Sale Price Slider */}
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <label className="text-sm font-medium text-gray-700">Prezzo di Vendita</label>
+                    <label className="text-sm font-medium text-slate-700">Prezzo di Vendita</label>
                     <span className={cn(
                       'text-sm font-bold px-2 py-0.5 rounded',
                       customSaleVariation > 0 ? 'bg-emerald-100 text-emerald-700' :
-                      customSaleVariation < 0 ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700'
+                      customSaleVariation < 0 ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-700'
                     )}>
                       {formatVariation(customSaleVariation)}
                     </span>
@@ -524,9 +524,9 @@ export default function ScenariosPage() {
                     step={1}
                     value={customSaleVariation}
                     onChange={(e) => setCustomSaleVariation(Number(e.target.value))}
-                    className="w-full h-2 rounded-lg appearance-none cursor-pointer accent-purple-600 bg-gray-200"
+                    className="w-full h-2 rounded-lg appearance-none cursor-pointer accent-purple-600 bg-slate-200"
                   />
-                  <div className="flex justify-between text-xs text-gray-400 mt-1">
+                  <div className="flex justify-between text-xs text-slate-400 mt-1">
                     <span>-20%</span>
                     <span>0%</span>
                     <span>+20%</span>
@@ -536,11 +536,11 @@ export default function ScenariosPage() {
                 {/* Construction Cost Slider */}
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <label className="text-sm font-medium text-gray-700">Costo Lavori</label>
+                    <label className="text-sm font-medium text-slate-700">Costo Lavori</label>
                     <span className={cn(
                       'text-sm font-bold px-2 py-0.5 rounded',
                       customConstructionVariation < 0 ? 'bg-emerald-100 text-emerald-700' :
-                      customConstructionVariation > 0 ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700'
+                      customConstructionVariation > 0 ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-700'
                     )}>
                       {formatVariation(customConstructionVariation)}
                     </span>
@@ -552,9 +552,9 @@ export default function ScenariosPage() {
                     step={1}
                     value={customConstructionVariation}
                     onChange={(e) => setCustomConstructionVariation(Number(e.target.value))}
-                    className="w-full h-2 rounded-lg appearance-none cursor-pointer accent-purple-600 bg-gray-200"
+                    className="w-full h-2 rounded-lg appearance-none cursor-pointer accent-purple-600 bg-slate-200"
                   />
-                  <div className="flex justify-between text-xs text-gray-400 mt-1">
+                  <div className="flex justify-between text-xs text-slate-400 mt-1">
                     <span>-20%</span>
                     <span>0%</span>
                     <span>+20%</span>
@@ -564,11 +564,11 @@ export default function ScenariosPage() {
                 {/* Acquisition Cost Slider */}
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <label className="text-sm font-medium text-gray-700">Costo Acquisizione</label>
+                    <label className="text-sm font-medium text-slate-700">Costo Acquisizione</label>
                     <span className={cn(
                       'text-sm font-bold px-2 py-0.5 rounded',
                       customAcquisitionVariation < 0 ? 'bg-emerald-100 text-emerald-700' :
-                      customAcquisitionVariation > 0 ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700'
+                      customAcquisitionVariation > 0 ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-700'
                     )}>
                       {formatVariation(customAcquisitionVariation)}
                     </span>
@@ -580,9 +580,9 @@ export default function ScenariosPage() {
                     step={1}
                     value={customAcquisitionVariation}
                     onChange={(e) => setCustomAcquisitionVariation(Number(e.target.value))}
-                    className="w-full h-2 rounded-lg appearance-none cursor-pointer accent-purple-600 bg-gray-200"
+                    className="w-full h-2 rounded-lg appearance-none cursor-pointer accent-purple-600 bg-slate-200"
                   />
-                  <div className="flex justify-between text-xs text-gray-400 mt-1">
+                  <div className="flex justify-between text-xs text-slate-400 mt-1">
                     <span>-10%</span>
                     <span>0%</span>
                     <span>+10%</span>
@@ -595,22 +595,22 @@ export default function ScenariosPage() {
                 <div className={cn('rounded-xl p-6', CUSTOM_COLOR.bg)}>
                   <div className="flex items-center gap-2 mb-5">
                     <Sliders className={cn('w-5 h-5', CUSTOM_COLOR.text)} />
-                    <h3 className="font-semibold text-gray-900">Risultati Simulazione</h3>
+                    <h3 className="font-semibold text-slate-900">Risultati Simulazione</h3>
                   </div>
 
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">Ricavo</span>
-                      <span className="text-lg font-semibold text-gray-900">{formatCurrency(customResults.total_revenue)}</span>
+                      <span className="text-sm text-slate-600">Ricavo</span>
+                      <span className="text-lg font-semibold text-slate-900">{formatCurrency(customResults.total_revenue)}</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">Costo Totale</span>
-                      <span className="text-lg font-semibold text-gray-900">{formatCurrency(customResults.total_cost)}</span>
+                      <span className="text-sm text-slate-600">Costo Totale</span>
+                      <span className="text-lg font-semibold text-slate-900">{formatCurrency(customResults.total_cost)}</span>
                     </div>
 
                     <div className="border-t border-purple-200 pt-4">
                       <div className="flex justify-between items-center">
-                        <span className="text-sm font-medium text-gray-700">Margine</span>
+                        <span className="text-sm font-medium text-slate-700">Margine</span>
                         <div className="flex items-center gap-2">
                           {customResults.gross_margin >= 0 ? (
                             <TrendingUp className="w-5 h-5 text-emerald-500" />
@@ -628,7 +628,7 @@ export default function ScenariosPage() {
                     </div>
 
                     <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium text-gray-700">ROI</span>
+                      <span className="text-sm font-medium text-slate-700">ROI</span>
                       <span className={cn(
                         'text-2xl font-bold',
                         customResults.roi >= 0 ? 'text-emerald-600' : 'text-red-600'
@@ -641,13 +641,13 @@ export default function ScenariosPage() {
                     <div className={cn(
                       'rounded-lg p-3 text-center',
                       customResults.gross_margin - baseResults.gross_margin > 0 ? 'bg-emerald-100' :
-                      customResults.gross_margin - baseResults.gross_margin < 0 ? 'bg-red-100' : 'bg-gray-100'
+                      customResults.gross_margin - baseResults.gross_margin < 0 ? 'bg-red-100' : 'bg-slate-100'
                     )}>
-                      <span className="text-xs text-gray-500 block">Differenza dal piano base</span>
+                      <span className="text-xs text-slate-500 block">Differenza dal piano base</span>
                       <p className={cn(
                         'text-sm font-bold mt-0.5',
                         customResults.gross_margin - baseResults.gross_margin > 0 ? 'text-emerald-700' :
-                        customResults.gross_margin - baseResults.gross_margin < 0 ? 'text-red-700' : 'text-gray-700'
+                        customResults.gross_margin - baseResults.gross_margin < 0 ? 'text-red-700' : 'text-slate-700'
                       )}>
                         {customResults.gross_margin - baseResults.gross_margin > 0 ? '+' : ''}
                         {formatCurrency(customResults.gross_margin - baseResults.gross_margin)}
@@ -665,7 +665,7 @@ export default function ScenariosPage() {
       {/* SEZIONE 4: GRAFICI COMPARATIVI                               */}
       {/* ============================================================ */}
       <div>
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Confronto Scenari</h2>
+        <h2 className="text-lg font-semibold text-slate-900 mb-4">Confronto Scenari</h2>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Margin Bar Chart */}
           <Card>
@@ -763,8 +763,8 @@ export default function ScenariosPage() {
       {/* ============================================================ */}
       {breakEvenAnalysis && (
         <div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <Shield className="w-5 h-5 text-gray-600" />
+          <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
+            <Shield className="w-5 h-5 text-slate-600" />
             Indicatori di Robustezza
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -776,14 +776,14 @@ export default function ScenariosPage() {
                     <AlertTriangle className="w-5 h-5 text-orange-600" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 text-sm">Break-even Price</h3>
-                    <p className="text-xs text-gray-500">Ricavo minimo per non andare in perdita</p>
+                    <h3 className="font-semibold text-slate-900 text-sm">Break-even Price</h3>
+                    <p className="text-xs text-slate-500">Ricavo minimo per non andare in perdita</p>
                   </div>
                 </div>
                 <p className="text-2xl font-bold text-orange-700">
                   {formatCurrency(breakEvenAnalysis.breakEvenRevenue)}
                 </p>
-                <p className="text-xs text-gray-500 mt-2">
+                <p className="text-xs text-slate-500 mt-2">
                   Variazione prezzo vendita: {formatVariation(breakEvenAnalysis.breakEvenVariation)}
                 </p>
               </CardContent>
@@ -797,8 +797,8 @@ export default function ScenariosPage() {
                     <Shield className="w-5 h-5 text-emerald-600" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 text-sm">Margine di Sicurezza</h3>
-                    <p className="text-xs text-gray-500">Quanto il prezzo puo scendere</p>
+                    <h3 className="font-semibold text-slate-900 text-sm">Margine di Sicurezza</h3>
+                    <p className="text-xs text-slate-500">Quanto il prezzo puo scendere</p>
                   </div>
                 </div>
                 <p className={cn(
@@ -809,7 +809,7 @@ export default function ScenariosPage() {
                   {formatNumber(breakEvenAnalysis.safetyMarginPercent, 1)}%
                 </p>
                 <div className="mt-3">
-                  <div className="h-2 rounded-full bg-gray-200 overflow-hidden">
+                  <div className="h-2 rounded-full bg-slate-200 overflow-hidden">
                     <div
                       className={cn(
                         'h-full rounded-full transition-all',
@@ -819,7 +819,7 @@ export default function ScenariosPage() {
                       style={{ width: `${Math.min(breakEvenAnalysis.safetyMarginPercent * 5, 100)}%` }}
                     />
                   </div>
-                  <div className="flex justify-between text-xs text-gray-400 mt-1">
+                  <div className="flex justify-between text-xs text-slate-400 mt-1">
                     <span>Rischioso</span>
                     <span>Sicuro</span>
                   </div>
@@ -847,8 +847,8 @@ export default function ScenariosPage() {
                     )} />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 text-sm">Valutazione Operazione</h3>
-                    <p className="text-xs text-gray-500">Giudizio complessivo</p>
+                    <h3 className="font-semibold text-slate-900 text-sm">Valutazione Operazione</h3>
+                    <p className="text-xs text-slate-500">Giudizio complessivo</p>
                   </div>
                 </div>
                 <p className={cn(
@@ -862,7 +862,7 @@ export default function ScenariosPage() {
                     ? 'Operazione Accettabile'
                     : 'Operazione Rischiosa'}
                 </p>
-                <p className="text-sm text-gray-500 mt-2">
+                <p className="text-sm text-slate-500 mt-2">
                   {breakEvenAnalysis.safetyMarginPercent > 10
                     ? "L'operazione resiste a un calo significativo del prezzo di vendita."
                     : breakEvenAnalysis.safetyMarginPercent > 5
@@ -882,10 +882,10 @@ export default function ScenariosPage() {
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-gray-200">
-                      <th className="text-left py-3 px-4 font-medium text-gray-600">Indicatore</th>
+                    <tr className="border-b border-slate-200">
+                      <th className="text-left py-3 px-4 font-medium text-slate-600">Indicatore</th>
                       {allScenarios.map((s) => (
-                        <th key={s.key} className="text-right py-3 px-4 font-medium text-gray-600">
+                        <th key={s.key} className="text-right py-3 px-4 font-medium text-slate-600">
                           {s.name}
                         </th>
                       ))}
@@ -904,13 +904,13 @@ export default function ScenariosPage() {
                       <tr
                         key={idx}
                         className={cn(
-                          'border-b border-gray-100',
-                          row.highlight && 'bg-gray-50 font-semibold'
+                          'border-b border-slate-100',
+                          row.highlight && 'bg-slate-50 font-semibold'
                         )}
                       >
-                        <td className="py-3 px-4 font-medium text-gray-900">{row.label}</td>
+                        <td className="py-3 px-4 font-medium text-slate-900">{row.label}</td>
                         {allScenarios.map((s) => (
-                          <td key={s.key} className="py-3 px-4 text-right text-gray-700">
+                          <td key={s.key} className="py-3 px-4 text-right text-slate-700">
                             {row.format(s.results)}
                           </td>
                         ))}

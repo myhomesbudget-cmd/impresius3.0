@@ -43,23 +43,23 @@ export default function ResetPasswordPage() {
           <span className="text-2xl font-bold text-gradient">Impresius</span>
         </Link>
 
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
+        <div className="bg-white rounded-2xl shadow-xl border border-slate-100 p-8">
           {sent ? (
             <div className="text-center">
               <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Mail className="w-8 h-8 text-blue-600" />
               </div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">Email inviata</h1>
-              <p className="text-gray-500 text-sm">
+              <h1 className="text-2xl font-bold text-slate-900 mb-2">Email inviata</h1>
+              <p className="text-slate-500 text-sm">
                 Se esiste un account con <strong>{email}</strong>, riceverai un link per reimpostare la password.
               </p>
             </div>
           ) : (
             <>
-              <h1 className="text-2xl font-bold text-gray-900 text-center mb-2">
+              <h1 className="text-2xl font-bold text-slate-900 text-center mb-2">
                 Password dimenticata?
               </h1>
-              <p className="text-gray-500 text-center text-sm mb-8">
+              <p className="text-slate-500 text-center text-sm mb-8">
                 Inserisci la tua email e ti invieremo un link per reimpostarla
               </p>
 
@@ -96,7 +96,7 @@ export default function ResetPasswordPage() {
 
         <Link
           href="/login"
-          className="flex items-center justify-center gap-2 text-sm text-gray-500 mt-6 hover:text-gray-700"
+          className="flex items-center justify-center gap-2 text-sm text-slate-500 mt-6 hover:text-slate-700"
         >
           <ArrowLeft className="w-4 h-4" />
           Torna al Login
