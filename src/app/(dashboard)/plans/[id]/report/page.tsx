@@ -149,8 +149,8 @@ export default function ReportPage() {
     return (
       <div className="p-4 md:p-8 max-w-5xl mx-auto flex items-center justify-center min-h-[60vh]">
         <div className="flex flex-col items-center gap-3">
-          <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
-          <p className="text-sm text-gray-500">Caricamento report...</p>
+          <Loader2 className="w-8 h-8 animate-spin text-slate-400" />
+          <p className="text-sm text-slate-500">Caricamento report...</p>
         </div>
       </div>
     );
@@ -210,11 +210,11 @@ export default function ReportPage() {
         {/* Header bar */}
         <div className="no-print mb-8 flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+            <h1 className="page-header-title flex items-center gap-2">
               <FileText className="w-6 h-6" />
               Genera Report
             </h1>
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="page-header-subtitle">
               Anteprima del report completo dell&apos;operazione
             </p>
           </div>
@@ -228,11 +228,11 @@ export default function ReportPage() {
         <Card id="report-content" className="bg-white text-black">
           <CardContent className="p-8 space-y-10">
             {/* Page 1 - Copertina */}
-            <section className="pb-8 border-b border-gray-300">
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">
+            <section className="pb-8 border-b border-slate-300">
+              <h2 className="text-3xl font-bold text-slate-900 mb-2">
                 {project.name}
               </h2>
-              <div className="text-sm text-gray-600 space-y-1 mb-6">
+              <div className="text-sm text-slate-600 space-y-1 mb-6">
                 {(project.location_city || project.location_province) && (
                   <p>
                     {[project.location_address, project.location_city, project.location_province]
@@ -252,19 +252,19 @@ export default function ReportPage() {
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="border rounded-lg p-4">
-                  <p className="text-xs text-gray-500 uppercase tracking-wide">Costo Totale</p>
-                  <p className="text-lg font-bold text-gray-900 mt-1">
+                  <p className="text-xs text-slate-500 uppercase tracking-wide">Costo Totale</p>
+                  <p className="text-lg font-bold text-slate-900 mt-1">
                     {formatCurrency(results.total_cost)}
                   </p>
                 </div>
                 <div className="border rounded-lg p-4">
-                  <p className="text-xs text-gray-500 uppercase tracking-wide">Ricavo Totale</p>
-                  <p className="text-lg font-bold text-gray-900 mt-1">
+                  <p className="text-xs text-slate-500 uppercase tracking-wide">Ricavo Totale</p>
+                  <p className="text-lg font-bold text-slate-900 mt-1">
                     {formatCurrency(results.total_revenue)}
                   </p>
                 </div>
                 <div className="border rounded-lg p-4">
-                  <p className="text-xs text-gray-500 uppercase tracking-wide">Margine</p>
+                  <p className="text-xs text-slate-500 uppercase tracking-wide">Margine</p>
                   <p
                     className={cn(
                       'text-lg font-bold mt-1',
@@ -275,8 +275,8 @@ export default function ReportPage() {
                   </p>
                 </div>
                 <div className="border rounded-lg p-4">
-                  <p className="text-xs text-gray-500 uppercase tracking-wide">ROI</p>
-                  <p className="text-lg font-bold text-gray-900 mt-1">
+                  <p className="text-xs text-slate-500 uppercase tracking-wide">ROI</p>
+                  <p className="text-lg font-bold text-slate-900 mt-1">
                     {formatPercentage(results.roi)}
                   </p>
                 </div>
@@ -285,52 +285,52 @@ export default function ReportPage() {
 
             {/* Section A - Riepilogo Economico */}
             <section>
-              <h3 className="text-lg font-bold text-gray-900 mb-4">
+              <h3 className="text-lg font-bold text-slate-900 mb-4">
                 A - Riepilogo Economico
               </h3>
               <table className="w-full text-sm border-collapse">
                 <thead>
-                  <tr className="border-b-2 border-gray-300">
-                    <th className="text-left py-2 px-3 font-semibold text-gray-700">
+                  <tr className="border-b-2 border-slate-300">
+                    <th className="text-left py-2 px-3 font-semibold text-slate-700">
                       Voce di Costo
                     </th>
-                    <th className="text-right py-2 px-3 font-semibold text-gray-700">
+                    <th className="text-right py-2 px-3 font-semibold text-slate-700">
                       Importo
                     </th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr className="border-b border-gray-200">
-                    <td className="py-2 px-3 text-gray-800">Acquisizione Immobile</td>
-                    <td className="py-2 px-3 text-right text-gray-800">
+                  <tr className="border-b border-slate-200">
+                    <td className="py-2 px-3 text-slate-800">Acquisizione Immobile</td>
+                    <td className="py-2 px-3 text-right text-slate-800">
                       {formatCurrency(results.total_acquisition_cost)}
                     </td>
                   </tr>
                   {results.operation_cost_by_section.map((section) => (
-                    <tr key={section.section} className="border-b border-gray-200">
-                      <td className="py-2 px-3 text-gray-800">
+                    <tr key={section.section} className="border-b border-slate-200">
+                      <td className="py-2 px-3 text-slate-800">
                         {SECTION_LABELS[section.section] || section.section}
                       </td>
-                      <td className="py-2 px-3 text-right text-gray-800">
+                      <td className="py-2 px-3 text-right text-slate-800">
                         {formatCurrency(section.total)}
                       </td>
                     </tr>
                   ))}
                   {results.construction_by_floor.map((floor) => (
-                    <tr key={floor.floor} className="border-b border-gray-200">
-                      <td className="py-2 px-3 text-gray-800">
+                    <tr key={floor.floor} className="border-b border-slate-200">
+                      <td className="py-2 px-3 text-slate-800">
                         Lavori - {getFloorLabel(floor.floor)}
                       </td>
-                      <td className="py-2 px-3 text-right text-gray-800">
+                      <td className="py-2 px-3 text-right text-slate-800">
                         {formatCurrency(floor.total)}
                       </td>
                     </tr>
                   ))}
                 </tbody>
                 <tfoot>
-                  <tr className="border-t-2 border-gray-400 bg-gray-50 font-bold">
-                    <td className="py-2 px-3 text-gray-900">TOTALE COSTI</td>
-                    <td className="py-2 px-3 text-right text-gray-900">
+                  <tr className="border-t-2 border-slate-400 bg-slate-50 font-bold">
+                    <td className="py-2 px-3 text-slate-900">TOTALE COSTI</td>
+                    <td className="py-2 px-3 text-right text-slate-900">
                       {formatCurrency(results.total_cost)}
                     </td>
                   </tr>
@@ -340,44 +340,44 @@ export default function ReportPage() {
 
             {/* Section B - Dettaglio Acquisizione */}
             <section>
-              <h3 className="text-lg font-bold text-gray-900 mb-4">
+              <h3 className="text-lg font-bold text-slate-900 mb-4">
                 B - Dettaglio Acquisizione
               </h3>
               <table className="w-full text-sm border-collapse">
                 <thead>
-                  <tr className="border-b-2 border-gray-300">
-                    <th className="text-left py-2 px-3 font-semibold text-gray-700">
+                  <tr className="border-b-2 border-slate-300">
+                    <th className="text-left py-2 px-3 font-semibold text-slate-700">
                       Voce
                     </th>
-                    <th className="text-center py-2 px-3 font-semibold text-gray-700">
+                    <th className="text-center py-2 px-3 font-semibold text-slate-700">
                       Tipo
                     </th>
-                    <th className="text-right py-2 px-3 font-semibold text-gray-700">
+                    <th className="text-right py-2 px-3 font-semibold text-slate-700">
                       Importo
                     </th>
                   </tr>
                 </thead>
                 <tbody>
                   {acquisitionCosts.map((cost) => (
-                    <tr key={cost.id} className="border-b border-gray-200">
-                      <td className="py-2 px-3 text-gray-800">{cost.label}</td>
-                      <td className="py-2 px-3 text-center text-gray-600">
+                    <tr key={cost.id} className="border-b border-slate-200">
+                      <td className="py-2 px-3 text-slate-800">{cost.label}</td>
+                      <td className="py-2 px-3 text-center text-slate-600">
                         {cost.calculation_type === 'percentage'
                           ? `${formatNumber(cost.percentage)}%`
                           : 'fisso'}
                       </td>
-                      <td className="py-2 px-3 text-right text-gray-800">
+                      <td className="py-2 px-3 text-right text-slate-800">
                         {formatCurrency(calculateAcquisitionAmount(cost))}
                       </td>
                     </tr>
                   ))}
                 </tbody>
                 <tfoot>
-                  <tr className="border-t-2 border-gray-400 bg-gray-50 font-bold">
-                    <td colSpan={2} className="py-2 px-3 text-gray-900">
+                  <tr className="border-t-2 border-slate-400 bg-slate-50 font-bold">
+                    <td colSpan={2} className="py-2 px-3 text-slate-900">
                       TOTALE ACQUISIZIONE
                     </td>
-                    <td className="py-2 px-3 text-right text-gray-900">
+                    <td className="py-2 px-3 text-right text-slate-900">
                       {formatCurrency(results.total_acquisition_cost)}
                     </td>
                   </tr>
@@ -387,7 +387,7 @@ export default function ReportPage() {
 
             {/* Section C - Dettaglio Costi Operativi */}
             <section>
-              <h3 className="text-lg font-bold text-gray-900 mb-4">
+              <h3 className="text-lg font-bold text-slate-900 mb-4">
                 C - Dettaglio Costi Operativi
               </h3>
               {OPERATION_SECTIONS.map((section) => {
@@ -401,34 +401,34 @@ export default function ReportPage() {
 
                 return (
                   <div key={section.value} className="mb-6">
-                    <h4 className="text-sm font-semibold text-gray-700 mb-2 uppercase tracking-wide">
+                    <h4 className="text-sm font-semibold text-slate-700 mb-2 uppercase tracking-wide">
                       {SECTION_LABELS[section.value]}
                     </h4>
                     <table className="w-full text-sm border-collapse mb-2">
                       <thead>
-                        <tr className="border-b border-gray-300">
-                          <th className="text-left py-1.5 px-3 font-medium text-gray-600">
+                        <tr className="border-b border-slate-300">
+                          <th className="text-left py-1.5 px-3 font-medium text-slate-600">
                             Voce
                           </th>
-                          <th className="text-right py-1.5 px-3 font-medium text-gray-600">
+                          <th className="text-right py-1.5 px-3 font-medium text-slate-600">
                             Importo
                           </th>
                         </tr>
                       </thead>
                       <tbody>
                         {sectionCosts.map((cost) => (
-                          <tr key={cost.id} className="border-b border-gray-100">
-                            <td className="py-1.5 px-3 text-gray-800">{cost.label}</td>
-                            <td className="py-1.5 px-3 text-right text-gray-800">
+                          <tr key={cost.id} className="border-b border-slate-100">
+                            <td className="py-1.5 px-3 text-slate-800">{cost.label}</td>
+                            <td className="py-1.5 px-3 text-right text-slate-800">
                               {formatCurrency(calculateOperationAmount(cost))}
                             </td>
                           </tr>
                         ))}
                       </tbody>
                       <tfoot>
-                        <tr className="border-t border-gray-300 font-semibold">
-                          <td className="py-1.5 px-3 text-gray-800">Subtotale</td>
-                          <td className="py-1.5 px-3 text-right text-gray-800">
+                        <tr className="border-t border-slate-300 font-semibold">
+                          <td className="py-1.5 px-3 text-slate-800">Subtotale</td>
+                          <td className="py-1.5 px-3 text-right text-slate-800">
                             {formatCurrency(sectionTotal)}
                           </td>
                         </tr>
@@ -437,7 +437,7 @@ export default function ReportPage() {
                   </div>
                 );
               })}
-              <div className="border-t-2 border-gray-400 bg-gray-50 px-3 py-2 flex justify-between font-bold text-sm">
+              <div className="border-t-2 border-slate-400 bg-slate-50 px-3 py-2 flex justify-between font-bold text-sm">
                 <span>TOTALE COSTI OPERATIVI</span>
                 <span>{formatCurrency(results.total_operation_cost)}</span>
               </div>
@@ -445,7 +445,7 @@ export default function ReportPage() {
 
             {/* Section D - Computo Metrico Estimativo */}
             <section>
-              <h3 className="text-lg font-bold text-gray-900 mb-4">
+              <h3 className="text-lg font-bold text-slate-900 mb-4">
                 D - Computo Metrico Estimativo
               </h3>
               {FLOORS.map((floor) => {
@@ -459,28 +459,28 @@ export default function ReportPage() {
 
                 return (
                   <div key={floor.value} className="mb-6">
-                    <h4 className="text-sm font-semibold text-gray-700 mb-2 uppercase tracking-wide">
+                    <h4 className="text-sm font-semibold text-slate-700 mb-2 uppercase tracking-wide">
                       {floor.label}
                     </h4>
                     <table className="w-full text-sm border-collapse mb-2">
                       <thead>
-                        <tr className="border-b border-gray-300">
-                          <th className="text-left py-1.5 px-3 font-medium text-gray-600">
+                        <tr className="border-b border-slate-300">
+                          <th className="text-left py-1.5 px-3 font-medium text-slate-600">
                             Lavorazione
                           </th>
-                          <th className="text-left py-1.5 px-3 font-medium text-gray-600">
+                          <th className="text-left py-1.5 px-3 font-medium text-slate-600">
                             Categoria
                           </th>
-                          <th className="text-center py-1.5 px-3 font-medium text-gray-600">
+                          <th className="text-center py-1.5 px-3 font-medium text-slate-600">
                             U.M.
                           </th>
-                          <th className="text-right py-1.5 px-3 font-medium text-gray-600">
+                          <th className="text-right py-1.5 px-3 font-medium text-slate-600">
                             Quantita
                           </th>
-                          <th className="text-right py-1.5 px-3 font-medium text-gray-600">
+                          <th className="text-right py-1.5 px-3 font-medium text-slate-600">
                             Prezzo Unit.
                           </th>
-                          <th className="text-right py-1.5 px-3 font-medium text-gray-600">
+                          <th className="text-right py-1.5 px-3 font-medium text-slate-600">
                             Totale
                           </th>
                         </tr>
@@ -491,21 +491,21 @@ export default function ReportPage() {
                           const qty = calculateItemQuantity(itemMeas);
                           const total = calculateItemTotal(item, itemMeas);
                           return (
-                            <tr key={item.id} className="border-b border-gray-100">
-                              <td className="py-1.5 px-3 text-gray-800">{item.title}</td>
-                              <td className="py-1.5 px-3 text-gray-600">
+                            <tr key={item.id} className="border-b border-slate-100">
+                              <td className="py-1.5 px-3 text-slate-800">{item.title}</td>
+                              <td className="py-1.5 px-3 text-slate-600">
                                 {getCategoryLabel(item.category)}
                               </td>
-                              <td className="py-1.5 px-3 text-center text-gray-600">
+                              <td className="py-1.5 px-3 text-center text-slate-600">
                                 {item.unit_of_measure}
                               </td>
-                              <td className="py-1.5 px-3 text-right text-gray-800">
+                              <td className="py-1.5 px-3 text-right text-slate-800">
                                 {formatNumber(qty)}
                               </td>
-                              <td className="py-1.5 px-3 text-right text-gray-800">
+                              <td className="py-1.5 px-3 text-right text-slate-800">
                                 {formatCurrency(item.unit_price)}
                               </td>
-                              <td className="py-1.5 px-3 text-right text-gray-800">
+                              <td className="py-1.5 px-3 text-right text-slate-800">
                                 {formatCurrency(total)}
                               </td>
                             </tr>
@@ -513,11 +513,11 @@ export default function ReportPage() {
                         })}
                       </tbody>
                       <tfoot>
-                        <tr className="border-t border-gray-300 font-semibold">
-                          <td colSpan={5} className="py-1.5 px-3 text-gray-800">
+                        <tr className="border-t border-slate-300 font-semibold">
+                          <td colSpan={5} className="py-1.5 px-3 text-slate-800">
                             Subtotale {floor.label}
                           </td>
-                          <td className="py-1.5 px-3 text-right text-gray-800">
+                          <td className="py-1.5 px-3 text-right text-slate-800">
                             {formatCurrency(floorTotal)}
                           </td>
                         </tr>
@@ -526,7 +526,7 @@ export default function ReportPage() {
                   </div>
                 );
               })}
-              <div className="border-t-2 border-gray-400 bg-gray-50 px-3 py-2 flex justify-between font-bold text-sm">
+              <div className="border-t-2 border-slate-400 bg-slate-50 px-3 py-2 flex justify-between font-bold text-sm">
                 <span>TOTALE LAVORI</span>
                 <span>{formatCurrency(results.total_construction_cost)}</span>
               </div>
@@ -534,63 +534,63 @@ export default function ReportPage() {
 
             {/* Section E - Stima Valore di Vendita */}
             <section>
-              <h3 className="text-lg font-bold text-gray-900 mb-4">
+              <h3 className="text-lg font-bold text-slate-900 mb-4">
                 E - Stima Valore di Vendita
               </h3>
               <table className="w-full text-sm border-collapse">
                 <thead>
-                  <tr className="border-b-2 border-gray-300">
-                    <th className="text-left py-2 px-3 font-semibold text-gray-700">
+                  <tr className="border-b-2 border-slate-300">
+                    <th className="text-left py-2 px-3 font-semibold text-slate-700">
                       Nome
                     </th>
-                    <th className="text-left py-2 px-3 font-semibold text-gray-700">
+                    <th className="text-left py-2 px-3 font-semibold text-slate-700">
                       Piano
                     </th>
-                    <th className="text-right py-2 px-3 font-semibold text-gray-700">
+                    <th className="text-right py-2 px-3 font-semibold text-slate-700">
                       Sup. Ragguagliata
                     </th>
-                    <th className="text-right py-2 px-3 font-semibold text-gray-700">
+                    <th className="text-right py-2 px-3 font-semibold text-slate-700">
                       Valore Calcolato
                     </th>
-                    <th className="text-right py-2 px-3 font-semibold text-gray-700">
+                    <th className="text-right py-2 px-3 font-semibold text-slate-700">
                       Prezzo Stabilito
                     </th>
                   </tr>
                 </thead>
                 <tbody>
                   {results.units_summary.map((unit, idx) => (
-                    <tr key={idx} className="border-b border-gray-200">
-                      <td className="py-2 px-3 text-gray-800 font-medium">{unit.name}</td>
-                      <td className="py-2 px-3 text-gray-600">{getFloorLabel(unit.floor)}</td>
-                      <td className="py-2 px-3 text-right text-gray-800">
+                    <tr key={idx} className="border-b border-slate-200">
+                      <td className="py-2 px-3 text-slate-800 font-medium">{unit.name}</td>
+                      <td className="py-2 px-3 text-slate-600">{getFloorLabel(unit.floor)}</td>
+                      <td className="py-2 px-3 text-right text-slate-800">
                         {formatNumber(unit.adjusted_surface)} mq
                       </td>
-                      <td className="py-2 px-3 text-right text-gray-800">
+                      <td className="py-2 px-3 text-right text-slate-800">
                         {formatCurrency(unit.calculated_value)}
                       </td>
-                      <td className="py-2 px-3 text-right text-gray-800 font-medium">
+                      <td className="py-2 px-3 text-right text-slate-800 font-medium">
                         {formatCurrency(unit.target_price)}
                       </td>
                     </tr>
                   ))}
                 </tbody>
                 <tfoot>
-                  <tr className="border-t-2 border-gray-400 bg-gray-50 font-bold">
-                    <td colSpan={2} className="py-2 px-3 text-gray-900">
+                  <tr className="border-t-2 border-slate-400 bg-slate-50 font-bold">
+                    <td colSpan={2} className="py-2 px-3 text-slate-900">
                       TOTALE
                     </td>
-                    <td className="py-2 px-3 text-right text-gray-900">
+                    <td className="py-2 px-3 text-right text-slate-900">
                       {formatNumber(
                         results.units_summary.reduce((sum, u) => sum + u.adjusted_surface, 0)
                       )}{' '}
                       mq
                     </td>
-                    <td className="py-2 px-3 text-right text-gray-900">
+                    <td className="py-2 px-3 text-right text-slate-900">
                       {formatCurrency(
                         results.units_summary.reduce((sum, u) => sum + u.calculated_value, 0)
                       )}
                     </td>
-                    <td className="py-2 px-3 text-right text-gray-900">
+                    <td className="py-2 px-3 text-right text-slate-900">
                       {formatCurrency(results.total_revenue)}
                     </td>
                   </tr>
@@ -600,12 +600,12 @@ export default function ReportPage() {
 
             {/* Section F - Indicatori */}
             <section>
-              <h3 className="text-lg font-bold text-gray-900 mb-4">
+              <h3 className="text-lg font-bold text-slate-900 mb-4">
                 F - Indicatori
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3 text-sm">
-                <div className="flex justify-between py-2 border-b border-gray-200">
-                  <span className="text-gray-600">Margine Lordo</span>
+                <div className="flex justify-between py-2 border-b border-slate-200">
+                  <span className="text-slate-600">Margine Lordo</span>
                   <span
                     className={cn(
                       'font-semibold',
@@ -615,51 +615,51 @@ export default function ReportPage() {
                     {formatCurrency(results.gross_margin)}
                   </span>
                 </div>
-                <div className="flex justify-between py-2 border-b border-gray-200">
-                  <span className="text-gray-600">% Margine su Costo</span>
-                  <span className="font-semibold text-gray-900">
+                <div className="flex justify-between py-2 border-b border-slate-200">
+                  <span className="text-slate-600">% Margine su Costo</span>
+                  <span className="font-semibold text-slate-900">
                     {formatPercentage(results.margin_percentage)}
                   </span>
                 </div>
-                <div className="flex justify-between py-2 border-b border-gray-200">
-                  <span className="text-gray-600">% Margine su Ricavo</span>
-                  <span className="font-semibold text-gray-900">
+                <div className="flex justify-between py-2 border-b border-slate-200">
+                  <span className="text-slate-600">% Margine su Ricavo</span>
+                  <span className="font-semibold text-slate-900">
                     {formatPercentage(results.margin_on_revenue)}
                   </span>
                 </div>
-                <div className="flex justify-between py-2 border-b border-gray-200">
-                  <span className="text-gray-600">ROI</span>
-                  <span className="font-semibold text-gray-900">
+                <div className="flex justify-between py-2 border-b border-slate-200">
+                  <span className="text-slate-600">ROI</span>
+                  <span className="font-semibold text-slate-900">
                     {formatPercentage(results.roi)}
                   </span>
                 </div>
-                <div className="flex justify-between py-2 border-b border-gray-200">
-                  <span className="text-gray-600">Costo / mq</span>
-                  <span className="font-semibold text-gray-900">
+                <div className="flex justify-between py-2 border-b border-slate-200">
+                  <span className="text-slate-600">Costo / mq</span>
+                  <span className="font-semibold text-slate-900">
                     {formatCurrency(results.cost_per_sqm)}
                   </span>
                 </div>
-                <div className="flex justify-between py-2 border-b border-gray-200">
-                  <span className="text-gray-600">Ricavo / mq</span>
-                  <span className="font-semibold text-gray-900">
+                <div className="flex justify-between py-2 border-b border-slate-200">
+                  <span className="text-slate-600">Ricavo / mq</span>
+                  <span className="font-semibold text-slate-900">
                     {formatCurrency(results.revenue_per_sqm)}
                   </span>
                 </div>
-                <div className="flex justify-between py-2 border-b border-gray-200">
-                  <span className="text-gray-600">Incidenza Acquisizione</span>
-                  <span className="font-semibold text-gray-900">
+                <div className="flex justify-between py-2 border-b border-slate-200">
+                  <span className="text-slate-600">Incidenza Acquisizione</span>
+                  <span className="font-semibold text-slate-900">
                     {formatPercentage(results.acquisition_incidence)}
                   </span>
                 </div>
-                <div className="flex justify-between py-2 border-b border-gray-200">
-                  <span className="text-gray-600">Incidenza Costruzione</span>
-                  <span className="font-semibold text-gray-900">
+                <div className="flex justify-between py-2 border-b border-slate-200">
+                  <span className="text-slate-600">Incidenza Costruzione</span>
+                  <span className="font-semibold text-slate-900">
                     {formatPercentage(results.construction_incidence)}
                   </span>
                 </div>
-                <div className="flex justify-between py-2 border-b border-gray-200">
-                  <span className="text-gray-600">Incidenza Costi Operativi</span>
-                  <span className="font-semibold text-gray-900">
+                <div className="flex justify-between py-2 border-b border-slate-200">
+                  <span className="text-slate-600">Incidenza Costi Operativi</span>
+                  <span className="font-semibold text-slate-900">
                     {formatPercentage(results.operation_incidence)}
                   </span>
                 </div>

@@ -48,11 +48,11 @@ export default function LoginPage() {
         </Link>
 
         {/* Card */}
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
-          <h1 className="text-2xl font-bold text-gray-900 text-center mb-2">
+        <div className="bg-white rounded-2xl shadow-xl border border-slate-100 p-8">
+          <h1 className="text-2xl font-bold text-slate-900 text-center mb-2">
             Bentornato
           </h1>
-          <p className="text-gray-500 text-center text-sm mb-8">
+          <p className="text-slate-500 text-center text-sm mb-8">
             Accedi al tuo account per gestire i tuoi piani
           </p>
 
@@ -104,7 +104,7 @@ export default function LoginPage() {
           </form>
         </div>
 
-        <p className="text-center text-sm text-gray-500 mt-6">
+        <p className="text-center text-sm text-slate-500 mt-6">
           Non hai un account?{" "}
           <Link href="/register" className="text-blue-600 font-medium hover:text-blue-700">
             Registrati gratis

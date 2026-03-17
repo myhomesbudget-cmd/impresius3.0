@@ -171,10 +171,10 @@ export default function MonitoringPage() {
   if (loading || !baseResults || !project) {
     return (
       <div className="p-4 md:p-8 max-w-7xl">
-        <div className="h-8 w-48 bg-gray-200 rounded animate-pulse mb-6" />
+        <div className="h-8 w-48 bg-slate-200 rounded animate-pulse mb-6" />
         <div className="grid grid-cols-3 gap-6">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-40 bg-gray-100 rounded-xl animate-pulse" />
+            <div key={i} className="h-40 bg-slate-100 rounded-xl animate-pulse" />
           ))}
         </div>
       </div>
@@ -205,11 +205,11 @@ export default function MonitoringPage() {
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+          <h1 className="page-header-title flex items-center gap-2">
             <Activity className="w-6 h-6 text-blue-600" />
             Monitoring Costi
           </h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="page-header-subtitle">
             Confronta i costi effettivi con il preventivo per &ldquo;{project.name}&rdquo;
           </p>
         </div>
@@ -226,14 +226,14 @@ export default function MonitoringPage() {
       {showForm && (
         <Card className="border-2 border-blue-200">
           <CardContent className="p-5">
-            <h3 className="font-semibold text-gray-900 mb-4">Nuovo Costo Effettivo</h3>
+            <h3 className="font-semibold text-slate-900 mb-4">Nuovo Costo Effettivo</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="text-xs font-medium text-gray-600 block mb-1">Categoria</label>
+                <label className="text-xs font-semibold text-slate-600 block mb-1.5">Categoria</label>
                 <select
                   value={form.reference_type}
                   onChange={(e) => setForm({ ...form, reference_type: e.target.value as ActualCostForm['reference_type'] })}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-[3px] focus:ring-blue-500/15"
                 >
                   <option value="acquisition">Acquisizione</option>
                   <option value="operation">Operativi</option>
@@ -241,7 +241,7 @@ export default function MonitoringPage() {
                 </select>
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 block mb-1">Descrizione</label>
+                <label className="text-xs font-semibold text-slate-600 block mb-1.5">Descrizione</label>
                 <Input
                   value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
@@ -249,7 +249,7 @@ export default function MonitoringPage() {
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 block mb-1">Importo</label>
+                <label className="text-xs font-semibold text-slate-600 block mb-1.5">Importo</label>
                 <Input
                   type="number"
                   step="0.01"
@@ -259,7 +259,7 @@ export default function MonitoringPage() {
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 block mb-1">Data</label>
+                <label className="text-xs font-semibold text-slate-600 block mb-1.5">Data</label>
                 <Input
                   type="date"
                   value={form.date}
@@ -267,7 +267,7 @@ export default function MonitoringPage() {
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 block mb-1">Nr. Fattura</label>
+                <label className="text-xs font-semibold text-slate-600 block mb-1.5">Nr. Fattura</label>
                 <Input
                   value={form.invoice_number}
                   onChange={(e) => setForm({ ...form, invoice_number: e.target.value })}
@@ -275,7 +275,7 @@ export default function MonitoringPage() {
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 block mb-1">Note</label>
+                <label className="text-xs font-semibold text-slate-600 block mb-1.5">Note</label>
                 <Input
                   value={form.notes}
                   onChange={(e) => setForm({ ...form, notes: e.target.value })}
@@ -301,18 +301,18 @@ export default function MonitoringPage() {
         {/* Total Budget */}
         <Card>
           <CardContent className="p-5">
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Preventivo Totale</p>
-            <p className="text-xl font-bold text-gray-900 mt-1">{formatCurrency(totalBudget)}</p>
+            <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Preventivo Totale</p>
+            <p className="text-xl font-bold text-slate-900 mt-1">{formatCurrency(totalBudget)}</p>
           </CardContent>
         </Card>
 
         {/* Total Actual */}
         <Card>
           <CardContent className="p-5">
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Effettivo Totale</p>
-            <p className="text-xl font-bold text-gray-900 mt-1">{formatCurrency(totalActual)}</p>
+            <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Effettivo Totale</p>
+            <p className="text-xl font-bold text-slate-900 mt-1">{formatCurrency(totalActual)}</p>
             <div className="mt-2">
-              <div className="h-2 rounded-full bg-gray-200 overflow-hidden">
+              <div className="h-2 rounded-full bg-slate-200 overflow-hidden">
                 <div
                   className={cn(
                     'h-full rounded-full transition-all',
@@ -321,7 +321,7 @@ export default function MonitoringPage() {
                   style={{ width: `${Math.min(totalProgress, 100)}%` }}
                 />
               </div>
-              <p className="text-xs text-gray-500 mt-1">{totalProgress.toFixed(1)}% del budget</p>
+              <p className="text-xs text-slate-500 mt-1">{totalProgress.toFixed(1)}% del budget</p>
             </div>
           </CardContent>
         </Card>
@@ -329,10 +329,10 @@ export default function MonitoringPage() {
         {/* Delta */}
         <Card className={cn(
           'border-2',
-          totalDelta > 0 ? 'border-red-200' : totalDelta < 0 ? 'border-emerald-200' : 'border-gray-200'
+          totalDelta > 0 ? 'border-red-200' : totalDelta < 0 ? 'border-emerald-200' : 'border-slate-200'
         )}>
           <CardContent className="p-5">
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Scostamento</p>
+            <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Scostamento</p>
             <div className="flex items-center gap-2 mt-1">
               {totalDelta > 0 ? (
                 <ArrowUpRight className="w-5 h-5 text-red-500" />
@@ -341,12 +341,12 @@ export default function MonitoringPage() {
               ) : null}
               <p className={cn(
                 'text-xl font-bold',
-                totalDelta > 0 ? 'text-red-600' : totalDelta < 0 ? 'text-emerald-600' : 'text-gray-900'
+                totalDelta > 0 ? 'text-red-600' : totalDelta < 0 ? 'text-emerald-600' : 'text-slate-900'
               )}>
                 {totalDelta > 0 ? '+' : ''}{formatCurrency(totalDelta)}
               </p>
             </div>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-slate-500 mt-1">
               {totalDelta > 0 ? 'Sopra il budget' : totalDelta < 0 ? 'Sotto il budget' : 'In linea'}
             </p>
           </CardContent>
@@ -355,7 +355,7 @@ export default function MonitoringPage() {
         {/* Status */}
         <Card>
           <CardContent className="p-5">
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Stato</p>
+            <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Stato</p>
             <div className="flex items-center gap-2 mt-2">
               {totalDelta > totalBudget * 0.1 ? (
                 <>
@@ -382,7 +382,7 @@ export default function MonitoringPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Category Cards */}
         <div className="space-y-4">
-          <h2 className="text-base font-semibold text-gray-900">Dettaglio per Categoria</h2>
+          <h2 className="text-base font-semibold text-slate-900">Dettaglio per Categoria</h2>
           {categories.map((cat) => {
             const delta = cat.actual - cat.budget;
             const progress = cat.budget > 0 ? (cat.actual / cat.budget) * 100 : 0;
@@ -391,26 +391,26 @@ export default function MonitoringPage() {
               <Card key={cat.key}>
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="font-medium text-gray-900">{cat.label}</h3>
+                    <h3 className="font-medium text-slate-900">{cat.label}</h3>
                     <span className={cn(
                       'text-xs font-medium px-2 py-0.5 rounded-full',
                       delta > 0 ? 'bg-red-100 text-red-700' :
-                      delta < 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-700'
+                      delta < 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-700'
                     )}>
                       {delta > 0 ? '+' : ''}{formatCurrency(delta)}
                     </span>
                   </div>
                   <div className="grid grid-cols-2 gap-4 text-sm mb-3">
                     <div>
-                      <span className="text-gray-500">Preventivo</span>
-                      <p className="font-semibold text-gray-900">{formatCurrency(cat.budget)}</p>
+                      <span className="text-slate-500">Preventivo</span>
+                      <p className="font-semibold text-slate-900">{formatCurrency(cat.budget)}</p>
                     </div>
                     <div>
-                      <span className="text-gray-500">Effettivo</span>
-                      <p className="font-semibold text-gray-900">{formatCurrency(cat.actual)}</p>
+                      <span className="text-slate-500">Effettivo</span>
+                      <p className="font-semibold text-slate-900">{formatCurrency(cat.actual)}</p>
                     </div>
                   </div>
-                  <div className="h-2 rounded-full bg-gray-200 overflow-hidden">
+                  <div className="h-2 rounded-full bg-slate-200 overflow-hidden">
                     <div
                       className={cn(
                         'h-full rounded-full transition-all',
@@ -420,7 +420,7 @@ export default function MonitoringPage() {
                       style={{ width: `${Math.min(progress, 100)}%` }}
                     />
                   </div>
-                  <p className="text-xs text-gray-500 mt-1">{progress.toFixed(1)}%</p>
+                  <p className="text-xs text-slate-500 mt-1">{progress.toFixed(1)}%</p>
                 </CardContent>
               </Card>
             );
@@ -463,37 +463,37 @@ export default function MonitoringPage() {
         <CardContent>
           {actualCosts.length === 0 ? (
             <div className="text-center py-10">
-              <Activity className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-              <p className="text-gray-500 font-medium">Nessun costo effettivo registrato</p>
-              <p className="text-sm text-gray-400 mt-1">Clicca &ldquo;Registra Costo&rdquo; per iniziare il monitoraggio</p>
+              <Activity className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+              <p className="text-slate-500 font-medium">Nessun costo effettivo registrato</p>
+              <p className="text-sm text-slate-400 mt-1">Clicca &ldquo;Registra Costo&rdquo; per iniziare il monitoraggio</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-gray-200">
-                    <th className="text-left py-3 px-4 font-medium text-gray-600">Data</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600">Categoria</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600">Descrizione</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600">Nr. Fattura</th>
-                    <th className="text-right py-3 px-4 font-medium text-gray-600">Importo</th>
-                    <th className="text-center py-3 px-4 font-medium text-gray-600">Azioni</th>
+                  <tr className="border-b border-slate-200">
+                    <th className="text-left py-3 px-4 font-medium text-slate-600">Data</th>
+                    <th className="text-left py-3 px-4 font-medium text-slate-600">Categoria</th>
+                    <th className="text-left py-3 px-4 font-medium text-slate-600">Descrizione</th>
+                    <th className="text-left py-3 px-4 font-medium text-slate-600">Nr. Fattura</th>
+                    <th className="text-right py-3 px-4 font-medium text-slate-600">Importo</th>
+                    <th className="text-center py-3 px-4 font-medium text-slate-600">Azioni</th>
                   </tr>
                 </thead>
                 <tbody>
                   {actualCosts.map((cost) => (
-                    <tr key={cost.id} className="border-b border-gray-100 hover:bg-gray-50">
-                      <td className="py-3 px-4 text-gray-700">
+                    <tr key={cost.id} className="border-b border-slate-100 hover:bg-slate-50">
+                      <td className="py-3 px-4 text-slate-700">
                         {cost.date ? formatDate(cost.date) : '—'}
                       </td>
                       <td className="py-3 px-4">
-                        <span className="inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+                        <span className="inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-700">
                           {REFERENCE_LABELS[cost.reference_type]}
                         </span>
                       </td>
-                      <td className="py-3 px-4 text-gray-900">{cost.description}</td>
-                      <td className="py-3 px-4 text-gray-500">{cost.invoice_number || '—'}</td>
-                      <td className="py-3 px-4 text-right font-semibold text-gray-900">
+                      <td className="py-3 px-4 text-slate-900">{cost.description}</td>
+                      <td className="py-3 px-4 text-slate-500">{cost.invoice_number || '—'}</td>
+                      <td className="py-3 px-4 text-right font-semibold text-slate-900">
                         {formatCurrency(cost.amount)}
                       </td>
                       <td className="py-3 px-4 text-center">

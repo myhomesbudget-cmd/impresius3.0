@@ -40,7 +40,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   return (
     <>
       {/* Navigation */}
-      <nav className="flex-1 px-3 py-6 space-y-1">
+      <nav className="flex-1 px-3 py-6 space-y-0.5">
         {navItems.map((item) => {
           const isActive =
             pathname === item.href ||
@@ -59,13 +59,23 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
               href={item.href}
               onClick={onNavigate}
               className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+                "sidebar-nav-item",
                 isActive
-                  ? "bg-blue-50 text-blue-700"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                  ? "sidebar-nav-item-active"
+                  : "sidebar-nav-item-inactive"
               )}
             >
-              <item.icon className={cn("w-5 h-5", isActive ? "text-blue-600" : "text-gray-400")} />
+              <div className={cn(
+                "icon-container icon-container-sm rounded-lg",
+                isActive
+                  ? "bg-blue-600/10"
+                  : "bg-slate-100"
+              )}>
+                <item.icon className={cn(
+                  "w-4 h-4",
+                  isActive ? "text-blue-600" : "text-slate-500"
+                )} />
+              </div>
               {item.label}
             </Link>
           );
@@ -73,12 +83,14 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
       </nav>
 
       {/* Bottom section */}
-      <div className="px-3 py-4 border-t border-gray-100">
+      <div className="px-3 py-4 border-t border-slate-100">
         <button
           onClick={handleLogout}
-          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-red-50 hover:text-red-600 transition-colors w-full"
+          className="sidebar-nav-item sidebar-nav-item-inactive hover:!bg-red-50 hover:!text-red-600 w-full"
         >
-          <LogOut className="w-5 h-5 text-gray-400" />
+          <div className="icon-container icon-container-sm rounded-lg bg-slate-100">
+            <LogOut className="w-4 h-4 text-slate-400" />
+          </div>
           Esci
         </button>
       </div>
@@ -92,13 +104,17 @@ export function Sidebar() {
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className="hidden md:flex fixed left-0 top-0 h-full w-64 bg-white border-r border-gray-200 flex-col z-40">
-        <div className="h-16 flex items-center px-6 border-b border-gray-100">
-          <Link href="/dashboard" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-              <Building2 className="w-4 h-4 text-white" />
+      <aside className="hidden md:flex fixed left-0 top-0 h-full w-64 bg-white border-r border-slate-200/80 flex-col z-40">
+        {/* Logo Area */}
+        <div className="h-16 flex items-center px-5 border-b border-slate-100">
+          <Link href="/dashboard" className="flex items-center gap-2.5">
+            <div className="w-9 h-9 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-[0_2px_8px_rgb(37_99_235/0.35)]">
+              <Building2 className="w-4.5 h-4.5 text-white" />
             </div>
-            <span className="text-lg font-bold text-gradient">Impresius</span>
+            <div className="flex flex-col">
+              <span className="text-[1.05rem] font-extrabold text-gradient leading-tight">Impresius</span>
+              <span className="text-[0.6rem] font-medium text-slate-400 uppercase tracking-[0.12em]">Pro Platform</span>
+            </div>
           </Link>
         </div>
         <SidebarContent />
@@ -107,7 +123,7 @@ export function Sidebar() {
       {/* Mobile overlay */}
       {isOpen && (
         <div
-          className="md:hidden fixed inset-0 bg-black/50 z-40"
+          className="md:hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-40 transition-opacity"
           onClick={close}
         />
       )}
@@ -115,19 +131,22 @@ export function Sidebar() {
       {/* Mobile drawer */}
       <aside
         className={cn(
-          "md:hidden fixed left-0 top-0 h-full w-72 bg-white border-r border-gray-200 flex flex-col z-50 transition-transform duration-300 ease-in-out",
+          "md:hidden fixed left-0 top-0 h-full w-72 bg-white border-r border-slate-200/80 flex flex-col z-50 transition-transform duration-300 ease-in-out shadow-2xl",
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
-        <div className="h-16 flex items-center justify-between px-6 border-b border-gray-100">
-          <Link href="/dashboard" className="flex items-center gap-2" onClick={close}>
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-              <Building2 className="w-4 h-4 text-white" />
+        <div className="h-16 flex items-center justify-between px-5 border-b border-slate-100">
+          <Link href="/dashboard" className="flex items-center gap-2.5" onClick={close}>
+            <div className="w-9 h-9 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-[0_2px_8px_rgb(37_99_235/0.35)]">
+              <Building2 className="w-4.5 h-4.5 text-white" />
             </div>
-            <span className="text-lg font-bold text-gradient">Impresius</span>
+            <div className="flex flex-col">
+              <span className="text-[1.05rem] font-extrabold text-gradient leading-tight">Impresius</span>
+              <span className="text-[0.6rem] font-medium text-slate-400 uppercase tracking-[0.12em]">Pro Platform</span>
+            </div>
           </Link>
-          <button onClick={close} className="p-1 rounded-lg hover:bg-gray-100 transition-colors">
-            <X className="w-5 h-5 text-gray-500" />
+          <button onClick={close} className="p-2 rounded-lg hover:bg-slate-100 transition-colors">
+            <X className="w-5 h-5 text-slate-500" />
           </button>
         </div>
         <SidebarContent onNavigate={close} />
