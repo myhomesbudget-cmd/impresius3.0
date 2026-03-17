@@ -61,6 +61,9 @@ export default function ValuationPage() {
 
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const globalPriceDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Keep a ref to the latest units to avoid stale closures in debounced saves
+  const unitsRef = useRef<UnitWithSurfaces[]>(units);
+  useEffect(() => { unitsRef.current = units; }, [units]);
 
   // Track which units had their market_price_sqm manually set
   const customPriceUnitsRef = useRef<Set<string>>(new Set());
@@ -115,6 +118,19 @@ export default function ValuationPage() {
     setLoading(false);
   }
 
+  // Flush pending save when navigating away
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+        debounceRef.current = null;
+        // Fire save synchronously with latest data
+        persistAll();
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // ---- auto-save helpers ----
   function triggerSave() {
     if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -128,8 +144,9 @@ export default function ValuationPage() {
     setSaved(false);
 
     const promises: PromiseLike<unknown>[] = [];
+    const currentUnits = unitsRef.current;
 
-    for (const unit of units) {
+    for (const unit of currentUnits) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { surfaces, ...unitData } = unit;
       promises.push(
@@ -404,7 +421,7 @@ export default function ValuationPage() {
                 className="pr-16"
               />
               <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">
-                EUR/mq
+                €/mq
               </span>
             </div>
             {globalPrice > 0 && (
@@ -507,7 +524,7 @@ export default function ValuationPage() {
                     {/* Market price per unit */}
                     <div>
                       <label className="block text-xs font-medium text-gray-500 mb-1">
-                        Prezzo EUR/mq
+                        Prezzo €/mq
                       </label>
                       <div className="relative">
                         <Input
@@ -524,7 +541,7 @@ export default function ValuationPage() {
                           className="pr-16"
                         />
                         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">
-                          EUR/mq
+                          €/mq
                         </span>
                       </div>
                     </div>
@@ -583,10 +600,10 @@ export default function ValuationPage() {
                           Sup. Ragguagliata
                         </th>
                         <th className="text-right py-2 px-2 font-medium text-gray-500 text-xs w-28">
-                          Prezzo EUR/mq
+                          Prezzo €/mq
                         </th>
                         <th className="text-right py-2 px-2 font-medium text-gray-500 text-xs w-32">
-                          Valore EUR
+                          Valore €
                         </th>
                         <th className="w-8" />
                       </tr>
@@ -847,7 +864,7 @@ export default function ValuationPage() {
                             }
                           />
                           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">
-                            EUR
+                            €
                           </span>
                         </div>
                       </div>
