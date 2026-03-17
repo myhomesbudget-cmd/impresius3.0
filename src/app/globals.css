@@ -91,12 +91,12 @@ html {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  background-image: url('/images/hero-bg-mobile.jpg');
+  background-image: url('/hero-bg-mobile.jpg');
 }
 
 @media (min-width: 768px) {
   .hero-bg {
-    background-image: url('/images/hero-bg-desktop.jpg');
+    background-image: url('/hero-bg-desktop.jpg');
   }
 }
 
