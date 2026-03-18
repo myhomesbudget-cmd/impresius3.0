@@ -64,8 +64,8 @@ const getCategoryLabel = (value: string) => {
 function CustomTooltip({ active, payload, label }: { active?: boolean; payload?: Array<{ name: string; value: number; color: string }>; label?: string }) {
   if (!active || !payload) return null;
   return (
-    <div className="bg-white border border-slate-200 rounded-lg shadow-lg p-3 text-xs">
-      {label && <p className="font-semibold text-slate-700 mb-1">{label}</p>}
+    <div className="bg-white border border-border rounded-lg shadow-lg p-3 text-xs">
+      {label && <p className="font-semibold text-foreground mb-1">{label}</p>}
       {payload.map((entry, idx) => (
         <p key={idx} style={{ color: entry.color }} className="font-medium">
           {entry.name}: {formatCurrency(entry.value)}
@@ -122,8 +122,8 @@ export default function ReportPage() {
     return (
       <div className="p-4 md:p-8 max-w-5xl mx-auto flex items-center justify-center min-h-[60vh]">
         <div className="flex flex-col items-center gap-3">
-          <Loader2 className="w-8 h-8 animate-spin text-slate-400" />
-          <p className="text-sm text-slate-500">Caricamento report...</p>
+          <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+          <p className="text-sm text-muted-foreground">Caricamento report...</p>
         </div>
       </div>
     );
@@ -229,7 +229,7 @@ export default function ReportPage() {
         </div>
 
         {/* ============ REPORT CONTENT ============ */}
-        <div id="report-content" className="bg-white text-black rounded-2xl shadow-xl overflow-hidden border border-slate-200">
+        <div id="report-content" className="bg-white text-black rounded-2xl shadow-xl overflow-hidden border border-border">
 
           {/* ======= COVER PAGE ======= */}
           <div className="relative overflow-hidden">
@@ -244,21 +244,21 @@ export default function ReportPage() {
                 </div>
                 <div>
                   <span className="text-xl font-extrabold text-gradient leading-tight">Impresius</span>
-                  <span className="block text-[0.6rem] font-semibold text-slate-400 uppercase tracking-[0.15em]">Report Operazione Immobiliare</span>
+                  <span className="block text-[0.6rem] font-semibold text-muted-foreground uppercase tracking-[0.15em]">Report Operazione Immobiliare</span>
                 </div>
               </div>
 
               {/* Project Title */}
-              <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight mb-3">
+              <h1 className="text-3xl md:text-4xl font-extrabold text-foreground tracking-tight mb-3">
                 {project.name}
               </h1>
 
               {project.description && (
-                <p className="text-base text-slate-500 mb-6 max-w-2xl leading-relaxed">{project.description}</p>
+                <p className="text-base text-muted-foreground mb-6 max-w-2xl leading-relaxed">{project.description}</p>
               )}
 
               {/* Project Meta */}
-              <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-slate-600 mb-8">
+              <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground mb-8">
                 {(project.location_city || project.location_province) && (
                   <span className="flex items-center gap-1.5">
                     <MapPin className="w-4 h-4 text-blue-500" />
@@ -279,11 +279,11 @@ export default function ReportPage() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="rounded-xl p-4 border-l-4 border-blue-500" style={{ background: 'linear-gradient(135deg, #eff6ff 0%, #eef2ff 100%)' }}>
                   <p className="text-[0.65rem] font-bold text-blue-600 uppercase tracking-wider mb-1">Costo Totale</p>
-                  <p className="text-lg font-extrabold text-slate-900">{formatCurrency(results.total_cost)}</p>
+                  <p className="text-lg font-extrabold text-foreground">{formatCurrency(results.total_cost)}</p>
                 </div>
                 <div className="rounded-xl p-4 border-l-4 border-emerald-500" style={{ background: 'linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%)' }}>
                   <p className="text-[0.65rem] font-bold text-emerald-600 uppercase tracking-wider mb-1">Ricavo Totale</p>
-                  <p className="text-lg font-extrabold text-slate-900">{formatCurrency(results.total_revenue)}</p>
+                  <p className="text-lg font-extrabold text-foreground">{formatCurrency(results.total_revenue)}</p>
                 </div>
                 <div className={cn(
                   "rounded-xl p-4 border-l-4",
@@ -294,7 +294,7 @@ export default function ReportPage() {
                 </div>
                 <div className="rounded-xl p-4 border-l-4 border-indigo-500" style={{ background: 'linear-gradient(135deg, #eef2ff 0%, #f5f3ff 100%)' }}>
                   <p className="text-[0.65rem] font-bold text-indigo-600 uppercase tracking-wider mb-1">ROI</p>
-                  <p className="text-lg font-extrabold text-slate-900">{formatPercentage(results.roi)}</p>
+                  <p className="text-lg font-extrabold text-foreground">{formatPercentage(results.roi)}</p>
                 </div>
               </div>
             </div>
@@ -305,7 +305,7 @@ export default function ReportPage() {
 
           {/* ======= CHARTS SECTION ======= */}
           <div className="px-8 md:px-12 py-8">
-            <h2 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
+            <h2 className="text-lg font-bold text-foreground mb-6 flex items-center gap-2">
               <span className="w-1 h-5 rounded-full" style={{ background: 'linear-gradient(to bottom, #2563eb, #4f46e5)' }} />
               Analisi Grafica
             </h2>
@@ -313,8 +313,8 @@ export default function ReportPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-2">
               {/* Pie Chart - Cost Breakdown */}
               {costBreakdownData.length > 0 && (
-                <div className="bg-slate-50/80 rounded-xl p-5 border border-slate-100">
-                  <h3 className="text-sm font-bold text-slate-700 mb-4 text-center">Composizione Costi</h3>
+                <div className="bg-muted/80 rounded-xl p-5 border border-border">
+                  <h3 className="text-sm font-bold text-foreground mb-4 text-center">Composizione Costi</h3>
                   <ResponsiveContainer width="100%" height={220}>
                     <PieChart>
                       <Pie
@@ -345,8 +345,8 @@ export default function ReportPage() {
               )}
 
               {/* Bar Chart - Costi vs Ricavi */}
-              <div className="bg-slate-50/80 rounded-xl p-5 border border-slate-100">
-                <h3 className="text-sm font-bold text-slate-700 mb-4 text-center">Costi vs Ricavi vs Margine</h3>
+              <div className="bg-muted/80 rounded-xl p-5 border border-border">
+                <h3 className="text-sm font-bold text-foreground mb-4 text-center">Costi vs Ricavi vs Margine</h3>
                 <ResponsiveContainer width="100%" height={220}>
                   <BarChart data={[
                     { name: 'Costi', value: results.total_cost },
@@ -368,8 +368,8 @@ export default function ReportPage() {
 
               {/* Pie Chart - Operation Cost by Section */}
               {operationSectionData.length > 0 && (
-                <div className="bg-slate-50/80 rounded-xl p-5 border border-slate-100">
-                  <h3 className="text-sm font-bold text-slate-700 mb-4 text-center">Costi Operativi per Sezione</h3>
+                <div className="bg-muted/80 rounded-xl p-5 border border-border">
+                  <h3 className="text-sm font-bold text-foreground mb-4 text-center">Costi Operativi per Sezione</h3>
                   <ResponsiveContainer width="100%" height={220}>
                     <PieChart>
                       <Pie
@@ -401,8 +401,8 @@ export default function ReportPage() {
 
               {/* Bar Chart - Construction by Floor */}
               {constructionFloorData.length > 0 && (
-                <div className="bg-slate-50/80 rounded-xl p-5 border border-slate-100">
-                  <h3 className="text-sm font-bold text-slate-700 mb-4 text-center">Lavori per Piano</h3>
+                <div className="bg-muted/80 rounded-xl p-5 border border-border">
+                  <h3 className="text-sm font-bold text-foreground mb-4 text-center">Lavori per Piano</h3>
                   <ResponsiveContainer width="100%" height={220}>
                     <BarChart data={constructionFloorData} barSize={32}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
@@ -430,34 +430,34 @@ export default function ReportPage() {
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)' }}>
-                  <th className="text-left py-3 px-4 font-bold text-slate-600 text-xs uppercase tracking-wider border-b-2 border-slate-200">Voce di Costo</th>
-                  <th className="text-right py-3 px-4 font-bold text-slate-600 text-xs uppercase tracking-wider border-b-2 border-slate-200">Importo</th>
+                  <th className="text-left py-3 px-4 font-bold text-muted-foreground text-xs uppercase tracking-wider border-b-2 border-border">Voce di Costo</th>
+                  <th className="text-right py-3 px-4 font-bold text-muted-foreground text-xs uppercase tracking-wider border-b-2 border-border">Importo</th>
                 </tr>
               </thead>
               <tbody>
-                <tr className="border-b border-slate-100 hover:bg-blue-50/30">
-                  <td className="py-2.5 px-4 text-slate-800 font-medium">
+                <tr className="border-b border-border hover:bg-blue-500/10">
+                  <td className="py-2.5 px-4 text-foreground font-medium">
                     <span className="inline-block w-2 h-2 rounded-full bg-blue-500 mr-2" />
                     Acquisizione Immobile
                   </td>
-                  <td className="py-2.5 px-4 text-right text-slate-800 font-semibold">{formatCurrency(results.total_acquisition_cost)}</td>
+                  <td className="py-2.5 px-4 text-right text-foreground font-semibold">{formatCurrency(results.total_acquisition_cost)}</td>
                 </tr>
                 {results.operation_cost_by_section.filter(s => s.total > 0).map((section) => (
-                  <tr key={section.section} className="border-b border-slate-100 hover:bg-amber-50/30">
-                    <td className="py-2.5 px-4 text-slate-800 font-medium">
+                  <tr key={section.section} className="border-b border-border hover:bg-amber-500/10">
+                    <td className="py-2.5 px-4 text-foreground font-medium">
                       <span className="inline-block w-2 h-2 rounded-full bg-amber-500 mr-2" />
                       {SECTION_LABELS[section.section] || section.section}
                     </td>
-                    <td className="py-2.5 px-4 text-right text-slate-800 font-semibold">{formatCurrency(section.total)}</td>
+                    <td className="py-2.5 px-4 text-right text-foreground font-semibold">{formatCurrency(section.total)}</td>
                   </tr>
                 ))}
                 {results.construction_by_floor.map((floor) => (
-                  <tr key={floor.floor} className="border-b border-slate-100 hover:bg-emerald-50/30">
-                    <td className="py-2.5 px-4 text-slate-800 font-medium">
+                  <tr key={floor.floor} className="border-b border-border hover:bg-emerald-500/10">
+                    <td className="py-2.5 px-4 text-foreground font-medium">
                       <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 mr-2" />
                       Lavori - {getFloorLabel(floor.floor)}
                     </td>
-                    <td className="py-2.5 px-4 text-right text-slate-800 font-semibold">{formatCurrency(floor.total)}</td>
+                    <td className="py-2.5 px-4 text-right text-foreground font-semibold">{formatCurrency(floor.total)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -479,24 +479,24 @@ export default function ReportPage() {
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)' }}>
-                  <th className="text-left py-3 px-4 font-bold text-slate-600 text-xs uppercase tracking-wider border-b-2 border-slate-200">Voce</th>
-                  <th className="text-center py-3 px-4 font-bold text-slate-600 text-xs uppercase tracking-wider border-b-2 border-slate-200">Tipo</th>
-                  <th className="text-right py-3 px-4 font-bold text-slate-600 text-xs uppercase tracking-wider border-b-2 border-slate-200">Importo</th>
+                  <th className="text-left py-3 px-4 font-bold text-muted-foreground text-xs uppercase tracking-wider border-b-2 border-border">Voce</th>
+                  <th className="text-center py-3 px-4 font-bold text-muted-foreground text-xs uppercase tracking-wider border-b-2 border-border">Tipo</th>
+                  <th className="text-right py-3 px-4 font-bold text-muted-foreground text-xs uppercase tracking-wider border-b-2 border-border">Importo</th>
                 </tr>
               </thead>
               <tbody>
                 {acquisitionCosts.map((cost) => (
-                  <tr key={cost.id} className="border-b border-slate-100">
-                    <td className="py-2.5 px-4 text-slate-800 font-medium">{cost.label}</td>
+                  <tr key={cost.id} className="border-b border-border">
+                    <td className="py-2.5 px-4 text-foreground font-medium">{cost.label}</td>
                     <td className="py-2.5 px-4 text-center">
                       <span className={cn(
                         "inline-flex items-center px-2 py-0.5 rounded-full text-[0.65rem] font-bold",
-                        cost.calculation_type === 'percentage' ? "bg-blue-50 text-blue-700" : "bg-slate-100 text-slate-600"
+                        cost.calculation_type === 'percentage' ? "bg-blue-500/10 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400" : "bg-muted text-muted-foreground"
                       )}>
                         {cost.calculation_type === 'percentage' ? `${formatNumber(cost.percentage)}%` : 'Fisso'}
                       </span>
                     </td>
-                    <td className="py-2.5 px-4 text-right text-slate-800 font-semibold">{formatCurrency(calculateAcquisitionAmount(cost))}</td>
+                    <td className="py-2.5 px-4 text-right text-foreground font-semibold">{formatCurrency(calculateAcquisitionAmount(cost))}</td>
                   </tr>
                 ))}
               </tbody>
@@ -522,20 +522,20 @@ export default function ReportPage() {
 
               return (
                 <div key={section.value} className="mb-6">
-                  <h4 className="text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider pl-4 border-l-3 border-amber-400" style={{ borderLeftWidth: '3px', borderLeftColor: '#f59e0b' }}>
+                  <h4 className="text-xs font-bold text-muted-foreground mb-2 uppercase tracking-wider pl-4 border-l-3 border-amber-400" style={{ borderLeftWidth: '3px', borderLeftColor: '#f59e0b' }}>
                     {SECTION_LABELS[section.value]}
                   </h4>
                   <table className="w-full text-sm border-collapse mb-2">
                     <tbody>
                       {sectionCosts.map((cost) => (
-                        <tr key={cost.id} className="border-b border-slate-100">
-                          <td className="py-2 px-4 text-slate-700">{cost.label}</td>
-                          <td className="py-2 px-4 text-right text-slate-800 font-semibold">{formatCurrency(calculateOperationAmount(cost))}</td>
+                        <tr key={cost.id} className="border-b border-border">
+                          <td className="py-2 px-4 text-foreground">{cost.label}</td>
+                          <td className="py-2 px-4 text-right text-foreground font-semibold">{formatCurrency(calculateOperationAmount(cost))}</td>
                         </tr>
                       ))}
                     </tbody>
                     <tfoot>
-                      <tr className="bg-amber-50/50">
+                      <tr className="bg-amber-500/10 dark:bg-amber-500/20">
                         <td className="py-2 px-4 text-amber-800 font-bold text-xs">Subtotale</td>
                         <td className="py-2 px-4 text-right text-amber-800 font-bold">{formatCurrency(sectionTotal)}</td>
                       </tr>
@@ -566,19 +566,19 @@ export default function ReportPage() {
 
               return (
                 <div key={floor.value} className="mb-6">
-                  <h4 className="text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider pl-4" style={{ borderLeftWidth: '3px', borderLeftColor: '#10b981' }}>
+                  <h4 className="text-xs font-bold text-muted-foreground mb-2 uppercase tracking-wider pl-4" style={{ borderLeftWidth: '3px', borderLeftColor: '#10b981' }}>
                     {floor.label}
                   </h4>
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm border-collapse mb-2">
                       <thead>
-                        <tr className="bg-slate-50">
-                          <th className="text-left py-2 px-3 font-semibold text-slate-500 text-[0.65rem] uppercase tracking-wider border-b border-slate-200">Lavorazione</th>
-                          <th className="text-left py-2 px-3 font-semibold text-slate-500 text-[0.65rem] uppercase tracking-wider border-b border-slate-200">Categoria</th>
-                          <th className="text-center py-2 px-3 font-semibold text-slate-500 text-[0.65rem] uppercase tracking-wider border-b border-slate-200">U.M.</th>
-                          <th className="text-right py-2 px-3 font-semibold text-slate-500 text-[0.65rem] uppercase tracking-wider border-b border-slate-200">Qta</th>
-                          <th className="text-right py-2 px-3 font-semibold text-slate-500 text-[0.65rem] uppercase tracking-wider border-b border-slate-200">P.U.</th>
-                          <th className="text-right py-2 px-3 font-semibold text-slate-500 text-[0.65rem] uppercase tracking-wider border-b border-slate-200">Totale</th>
+                        <tr className="bg-muted">
+                          <th className="text-left py-2 px-3 font-semibold text-muted-foreground text-[0.65rem] uppercase tracking-wider border-b border-border">Lavorazione</th>
+                          <th className="text-left py-2 px-3 font-semibold text-muted-foreground text-[0.65rem] uppercase tracking-wider border-b border-border">Categoria</th>
+                          <th className="text-center py-2 px-3 font-semibold text-muted-foreground text-[0.65rem] uppercase tracking-wider border-b border-border">U.M.</th>
+                          <th className="text-right py-2 px-3 font-semibold text-muted-foreground text-[0.65rem] uppercase tracking-wider border-b border-border">Qta</th>
+                          <th className="text-right py-2 px-3 font-semibold text-muted-foreground text-[0.65rem] uppercase tracking-wider border-b border-border">P.U.</th>
+                          <th className="text-right py-2 px-3 font-semibold text-muted-foreground text-[0.65rem] uppercase tracking-wider border-b border-border">Totale</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -587,19 +587,19 @@ export default function ReportPage() {
                           const qty = calculateItemQuantity(itemMeas);
                           const total = calculateItemTotal(item, itemMeas);
                           return (
-                            <tr key={item.id} className="border-b border-slate-100">
-                              <td className="py-1.5 px-3 text-slate-800 font-medium">{item.title}</td>
-                              <td className="py-1.5 px-3 text-slate-500 text-xs">{getCategoryLabel(item.category)}</td>
-                              <td className="py-1.5 px-3 text-center text-slate-500 text-xs">{item.unit_of_measure}</td>
-                              <td className="py-1.5 px-3 text-right text-slate-800">{formatNumber(qty)}</td>
-                              <td className="py-1.5 px-3 text-right text-slate-800">{formatCurrency(item.unit_price)}</td>
-                              <td className="py-1.5 px-3 text-right text-slate-800 font-semibold">{formatCurrency(total)}</td>
+                            <tr key={item.id} className="border-b border-border">
+                              <td className="py-1.5 px-3 text-foreground font-medium">{item.title}</td>
+                              <td className="py-1.5 px-3 text-muted-foreground text-xs">{getCategoryLabel(item.category)}</td>
+                              <td className="py-1.5 px-3 text-center text-muted-foreground text-xs">{item.unit_of_measure}</td>
+                              <td className="py-1.5 px-3 text-right text-foreground">{formatNumber(qty)}</td>
+                              <td className="py-1.5 px-3 text-right text-foreground">{formatCurrency(item.unit_price)}</td>
+                              <td className="py-1.5 px-3 text-right text-foreground font-semibold">{formatCurrency(total)}</td>
                             </tr>
                           );
                         })}
                       </tbody>
                       <tfoot>
-                        <tr className="bg-emerald-50/50">
+                        <tr className="bg-emerald-500/10 dark:bg-emerald-500/20">
                           <td colSpan={5} className="py-2 px-3 text-emerald-800 font-bold text-xs">Subtotale {floor.label}</td>
                           <td className="py-2 px-3 text-right text-emerald-800 font-bold">{formatCurrency(floorTotal)}</td>
                         </tr>
@@ -624,21 +624,21 @@ export default function ReportPage() {
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)' }}>
-                  <th className="text-left py-3 px-4 font-bold text-slate-600 text-xs uppercase tracking-wider border-b-2 border-slate-200">Unita</th>
-                  <th className="text-left py-3 px-4 font-bold text-slate-600 text-xs uppercase tracking-wider border-b-2 border-slate-200">Piano</th>
-                  <th className="text-right py-3 px-4 font-bold text-slate-600 text-xs uppercase tracking-wider border-b-2 border-slate-200">Sup. Ragg.</th>
-                  <th className="text-right py-3 px-4 font-bold text-slate-600 text-xs uppercase tracking-wider border-b-2 border-slate-200">Val. Calcolato</th>
-                  <th className="text-right py-3 px-4 font-bold text-slate-600 text-xs uppercase tracking-wider border-b-2 border-slate-200">Prezzo Vendita</th>
+                  <th className="text-left py-3 px-4 font-bold text-muted-foreground text-xs uppercase tracking-wider border-b-2 border-border">Unita</th>
+                  <th className="text-left py-3 px-4 font-bold text-muted-foreground text-xs uppercase tracking-wider border-b-2 border-border">Piano</th>
+                  <th className="text-right py-3 px-4 font-bold text-muted-foreground text-xs uppercase tracking-wider border-b-2 border-border">Sup. Ragg.</th>
+                  <th className="text-right py-3 px-4 font-bold text-muted-foreground text-xs uppercase tracking-wider border-b-2 border-border">Val. Calcolato</th>
+                  <th className="text-right py-3 px-4 font-bold text-muted-foreground text-xs uppercase tracking-wider border-b-2 border-border">Prezzo Vendita</th>
                 </tr>
               </thead>
               <tbody>
                 {results.units_summary.map((unit, idx) => (
-                  <tr key={idx} className="border-b border-slate-100">
-                    <td className="py-2.5 px-4 text-slate-800 font-semibold">{unit.name}</td>
-                    <td className="py-2.5 px-4 text-slate-600">{getFloorLabel(unit.floor)}</td>
-                    <td className="py-2.5 px-4 text-right text-slate-800">{formatNumber(unit.adjusted_surface)} mq</td>
-                    <td className="py-2.5 px-4 text-right text-slate-600">{formatCurrency(unit.calculated_value)}</td>
-                    <td className="py-2.5 px-4 text-right text-slate-800 font-bold">{formatCurrency(unit.target_price)}</td>
+                  <tr key={idx} className="border-b border-border">
+                    <td className="py-2.5 px-4 text-foreground font-semibold">{unit.name}</td>
+                    <td className="py-2.5 px-4 text-muted-foreground">{getFloorLabel(unit.floor)}</td>
+                    <td className="py-2.5 px-4 text-right text-foreground">{formatNumber(unit.adjusted_surface)} mq</td>
+                    <td className="py-2.5 px-4 text-right text-muted-foreground">{formatCurrency(unit.calculated_value)}</td>
+                    <td className="py-2.5 px-4 text-right text-foreground font-bold">{formatCurrency(unit.target_price)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -678,7 +678,7 @@ export default function ReportPage() {
             </div>
 
             <div className="mt-6">
-              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Incidenza sui Costi Totali</h4>
+              <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">Incidenza sui Costi Totali</h4>
               <div className="space-y-3">
                 <IncidenceBar label="Acquisizione" value={results.acquisition_incidence} color="#2563eb" />
                 <IncidenceBar label="Costi Operativi" value={results.operation_incidence} color="#f59e0b" />
@@ -689,14 +689,14 @@ export default function ReportPage() {
 
           {/* ======= FOOTER ======= */}
           <div className="h-1" style={{ background: 'linear-gradient(to right, #2563eb, #4f46e5, #7c3aed)' }} />
-          <div className="px-8 md:px-12 py-4 flex items-center justify-between bg-slate-50/80">
+          <div className="px-8 md:px-12 py-4 flex items-center justify-between bg-muted/80">
             <div className="flex items-center gap-2">
               <div className="w-5 h-5 icon-gradient rounded flex items-center justify-center">
                 <Building2 className="w-3 h-3 text-white" />
               </div>
               <span className="text-xs font-bold text-gradient">Impresius</span>
             </div>
-            <p className="text-[0.6rem] text-slate-400 font-medium">
+            <p className="text-[0.6rem] text-muted-foreground font-medium">
               Report generato il {reportDate} &middot; Documento riservato
             </p>
           </div>
@@ -717,16 +717,16 @@ function SectionHeader({ number, title, color }: { number: string; title: string
       >
         {number}
       </span>
-      <h3 className="text-lg font-bold text-slate-900">{title}</h3>
+      <h3 className="text-lg font-bold text-foreground">{title}</h3>
     </div>
   );
 }
 
 function IndicatorCard({ label, value, color, accent }: { label: string; value: string; color: string; accent: string }) {
   return (
-    <div className="rounded-xl p-4 border border-slate-100" style={{ background: accent, borderLeftWidth: '4px', borderLeftColor: color }}>
+    <div className="rounded-xl p-4 border border-border" style={{ background: accent, borderLeftWidth: '4px', borderLeftColor: color }}>
       <p className="text-[0.65rem] font-bold uppercase tracking-wider mb-1" style={{ color }}>{label}</p>
-      <p className="text-lg font-extrabold text-slate-900">{value}</p>
+      <p className="text-lg font-extrabold text-foreground">{value}</p>
     </div>
   );
 }
@@ -735,10 +735,10 @@ function IncidenceBar({ label, value, color }: { label: string; value: number; c
   return (
     <div>
       <div className="flex justify-between text-xs mb-1">
-        <span className="font-semibold text-slate-600">{label}</span>
+        <span className="font-semibold text-muted-foreground">{label}</span>
         <span className="font-bold" style={{ color }}>{formatPercentage(value)}</span>
       </div>
-      <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden">
+      <div className="h-2.5 bg-muted rounded-full overflow-hidden">
         <div
           className="h-full rounded-full transition-all duration-500"
           style={{ width: `${Math.min(value, 100)}%`, background: color }}

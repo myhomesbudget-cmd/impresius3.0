@@ -50,14 +50,14 @@ export default function UpdatePasswordPage() {
     return (
       <div className="min-h-screen relative flex items-center justify-center p-4">
         <div className="w-full max-w-md text-center">
-          <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-xl border border-slate-100 p-8">
+          <div className="bg-card/90 backdrop-blur-md rounded-2xl shadow-xl border border-border p-8">
             <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <CheckCircle2 className="w-8 h-8 text-emerald-600" />
             </div>
-            <h1 className="text-2xl font-bold text-slate-900 mb-2">
+            <h1 className="text-2xl font-bold text-foreground mb-2">
               Password aggiornata
             </h1>
-            <p className="text-slate-500 text-sm">
+            <p className="text-muted-foreground text-sm">
               La tua password è stata aggiornata con successo.
             </p>
             <Link href="/dashboard">
@@ -83,11 +83,11 @@ export default function UpdatePasswordPage() {
         </Link>
 
         {/* Card */}
-        <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-xl border border-slate-100 p-8">
-          <h1 className="text-2xl font-bold text-slate-900 text-center mb-2">
+        <div className="bg-card/90 backdrop-blur-md rounded-2xl shadow-xl border border-border p-8">
+          <h1 className="text-2xl font-bold text-foreground text-center mb-2">
             Nuova Password
           </h1>
-          <p className="text-slate-500 text-center text-sm mb-8">
+          <p className="text-muted-foreground text-center text-sm mb-8">
             Scegli una nuova password per il tuo account
           </p>
 

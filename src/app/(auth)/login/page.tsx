@@ -51,11 +51,11 @@ function LoginForm() {
         </Link>
 
         {/* Card */}
-        <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-xl border border-slate-100 p-8">
-          <h1 className="text-2xl font-bold text-slate-900 text-center mb-2">
+        <div className="bg-card/90 backdrop-blur-md rounded-2xl shadow-xl border border-border p-8">
+          <h1 className="text-2xl font-bold text-foreground text-center mb-2">
             Bentornato
           </h1>
-          <p className="text-slate-500 text-center text-sm mb-8">
+          <p className="text-muted-foreground text-center text-sm mb-8">
             Accedi al tuo account per gestire i tuoi piani
           </p>
 
@@ -120,7 +120,7 @@ function LoginForm() {
           </form>
         </div>
 
-        <p className="text-center text-sm text-slate-500 mt-6">
+        <p className="text-center text-sm text-muted-foreground mt-6">
           Non hai un account?{" "}
           <Link href="/register" className="text-blue-600 font-medium hover:text-blue-700">
             Registrati gratis

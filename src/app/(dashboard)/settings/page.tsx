@@ -25,8 +25,8 @@ const planLabels: Record<string, string> = {
 };
 
 const planColors: Record<string, string> = {
-  free: 'bg-slate-50 text-slate-700 border border-slate-200',
-  premium: 'bg-amber-50 text-amber-700 border border-amber-200',
+  free: 'bg-muted text-foreground border border-border',
+  premium: 'bg-amber-500/10 dark:bg-amber-500/200/10 dark:bg-amber-500/10 dark:bg-amber-500/200/20 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800',
 };
 
 export default function SettingsPage() {
@@ -126,7 +126,7 @@ export default function SettingsPage() {
   if (loading) {
     return (
       <div className="p-4 md:p-8 max-w-3xl mx-auto flex items-center justify-center min-h-[50vh]">
-        <Loader2 className="w-6 h-6 animate-spin text-slate-400" />
+        <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
       </div>
     );
   }
@@ -155,7 +155,7 @@ export default function SettingsPage() {
         <Card>
           <CardHeader>
             <div className="flex items-center gap-2.5">
-              <div className="icon-container icon-container-sm rounded-lg bg-blue-50">
+              <div className="icon-container icon-container-sm rounded-lg bg-blue-500/10 dark:bg-blue-500/20">
                 <User className="w-4 h-4 text-blue-600" />
               </div>
               <CardTitle>Profilo Personale</CardTitle>
@@ -163,11 +163,11 @@ export default function SettingsPage() {
           </CardHeader>
           <CardContent className="space-y-5">
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">
+              <label className="block text-sm font-semibold text-foreground mb-2">
                 Nome completo
               </label>
               <div className="relative">
-                <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
@@ -178,11 +178,11 @@ export default function SettingsPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">
+              <label className="block text-sm font-semibold text-foreground mb-2">
                 Azienda
               </label>
               <div className="relative">
-                <Building className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <Building className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   value={companyName}
                   onChange={(e) => setCompanyName(e.target.value)}
@@ -193,11 +193,11 @@ export default function SettingsPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">
+              <label className="block text-sm font-semibold text-foreground mb-2">
                 Telefono
               </label>
               <div className="relative">
-                <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
@@ -208,21 +208,21 @@ export default function SettingsPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">
+              <label className="block text-sm font-semibold text-foreground mb-2">
                 Email
               </label>
               <div className="relative">
-                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   value={userEmail}
                   readOnly
                   disabled
-                  className="pl-10 bg-slate-50"
+                  className="pl-10 bg-muted"
                 />
               </div>
             </div>
 
-            <div className="flex items-center gap-3 pt-3 border-t border-slate-100">
+            <div className="flex items-center gap-3 pt-3 border-t border-border">
               <Button onClick={handleSaveProfile} disabled={saving} className="gap-2">
                 {saving ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -246,15 +246,15 @@ export default function SettingsPage() {
         <Card>
           <CardHeader>
             <div className="flex items-center gap-2.5">
-              <div className="icon-container icon-container-sm rounded-lg bg-amber-50">
+              <div className="icon-container icon-container-sm rounded-lg bg-amber-500/10 dark:bg-amber-500/20">
                 <Crown className="w-4 h-4 text-amber-600" />
               </div>
               <CardTitle>Piano e Abbonamento</CardTitle>
             </div>
           </CardHeader>
           <CardContent className="space-y-5">
-            <div className="flex items-center justify-between py-3 px-4 rounded-xl bg-slate-50 border border-slate-100">
-              <span className="text-sm font-semibold text-slate-700">
+            <div className="flex items-center justify-between py-3 px-4 rounded-xl bg-muted border border-border">
+              <span className="text-sm font-semibold text-foreground">
                 Piano attuale
               </span>
               <span
@@ -270,8 +270,8 @@ export default function SettingsPage() {
             </div>
 
             {profile?.subscription_plan === 'free' && (
-              <div className="flex items-center justify-between py-3 px-4 rounded-xl bg-slate-50 border border-slate-100">
-                <span className="text-sm font-semibold text-slate-700">
+              <div className="flex items-center justify-between py-3 px-4 rounded-xl bg-muted border border-border">
+                <span className="text-sm font-semibold text-foreground">
                   Piano gratuito utilizzato
                 </span>
                 <span
@@ -288,11 +288,11 @@ export default function SettingsPage() {
 
             {profile?.subscription_plan === 'premium' &&
               profile.subscription_expires_at && (
-                <div className="flex items-center justify-between py-3 px-4 rounded-xl bg-slate-50 border border-slate-100">
-                  <span className="text-sm font-semibold text-slate-700">
+                <div className="flex items-center justify-between py-3 px-4 rounded-xl bg-muted border border-border">
+                  <span className="text-sm font-semibold text-foreground">
                     Scadenza abbonamento
                   </span>
-                  <span className="text-sm font-medium text-slate-600">
+                  <span className="text-sm font-medium text-muted-foreground">
                     {formatDate(profile.subscription_expires_at)}
                   </span>
                 </div>
@@ -320,8 +320,8 @@ export default function SettingsPage() {
         <Card>
           <CardHeader>
             <div className="flex items-center gap-2.5">
-              <div className="icon-container icon-container-sm rounded-lg bg-slate-100">
-                <Shield className="w-4 h-4 text-slate-600" />
+              <div className="icon-container icon-container-sm rounded-lg bg-muted">
+                <Shield className="w-4 h-4 text-muted-foreground" />
               </div>
               <CardTitle>Account</CardTitle>
             </div>
@@ -338,16 +338,16 @@ export default function SettingsPage() {
                   </span>
                 )}
               </div>
-              <p className="mt-2 text-xs text-slate-500">
+              <p className="mt-2 text-xs text-muted-foreground">
                 Riceverai un&apos;email con il link per reimpostare la password.
               </p>
             </div>
 
-            <div className="border-t border-slate-100 pt-5">
+            <div className="border-t border-border pt-5">
               <Button variant="outline" disabled className="text-red-500 gap-2">
                 Elimina Account
               </Button>
-              <p className="mt-2 text-xs text-slate-500">
+              <p className="mt-2 text-xs text-muted-foreground">
                 Per eliminare il tuo account, contattaci all&apos;indirizzo{' '}
                 <a
                   href="mailto:supporto@impresius.com"

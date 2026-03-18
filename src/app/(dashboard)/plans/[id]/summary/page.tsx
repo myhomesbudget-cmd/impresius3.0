@@ -108,10 +108,10 @@ export default function SummaryPage() {
 
   const marginIconBg =
     results.margin_percentage > 15
-      ? 'bg-emerald-50'
+      ? 'bg-emerald-500/10 dark:bg-emerald-500/20'
       : results.margin_percentage >= 5
-        ? 'bg-amber-50'
-        : 'bg-red-50';
+        ? 'bg-amber-500/10 dark:bg-amber-500/20'
+        : 'bg-red-500/10 dark:bg-red-500/20';
 
   const getFloorLabel = (floorValue: string) => {
     const floor = FLOORS.find((f) => f.value === floorValue);
@@ -154,8 +154,8 @@ export default function SummaryPage() {
       {/* Section 1: Indicatori Principali */}
       <div className="mb-10">
         <div className="section-header">
-          <div className="icon-container icon-container-sm rounded-lg bg-slate-100">
-            <Target className="w-4 h-4 text-slate-600" />
+          <div className="icon-container icon-container-sm rounded-lg bg-muted">
+            <Target className="w-4 h-4 text-muted-foreground" />
           </div>
           <h2 className="section-header-title">Indicatori Principali</h2>
         </div>
@@ -195,7 +195,7 @@ export default function SummaryPage() {
             <div className="p-5">
               <div className="flex items-center justify-between mb-3">
                 <span className="metric-label">ROI</span>
-                <div className="icon-container icon-container-md rounded-xl bg-blue-50">
+                <div className="icon-container icon-container-md rounded-xl bg-blue-500/10 dark:bg-blue-500/20">
                   <Percent className="w-5 h-5 text-blue-600" />
                 </div>
               </div>
@@ -213,16 +213,16 @@ export default function SummaryPage() {
             <div className="p-5">
               <div className="flex items-center justify-between mb-3">
                 <span className="metric-label">Costo Totale</span>
-                <div className="icon-container icon-container-md rounded-xl bg-red-50">
+                <div className="icon-container icon-container-md rounded-xl bg-red-500/10 dark:bg-red-500/20">
                   <DollarSign className="w-5 h-5 text-red-500" />
                 </div>
               </div>
-              <p className="metric-value text-slate-900">
+              <p className="metric-value text-foreground">
                 {formatCurrency(results.total_cost)}
               </p>
               <div className="flex items-center gap-1.5 mt-2">
-                <Ruler className="w-3.5 h-3.5 text-slate-400" />
-                <span className="text-sm font-medium text-slate-500">
+                <Ruler className="w-3.5 h-3.5 text-muted-foreground" />
+                <span className="text-sm font-medium text-muted-foreground">
                   {formatCurrency(results.cost_per_sqm)}/mq
                 </span>
               </div>
@@ -234,16 +234,16 @@ export default function SummaryPage() {
             <div className="p-5">
               <div className="flex items-center justify-between mb-3">
                 <span className="metric-label">Ricavo Totale</span>
-                <div className="icon-container icon-container-md rounded-xl bg-emerald-50">
+                <div className="icon-container icon-container-md rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20">
                   <DollarSign className="w-5 h-5 text-emerald-500" />
                 </div>
               </div>
-              <p className="metric-value text-slate-900">
+              <p className="metric-value text-foreground">
                 {formatCurrency(results.total_revenue)}
               </p>
               <div className="flex items-center gap-1.5 mt-2">
-                <Ruler className="w-3.5 h-3.5 text-slate-400" />
-                <span className="text-sm font-medium text-slate-500">
+                <Ruler className="w-3.5 h-3.5 text-muted-foreground" />
+                <span className="text-sm font-medium text-muted-foreground">
                   {formatCurrency(results.revenue_per_sqm)}/mq
                 </span>
               </div>
@@ -257,7 +257,7 @@ export default function SummaryPage() {
         <Card>
           <CardHeader>
             <div className="flex items-center gap-2.5">
-              <div className="icon-container icon-container-sm rounded-lg bg-emerald-50">
+              <div className="icon-container icon-container-sm rounded-lg bg-emerald-500/10 dark:bg-emerald-500/20">
                 <TrendingUp className="w-4 h-4 text-emerald-600" />
               </div>
               <CardTitle>Riepilogo Ricavi</CardTitle>
@@ -278,19 +278,19 @@ export default function SummaryPage() {
                 <tbody>
                   {results.units_summary.map((unit, idx) => (
                     <tr key={idx}>
-                      <td className="font-semibold text-slate-900">
+                      <td className="font-semibold text-foreground">
                         {unit.name}
                       </td>
-                      <td className="text-slate-600">
+                      <td className="text-muted-foreground">
                         {getFloorLabel(unit.floor)}
                       </td>
-                      <td className="text-right text-slate-700 font-medium">
+                      <td className="text-right text-foreground font-medium">
                         {formatNumber(unit.adjusted_surface)} mq
                       </td>
-                      <td className="text-right text-slate-700">
+                      <td className="text-right text-foreground">
                         {formatCurrency(unit.calculated_value)}
                       </td>
-                      <td className="text-right font-bold text-slate-900">
+                      <td className="text-right font-bold text-foreground">
                         {formatCurrency(unit.target_price)}
                       </td>
                     </tr>
@@ -298,10 +298,10 @@ export default function SummaryPage() {
                 </tbody>
                 <tfoot>
                   <tr>
-                    <td colSpan={2} className="font-bold text-slate-900">
+                    <td colSpan={2} className="font-bold text-foreground">
                       TOTALE
                     </td>
-                    <td className="text-right font-bold text-slate-900">
+                    <td className="text-right font-bold text-foreground">
                       {formatNumber(
                         results.units_summary.reduce(
                           (sum, u) => sum + u.adjusted_surface,
@@ -310,7 +310,7 @@ export default function SummaryPage() {
                       )}{' '}
                       mq
                     </td>
-                    <td className="text-right font-bold text-slate-900">
+                    <td className="text-right font-bold text-foreground">
                       {formatCurrency(
                         results.units_summary.reduce(
                           (sum, u) => sum + u.calculated_value,
@@ -334,7 +334,7 @@ export default function SummaryPage() {
         <Card>
           <CardHeader>
             <div className="flex items-center gap-2.5">
-              <div className="icon-container icon-container-sm rounded-lg bg-red-50">
+              <div className="icon-container icon-container-sm rounded-lg bg-red-500/10 dark:bg-red-500/20">
                 <DollarSign className="w-4 h-4 text-red-500" />
               </div>
               <CardTitle>Riepilogo Costi</CardTitle>
@@ -352,10 +352,10 @@ export default function SummaryPage() {
                 <tbody>
                   {/* Acquisizione */}
                   <tr>
-                    <td className="font-semibold text-slate-900">
+                    <td className="font-semibold text-foreground">
                       Acquisizione Immobile
                     </td>
-                    <td className="text-right font-medium text-slate-700">
+                    <td className="text-right font-medium text-foreground">
                       {formatCurrency(results.total_acquisition_cost)}
                     </td>
                   </tr>
@@ -363,11 +363,11 @@ export default function SummaryPage() {
                   {/* Operation costs by section */}
                   {results.operation_cost_by_section.map((section) => (
                     <tr key={section.section}>
-                      <td className="font-semibold text-slate-900">
+                      <td className="font-semibold text-foreground">
                         {sectionLabels[section.section] ||
                           getSectionLabel(section.section)}
                       </td>
-                      <td className="text-right font-medium text-slate-700">
+                      <td className="text-right font-medium text-foreground">
                         {formatCurrency(section.total)}
                       </td>
                     </tr>
@@ -376,10 +376,10 @@ export default function SummaryPage() {
                   {/* Construction costs by floor */}
                   {results.construction_by_floor.map((floor) => (
                     <tr key={floor.floor}>
-                      <td className="font-semibold text-slate-900">
+                      <td className="font-semibold text-foreground">
                         Lavori - {getFloorLabel(floor.floor)}
                       </td>
-                      <td className="text-right font-medium text-slate-700">
+                      <td className="text-right font-medium text-foreground">
                         {formatCurrency(floor.total)}
                       </td>
                     </tr>
@@ -387,7 +387,7 @@ export default function SummaryPage() {
                 </tbody>
                 <tfoot>
                   <tr>
-                    <td className="font-bold text-slate-900">
+                    <td className="font-bold text-foreground">
                       TOTALE COSTI
                     </td>
                     <td className="text-right font-extrabold text-red-700 text-lg">
@@ -406,7 +406,7 @@ export default function SummaryPage() {
         <Card>
           <CardHeader>
             <div className="flex items-center gap-2.5">
-              <div className="icon-container icon-container-sm rounded-lg bg-indigo-50">
+              <div className="icon-container icon-container-sm rounded-lg bg-indigo-500/10 dark:bg-indigo-500/20">
                 <PieChart className="w-4 h-4 text-indigo-600" />
               </div>
               <CardTitle>Analisi Margine</CardTitle>
@@ -452,58 +452,58 @@ export default function SummaryPage() {
 
               {/* Key Metrics */}
               <div className="flex flex-col justify-center space-y-1">
-                <div className="flex items-center justify-between py-4 border-b border-slate-100">
+                <div className="flex items-center justify-between py-4 border-b border-border">
                   <div className="flex items-center gap-3">
                     <div className={cn("icon-container icon-container-sm rounded-lg", marginIconBg)}>
                       <TrendingUp className={cn("w-3.5 h-3.5", marginColor)} />
                     </div>
-                    <span className="text-sm font-medium text-slate-600">Margine Lordo</span>
+                    <span className="text-sm font-medium text-muted-foreground">Margine Lordo</span>
                   </div>
                   <span className={cn('font-bold text-lg', marginColor)}>
                     {formatCurrency(results.gross_margin)}
                   </span>
                 </div>
-                <div className="flex items-center justify-between py-4 border-b border-slate-100">
+                <div className="flex items-center justify-between py-4 border-b border-border">
                   <div className="flex items-center gap-3">
-                    <div className="icon-container icon-container-sm rounded-lg bg-slate-100">
-                      <Percent className="w-3.5 h-3.5 text-slate-600" />
+                    <div className="icon-container icon-container-sm rounded-lg bg-muted">
+                      <Percent className="w-3.5 h-3.5 text-muted-foreground" />
                     </div>
-                    <span className="text-sm font-medium text-slate-600">Margine su Costo</span>
+                    <span className="text-sm font-medium text-muted-foreground">Margine su Costo</span>
                   </div>
-                  <span className="font-bold text-lg text-slate-900">
+                  <span className="font-bold text-lg text-foreground">
                     {formatPercentage(results.margin_percentage)}
                   </span>
                 </div>
-                <div className="flex items-center justify-between py-4 border-b border-slate-100">
+                <div className="flex items-center justify-between py-4 border-b border-border">
                   <div className="flex items-center gap-3">
-                    <div className="icon-container icon-container-sm rounded-lg bg-slate-100">
-                      <Percent className="w-3.5 h-3.5 text-slate-600" />
+                    <div className="icon-container icon-container-sm rounded-lg bg-muted">
+                      <Percent className="w-3.5 h-3.5 text-muted-foreground" />
                     </div>
-                    <span className="text-sm font-medium text-slate-600">Margine su Ricavo</span>
+                    <span className="text-sm font-medium text-muted-foreground">Margine su Ricavo</span>
                   </div>
-                  <span className="font-bold text-lg text-slate-900">
+                  <span className="font-bold text-lg text-foreground">
                     {formatPercentage(results.margin_on_revenue)}
                   </span>
                 </div>
-                <div className="flex items-center justify-between py-4 border-b border-slate-100">
+                <div className="flex items-center justify-between py-4 border-b border-border">
                   <div className="flex items-center gap-3">
-                    <div className="icon-container icon-container-sm rounded-lg bg-red-50">
+                    <div className="icon-container icon-container-sm rounded-lg bg-red-500/10 dark:bg-red-500/20">
                       <Ruler className="w-3.5 h-3.5 text-red-500" />
                     </div>
-                    <span className="text-sm font-medium text-slate-600">Costo per mq</span>
+                    <span className="text-sm font-medium text-muted-foreground">Costo per mq</span>
                   </div>
-                  <span className="font-bold text-lg text-slate-900">
+                  <span className="font-bold text-lg text-foreground">
                     {formatCurrency(results.cost_per_sqm)}
                   </span>
                 </div>
                 <div className="flex items-center justify-between py-4">
                   <div className="flex items-center gap-3">
-                    <div className="icon-container icon-container-sm rounded-lg bg-emerald-50">
+                    <div className="icon-container icon-container-sm rounded-lg bg-emerald-500/10 dark:bg-emerald-500/20">
                       <Ruler className="w-3.5 h-3.5 text-emerald-500" />
                     </div>
-                    <span className="text-sm font-medium text-slate-600">Ricavo per mq</span>
+                    <span className="text-sm font-medium text-muted-foreground">Ricavo per mq</span>
                   </div>
-                  <span className="font-bold text-lg text-slate-900">
+                  <span className="font-bold text-lg text-foreground">
                     {formatCurrency(results.revenue_per_sqm)}
                   </span>
                 </div>
@@ -518,7 +518,7 @@ export default function SummaryPage() {
         <Card>
           <CardHeader>
             <div className="flex items-center gap-2.5">
-              <div className="icon-container icon-container-sm rounded-lg bg-blue-50">
+              <div className="icon-container icon-container-sm rounded-lg bg-blue-500/10 dark:bg-blue-500/20">
                 <BarChart3 className="w-4 h-4 text-blue-600" />
               </div>
               <CardTitle>Incidenza Costi</CardTitle>
@@ -530,16 +530,16 @@ export default function SummaryPage() {
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-3 h-3 rounded-full bg-blue-500" />
-                    <span className="text-sm font-semibold text-slate-700">
+                    <div className="w-3 h-3 rounded-full bg-blue-500/10 dark:bg-blue-500/200" />
+                    <span className="text-sm font-semibold text-foreground">
                       Acquisizione
                     </span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="text-sm font-medium text-slate-500">
+                    <span className="text-sm font-medium text-muted-foreground">
                       {formatCurrency(results.total_acquisition_cost)}
                     </span>
-                    <span className="text-sm font-bold text-slate-900 min-w-[3.5rem] text-right">
+                    <span className="text-sm font-bold text-foreground min-w-[3.5rem] text-right">
                       {formatPercentage(results.acquisition_incidence)}
                     </span>
                   </div>
@@ -558,16 +558,16 @@ export default function SummaryPage() {
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-3 h-3 rounded-full bg-amber-500" />
-                    <span className="text-sm font-semibold text-slate-700">
+                    <div className="w-3 h-3 rounded-full bg-amber-500/10 dark:bg-amber-500/200" />
+                    <span className="text-sm font-semibold text-foreground">
                       Operativi
                     </span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="text-sm font-medium text-slate-500">
+                    <span className="text-sm font-medium text-muted-foreground">
                       {formatCurrency(results.total_operation_cost)}
                     </span>
-                    <span className="text-sm font-bold text-slate-900 min-w-[3.5rem] text-right">
+                    <span className="text-sm font-bold text-foreground min-w-[3.5rem] text-right">
                       {formatPercentage(results.operation_incidence)}
                     </span>
                   </div>
@@ -586,16 +586,16 @@ export default function SummaryPage() {
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-3 h-3 rounded-full bg-emerald-500" />
-                    <span className="text-sm font-semibold text-slate-700">
+                    <div className="w-3 h-3 rounded-full bg-emerald-500/10 dark:bg-emerald-500/200" />
+                    <span className="text-sm font-semibold text-foreground">
                       Costruzione
                     </span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="text-sm font-medium text-slate-500">
+                    <span className="text-sm font-medium text-muted-foreground">
                       {formatCurrency(results.total_construction_cost)}
                     </span>
-                    <span className="text-sm font-bold text-slate-900 min-w-[3.5rem] text-right">
+                    <span className="text-sm font-bold text-foreground min-w-[3.5rem] text-right">
                       {formatPercentage(results.construction_incidence)}
                     </span>
                   </div>

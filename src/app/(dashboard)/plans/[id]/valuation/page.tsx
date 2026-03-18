@@ -383,7 +383,7 @@ export default function ValuationPage() {
           <div className="flex items-center gap-3 shrink-0">
             <div className="flex items-center gap-2 text-sm">
               {saving && (
-                <span className="flex items-center gap-1.5 text-slate-400">
+                <span className="flex items-center gap-1.5 text-muted-foreground">
                   <Loader2 className="w-4 h-4 animate-spin" />
                   Salvataggio...
                 </span>
@@ -407,7 +407,7 @@ export default function ValuationPage() {
       <Card className="mb-6">
         <CardContent className="py-4">
           <div className="flex items-center gap-4">
-            <label className="text-sm font-semibold text-slate-700 whitespace-nowrap">
+            <label className="text-sm font-semibold text-foreground whitespace-nowrap">
               Prezzo di Mercato Ricorrente
             </label>
             <div className="relative w-56">
@@ -420,12 +420,12 @@ export default function ValuationPage() {
                 onChange={(e) => handleGlobalPriceChange(Number(e.target.value))}
                 className="pr-16"
               />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400">
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
                 €/mq
               </span>
             </div>
             {globalPrice > 0 && (
-              <span className="text-sm text-slate-500">
+              <span className="text-sm text-muted-foreground">
                 {formatCurrency(globalPrice)}/mq
               </span>
             )}
@@ -437,11 +437,11 @@ export default function ValuationPage() {
       {units.length === 0 && (
         <Card className="border-dashed">
           <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-            <Building2 className="w-12 h-12 text-slate-300 mb-4" />
-            <h3 className="text-lg font-semibold text-slate-700 mb-1">
+            <Building2 className="w-12 h-12 text-muted-foreground/50 mb-4" />
+            <h3 className="text-lg font-semibold text-foreground mb-1">
               Nessuna unita immobiliare
             </h3>
-            <p className="text-sm text-slate-500 mb-6">
+            <p className="text-sm text-muted-foreground mb-6">
               Aggiungi la prima unita immobiliare per iniziare la valutazione
             </p>
             <Button onClick={addUnit}>
@@ -473,7 +473,7 @@ export default function ValuationPage() {
                   <div className="flex-1 grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
                     {/* Name */}
                     <div>
-                      <label className="block text-xs font-semibold text-slate-600 mb-1.5">
+                      <label className="block text-xs font-semibold text-muted-foreground mb-1.5">
                         Nome Unita
                       </label>
                       <Input
@@ -487,12 +487,12 @@ export default function ValuationPage() {
 
                     {/* Floor */}
                     <div>
-                      <label className="block text-xs font-semibold text-slate-600 mb-1.5">
+                      <label className="block text-xs font-semibold text-muted-foreground mb-1.5">
                         Piano
                       </label>
                       <select
                         className={cn(
-                          'flex h-11 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 transition-colors',
+                          'flex h-11 w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground transition-colors',
                           'focus:border-blue-500 focus:outline-none focus:ring-[3px] focus:ring-blue-500/15'
                         )}
                         value={unit.floor}
@@ -510,7 +510,7 @@ export default function ValuationPage() {
 
                     {/* Destination */}
                     <div>
-                      <label className="block text-xs font-semibold text-slate-600 mb-1.5">
+                      <label className="block text-xs font-semibold text-muted-foreground mb-1.5">
                         Destinazione
                       </label>
                       <Input
@@ -523,7 +523,7 @@ export default function ValuationPage() {
 
                     {/* Market price per unit */}
                     <div>
-                      <label className="block text-xs font-semibold text-slate-600 mb-1.5">
+                      <label className="block text-xs font-semibold text-muted-foreground mb-1.5">
                         Prezzo €/mq
                       </label>
                       <div className="relative">
@@ -540,7 +540,7 @@ export default function ValuationPage() {
                           }}
                           className="pr-16"
                         />
-                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400">
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
                           €/mq
                         </span>
                       </div>
@@ -568,7 +568,7 @@ export default function ValuationPage() {
                     </div>
                   ) : (
                     <button
-                      className="mt-5 p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                      className="mt-5 p-2 text-muted-foreground hover:text-red-500 hover:bg-red-500/10 dark:hover:bg-red-500/20 rounded-lg transition-colors"
                       onClick={() => setDeletingUnitId(unit.id)}
                       title="Elimina unita"
                     >
@@ -583,26 +583,26 @@ export default function ValuationPage() {
                 <div className="overflow-x-auto mobile-scroll-hint">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b border-slate-200">
-                        <th className="text-left py-2 px-2 font-medium text-slate-500 text-xs w-24">
+                      <tr className="border-b border-border">
+                        <th className="text-left py-2 px-2 font-medium text-muted-foreground text-xs w-24">
                           Piano Rif.
                         </th>
-                        <th className="text-left py-2 px-2 font-medium text-slate-500 text-xs">
+                        <th className="text-left py-2 px-2 font-medium text-muted-foreground text-xs">
                           Destinazione d&apos;Uso
                         </th>
-                        <th className="text-right py-2 px-2 font-medium text-slate-500 text-xs w-28">
+                        <th className="text-right py-2 px-2 font-medium text-muted-foreground text-xs w-28">
                           Superficie (mq)
                         </th>
-                        <th className="text-right py-2 px-2 font-medium text-slate-500 text-xs w-28">
+                        <th className="text-right py-2 px-2 font-medium text-muted-foreground text-xs w-28">
                           Coeff. Ragguaglio
                         </th>
-                        <th className="text-right py-2 px-2 font-medium text-slate-500 text-xs w-32">
+                        <th className="text-right py-2 px-2 font-medium text-muted-foreground text-xs w-32">
                           Sup. Ragguagliata
                         </th>
-                        <th className="text-right py-2 px-2 font-medium text-slate-500 text-xs w-28">
+                        <th className="text-right py-2 px-2 font-medium text-muted-foreground text-xs w-28">
                           Prezzo €/mq
                         </th>
-                        <th className="text-right py-2 px-2 font-medium text-slate-500 text-xs w-32">
+                        <th className="text-right py-2 px-2 font-medium text-muted-foreground text-xs w-32">
                           Valore €
                         </th>
                         <th className="w-8" />
@@ -623,13 +623,13 @@ export default function ValuationPage() {
                         return (
                           <tr
                             key={surface.id}
-                            className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors"
+                            className="border-b border-border hover:bg-accent/50 transition-colors"
                           >
                             {/* Floor ref */}
                             <td className="py-1.5 px-2">
                               <select
                                 className={cn(
-                                  'w-full rounded border border-slate-200 bg-white px-2 py-1 text-xs',
+                                  'w-full rounded border border-border bg-card px-2 py-1 text-xs',
                                   'focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/20'
                                 )}
                                 value={surface.floor_reference || ''}
@@ -652,12 +652,12 @@ export default function ValuationPage() {
                             </td>
 
                             {/* Surface type label */}
-                            <td className="py-1.5 px-2 text-slate-800 font-medium text-xs">
+                            <td className="py-1.5 px-2 text-foreground font-medium text-xs">
                               {isCustom ? (
                                 <input
                                   type="text"
                                   className={cn(
-                                    'w-full rounded border border-slate-200 bg-white px-2 py-1 text-xs',
+                                    'w-full rounded border border-border bg-card px-2 py-1 text-xs',
                                     'focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/20'
                                   )}
                                   value={surface.surface_type}
@@ -683,7 +683,7 @@ export default function ValuationPage() {
                                 min={0}
                                 step={0.01}
                                 className={cn(
-                                  'w-full rounded border border-slate-200 bg-white px-2 py-1 text-xs text-right',
+                                  'w-full rounded border border-border bg-card px-2 py-1 text-xs text-right',
                                   'focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/20'
                                 )}
                                 value={surface.gross_surface || ''}
@@ -708,7 +708,7 @@ export default function ValuationPage() {
                                   max={100}
                                   step={1}
                                   className={cn(
-                                    'w-full rounded border border-slate-200 bg-white px-2 py-1 pr-6 text-xs text-right',
+                                    'w-full rounded border border-border bg-card px-2 py-1 pr-6 text-xs text-right',
                                     'focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/20'
                                   )}
                                   value={
@@ -725,7 +725,7 @@ export default function ValuationPage() {
                                     )
                                   }
                                 />
-                                <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-slate-400">
+                                <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-muted-foreground">
                                   %
                                 </span>
                               </div>
@@ -733,7 +733,7 @@ export default function ValuationPage() {
 
                             {/* Adjusted surface (read-only) */}
                             <td className="py-1.5 px-2">
-                              <div className="bg-slate-50 rounded px-2 py-1 text-xs text-right text-slate-700 font-medium">
+                              <div className="bg-muted rounded px-2 py-1 text-xs text-right text-foreground font-medium">
                                 {formatNumber(adjusted)}
                               </div>
                             </td>
@@ -745,7 +745,7 @@ export default function ValuationPage() {
                                 min={0}
                                 step={50}
                                 className={cn(
-                                  'w-full rounded border border-slate-200 bg-white px-2 py-1 text-xs text-right',
+                                  'w-full rounded border border-border bg-card px-2 py-1 text-xs text-right',
                                   'focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/20'
                                 )}
                                 value={surface.unit_price ?? ''}
@@ -764,7 +764,7 @@ export default function ValuationPage() {
 
                             {/* Value (read-only) */}
                             <td className="py-1.5 px-2">
-                              <div className="bg-slate-50 rounded px-2 py-1 text-xs text-right text-slate-700 font-semibold">
+                              <div className="bg-muted rounded px-2 py-1 text-xs text-right text-foreground font-semibold">
                                 {formatCurrency(value)}
                               </div>
                             </td>
@@ -773,7 +773,7 @@ export default function ValuationPage() {
                             <td className="py-1.5 px-1">
                               {isCustom && (
                                 <button
-                                  className="p-1 text-slate-300 hover:text-red-500 transition-colors"
+                                  className="p-1 text-muted-foreground/50 hover:text-red-500 transition-colors"
                                   onClick={() => deleteSurface(unit.id, surface.id)}
                                   title="Rimuovi riga"
                                 >
@@ -800,14 +800,14 @@ export default function ValuationPage() {
                 </div>
 
                 {/* Footer: totals */}
-                <div className="mt-4 pt-4 border-t border-slate-200">
+                <div className="mt-4 pt-4 border-t border-border">
                   <div className="flex items-center justify-between">
                     <div className="space-y-1">
                       <div className="flex items-center gap-3">
-                        <span className="text-sm font-medium text-slate-600">
+                        <span className="text-sm font-medium text-muted-foreground">
                           TOT.LE Complessivo
                         </span>
-                        <span className="text-lg font-bold text-slate-900">
+                        <span className="text-lg font-bold text-foreground">
                           {formatCurrency(calculatedValue)}
                         </span>
                       </div>
@@ -819,11 +819,11 @@ export default function ValuationPage() {
                         <div
                           className={cn(
                             'flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full font-medium',
-                            isAbove && 'bg-emerald-50 text-emerald-700',
-                            isBelowThreshold && 'bg-amber-50 text-amber-700',
+                            isAbove && 'bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-700',
+                            isBelowThreshold && 'bg-amber-500/10 dark:bg-amber-500/20 text-amber-700',
                             !isAbove &&
                               !isBelowThreshold &&
-                              'bg-slate-50 text-slate-600'
+                              'bg-muted text-muted-foreground'
                           )}
                         >
                           {isBelowThreshold && (
@@ -836,7 +836,7 @@ export default function ValuationPage() {
 
                       {/* Target sale price */}
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-semibold text-slate-700">
+                        <span className="text-sm font-semibold text-foreground">
                           PREZZO STABILITO
                         </span>
                         <div className="relative">
@@ -845,13 +845,13 @@ export default function ValuationPage() {
                             min={0}
                             step={1000}
                             className={cn(
-                              'w-44 rounded-lg border-2 bg-white px-3 py-2 text-right text-base font-bold transition-colors',
+                              'w-44 rounded-lg border-2 bg-card px-3 py-2 text-right text-base font-bold transition-colors',
                               'focus:outline-none focus:ring-[3px] focus:ring-blue-500/15',
                               isAbove && target > 0
                                 ? 'border-emerald-400 text-emerald-700'
                                 : isBelowThreshold
                                 ? 'border-amber-400 text-amber-700'
-                                : 'border-slate-300 text-slate-900'
+                                : 'border-border text-foreground'
                             )}
                             value={unit.target_sale_price || ''}
                             placeholder="0"
@@ -863,7 +863,7 @@ export default function ValuationPage() {
                               )
                             }
                           />
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-400">
+                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
                             €
                           </span>
                         </div>
@@ -887,17 +887,17 @@ export default function ValuationPage() {
             <div className="overflow-x-auto mobile-scroll-hint">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-slate-200">
-                    <th className="text-left py-2 px-3 font-medium text-slate-500 text-xs">
+                  <tr className="border-b border-border">
+                    <th className="text-left py-2 px-3 font-medium text-muted-foreground text-xs">
                       Unita
                     </th>
-                    <th className="text-right py-2 px-3 font-medium text-slate-500 text-xs">
+                    <th className="text-right py-2 px-3 font-medium text-muted-foreground text-xs">
                       Sup. Ragguagliata (mq)
                     </th>
-                    <th className="text-right py-2 px-3 font-medium text-slate-500 text-xs">
+                    <th className="text-right py-2 px-3 font-medium text-muted-foreground text-xs">
                       Valore Calcolato
                     </th>
-                    <th className="text-right py-2 px-3 font-medium text-slate-500 text-xs">
+                    <th className="text-right py-2 px-3 font-medium text-muted-foreground text-xs">
                       Prezzo Stabilito
                     </th>
                   </tr>
@@ -906,18 +906,18 @@ export default function ValuationPage() {
                   {summary.map((row) => (
                     <tr
                       key={row.id}
-                      className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors"
+                      className="border-b border-border hover:bg-accent/50 transition-colors"
                     >
-                      <td className="py-2.5 px-3 font-medium text-slate-800">
+                      <td className="py-2.5 px-3 font-medium text-foreground">
                         {row.name}
                       </td>
-                      <td className="py-2.5 px-3 text-right text-slate-600">
+                      <td className="py-2.5 px-3 text-right text-muted-foreground">
                         {formatNumber(row.totalAdjustedSurface)}
                       </td>
-                      <td className="py-2.5 px-3 text-right text-slate-700">
+                      <td className="py-2.5 px-3 text-right text-foreground">
                         {formatCurrency(row.calculatedValue)}
                       </td>
-                      <td className="py-2.5 px-3 text-right font-semibold text-slate-900">
+                      <td className="py-2.5 px-3 text-right font-semibold text-foreground">
                         {row.targetPrice > 0
                           ? formatCurrency(row.targetPrice)
                           : '-'}
@@ -926,17 +926,17 @@ export default function ValuationPage() {
                   ))}
                 </tbody>
                 <tfoot>
-                  <tr className="border-t-2 border-slate-300">
-                    <td className="py-3 px-3 font-bold text-slate-900">TOTALE</td>
-                    <td className="py-3 px-3 text-right font-bold text-slate-700">
+                  <tr className="border-t-2 border-border">
+                    <td className="py-3 px-3 font-bold text-foreground">TOTALE</td>
+                    <td className="py-3 px-3 text-right font-bold text-foreground">
                       {formatNumber(
                         summary.reduce((s, r) => s + r.totalAdjustedSurface, 0)
                       )}
                     </td>
-                    <td className="py-3 px-3 text-right font-bold text-slate-700">
+                    <td className="py-3 px-3 text-right font-bold text-foreground">
                       {formatCurrency(totalCalculated)}
                     </td>
-                    <td className="py-3 px-3 text-right font-bold text-slate-900 text-base">
+                    <td className="py-3 px-3 text-right font-bold text-foreground text-base">
                       {totalTarget > 0 ? formatCurrency(totalTarget) : '-'}
                     </td>
                   </tr>

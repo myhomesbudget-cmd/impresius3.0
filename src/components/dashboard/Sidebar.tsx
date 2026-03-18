@@ -68,12 +68,12 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
               <div className={cn(
                 "icon-container icon-container-sm rounded-lg",
                 isActive
-                  ? "bg-blue-600/10"
-                  : "bg-slate-100"
+                  ? "bg-primary/10"
+                  : "bg-muted"
               )}>
                 <item.icon className={cn(
                   "w-4 h-4",
-                  isActive ? "text-blue-600" : "text-slate-500"
+                  isActive ? "text-primary" : "text-muted-foreground"
                 )} />
               </div>
               {item.label}
@@ -83,13 +83,13 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
       </nav>
 
       {/* Bottom section */}
-      <div className="px-3 py-4 border-t border-slate-100">
+      <div className="px-3 py-4 border-t border-sidebar-border">
         <button
           onClick={handleLogout}
-          className="sidebar-nav-item sidebar-nav-item-inactive hover:!bg-red-50 hover:!text-red-600 w-full"
+          className="sidebar-nav-item sidebar-nav-item-inactive hover:!bg-destructive/10 hover:!text-destructive w-full"
         >
-          <div className="icon-container icon-container-sm rounded-lg bg-slate-100">
-            <LogOut className="w-4 h-4 text-slate-400" />
+          <div className="icon-container icon-container-sm rounded-lg bg-muted">
+            <LogOut className="w-4 h-4 text-muted-foreground" />
           </div>
           Esci
         </button>
@@ -104,16 +104,16 @@ export function Sidebar() {
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className="hidden md:flex fixed left-0 top-0 h-full w-64 bg-white/90 backdrop-blur-md border-r border-slate-200/80 flex-col z-40">
+      <aside className="hidden md:flex fixed left-0 top-0 h-full w-64 bg-sidebar/90 backdrop-blur-md border-r border-sidebar-border flex-col z-40">
         {/* Logo Area */}
-        <div className="h-16 flex items-center px-5 border-b border-slate-100">
+        <div className="h-16 flex items-center px-5 border-b border-sidebar-border">
           <Link href="/dashboard" className="flex items-center gap-2.5">
-            <div className="w-9 h-9 icon-gradient rounded-xl flex items-center justify-center shadow-[0_2px_8px_rgb(37_99_235/0.35)]">
+            <div className="w-9 h-9 icon-gradient rounded-xl flex items-center justify-center shadow-[0_2px_8px_hsl(var(--primary)/0.35)]">
               <Building2 className="w-4.5 h-4.5 text-white" />
             </div>
             <div className="flex flex-col">
               <span className="text-[1.05rem] font-extrabold text-gradient leading-tight">Impresius</span>
-              <span className="text-[0.6rem] font-medium text-slate-400 uppercase tracking-[0.12em]">Pro Platform</span>
+              <span className="text-[0.6rem] font-medium text-muted-foreground uppercase tracking-[0.12em]">Pro Platform</span>
             </div>
           </Link>
         </div>
@@ -131,22 +131,22 @@ export function Sidebar() {
       {/* Mobile drawer */}
       <aside
         className={cn(
-          "md:hidden fixed left-0 top-0 h-full w-72 bg-white/95 backdrop-blur-md border-r border-slate-200/80 flex flex-col z-50 transition-transform duration-300 ease-in-out shadow-2xl",
+          "md:hidden fixed left-0 top-0 h-full w-72 bg-sidebar/95 backdrop-blur-md border-r border-sidebar-border flex flex-col z-50 transition-transform duration-300 ease-in-out shadow-2xl",
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
-        <div className="h-16 flex items-center justify-between px-5 border-b border-slate-100">
+        <div className="h-16 flex items-center justify-between px-5 border-b border-sidebar-border">
           <Link href="/dashboard" className="flex items-center gap-2.5" onClick={close}>
-            <div className="w-9 h-9 icon-gradient rounded-xl flex items-center justify-center shadow-[0_2px_8px_rgb(37_99_235/0.35)]">
+            <div className="w-9 h-9 icon-gradient rounded-xl flex items-center justify-center shadow-[0_2px_8px_hsl(var(--primary)/0.35)]">
               <Building2 className="w-4.5 h-4.5 text-white" />
             </div>
             <div className="flex flex-col">
               <span className="text-[1.05rem] font-extrabold text-gradient leading-tight">Impresius</span>
-              <span className="text-[0.6rem] font-medium text-slate-400 uppercase tracking-[0.12em]">Pro Platform</span>
+              <span className="text-[0.6rem] font-medium text-muted-foreground uppercase tracking-[0.12em]">Pro Platform</span>
             </div>
           </Link>
-          <button onClick={close} className="p-2 rounded-lg hover:bg-slate-100 transition-colors">
-            <X className="w-5 h-5 text-slate-500" />
+          <button onClick={close} className="p-2 rounded-lg hover:bg-accent transition-colors">
+            <X className="w-5 h-5 text-muted-foreground" />
           </button>
         </div>
         <SidebarContent onNavigate={close} />

@@ -5,23 +5,22 @@ import { ArrowRight, TrendingUp, Shield, Zap, Calculator, BarChart3, FileText } 
 export function Hero() {
   return (
     <section className="relative pt-32 pb-20 overflow-hidden">
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-4xl mx-auto">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-white/80 border border-blue-100 text-blue-700 text-sm font-semibold mb-10 animate-fade-in shadow-[0_2px_8px_rgb(59_130_246/0.1)]">
+          <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-card/80 border border-primary/20 text-primary text-sm font-semibold mb-10 animate-fade-in shadow-[0_2px_8px_hsl(var(--primary)/0.1)]">
             <Zap className="w-4 h-4" />
             Piattaforma professionale per operatori immobiliari
           </div>
 
           {/* Title */}
-          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-slate-900 mb-8 animate-fade-in-up leading-[1.08]">
+          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-foreground mb-8 animate-fade-in-up leading-[1.08]">
             Analisi e gestione{" "}
             <span className="text-gradient">operazioni immobiliari</span>
           </h1>
 
           {/* Subtitle */}
-          <p className="text-xl text-slate-500 max-w-2xl mx-auto mb-12 animate-fade-in-up leading-relaxed" style={{ animationDelay: "0.1s" }}>
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-12 animate-fade-in-up leading-relaxed" style={{ animationDelay: "0.1s" }}>
             Valuta la sostenibilita economica delle tue operazioni immobiliari.
             Computo metrico, stima valori, analisi margini e report professionali
             in un&apos;unica piattaforma.
@@ -44,21 +43,21 @@ export function Hero() {
 
           {/* Trust badges */}
           <div className="flex flex-wrap justify-center gap-10 mt-20 animate-fade-in" style={{ animationDelay: "0.4s" }}>
-            <div className="flex items-center gap-2.5 text-slate-500">
-              <div className="icon-container icon-container-sm rounded-lg bg-emerald-50">
-                <TrendingUp className="w-4 h-4 text-emerald-600" />
+            <div className="flex items-center gap-2.5 text-muted-foreground">
+              <div className="icon-container icon-container-sm rounded-lg bg-emerald-500/10 dark:bg-emerald-500/20">
+                <TrendingUp className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
               </div>
               <span className="text-sm font-semibold">Margini e ROI istantanei</span>
             </div>
-            <div className="flex items-center gap-2.5 text-slate-500">
-              <div className="icon-container icon-container-sm rounded-lg bg-blue-50">
-                <Shield className="w-4 h-4 text-blue-600" />
+            <div className="flex items-center gap-2.5 text-muted-foreground">
+              <div className="icon-container icon-container-sm rounded-lg bg-primary/10">
+                <Shield className="w-4 h-4 text-primary" />
               </div>
               <span className="text-sm font-semibold">Dati sicuri e protetti</span>
             </div>
-            <div className="flex items-center gap-2.5 text-slate-500">
-              <div className="icon-container icon-container-sm rounded-lg bg-amber-50">
-                <Zap className="w-4 h-4 text-amber-600" />
+            <div className="flex items-center gap-2.5 text-muted-foreground">
+              <div className="icon-container icon-container-sm rounded-lg bg-amber-500/10 dark:bg-amber-500/20">
+                <Zap className="w-4 h-4 text-amber-600 dark:text-amber-400" />
               </div>
               <span className="text-sm font-semibold">Calcoli in tempo reale</span>
             </div>
@@ -67,8 +66,8 @@ export function Hero() {
 
         {/* Dashboard Preview */}
         <div className="mt-24 relative animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
-          <div className="bg-gradient-to-b from-slate-900 to-slate-800 rounded-2xl shadow-[0_20px_60px_rgb(0_0_0/0.25)] overflow-hidden border border-slate-700/50 p-1.5">
-            <div className="bg-slate-900 rounded-xl p-6">
+          <div className="bg-gradient-to-b from-slate-900 to-slate-800 dark:from-slate-800 dark:to-slate-900 rounded-2xl shadow-[0_20px_60px_rgb(0_0_0/0.25)] overflow-hidden border border-slate-700/50 p-1.5">
+            <div className="bg-slate-900 dark:bg-slate-950 rounded-xl p-6">
               {/* Fake browser bar */}
               <div className="flex items-center gap-2 mb-6">
                 <div className="w-3 h-3 rounded-full bg-red-500/80" />
@@ -148,7 +147,7 @@ export function Hero() {
             </div>
           </div>
           {/* Gradient overlay at bottom */}
-          <div className="absolute -bottom-10 left-0 right-0 h-40 bg-gradient-to-t from-white/60 to-transparent" />
+          <div className="absolute -bottom-10 left-0 right-0 h-40 bg-gradient-to-t from-background/60 to-transparent" />
         </div>
       </div>
     </section>
