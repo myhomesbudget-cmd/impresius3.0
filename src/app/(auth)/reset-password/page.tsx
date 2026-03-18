@@ -24,7 +24,17 @@ export default function ResetPasswordPage() {
     });
 
     if (error) {
-      setError("Errore nell'invio dell'email. Riprova.");
+      console.error("Reset password error:", error.message, error.status, error);
+      if (error.message?.includes("rate") || error.status === 429) {
+        setError("Troppi tentativi. Attendi qualche minuto e riprova.");
+      } else if (error.message?.includes("not found") || error.message?.includes("not registered")) {
+        // Non rivelare se l'email esiste — mostra successo comunque
+        setSent(true);
+        setLoading(false);
+        return;
+      } else {
+        setError(`Errore: ${error.message || "Impossibile inviare l'email. Riprova."}`);
+      }
       setLoading(false);
       return;
     }
