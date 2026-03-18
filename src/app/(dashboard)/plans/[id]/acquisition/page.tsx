@@ -474,7 +474,7 @@ export default function AcquisitionPage() {
   // ----------------------------------------------------------
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6 md:space-y-8 pb-36 lg:pb-28">
+    <div className="p-4 md:p-8 max-w-6xl space-y-6 md:space-y-8 pb-36 lg:pb-28">
       {/* Page Header */}
       <div className="space-y-1">
         <h1 className="page-header-title">

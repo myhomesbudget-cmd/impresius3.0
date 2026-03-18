@@ -371,7 +371,7 @@ export default function ValuationPage() {
     <div className="p-4 md:p-8 max-w-7xl">
       {/* Header */}
       <div className="mb-8">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h1 className="page-header-title">
               Area 3 &mdash; Stima del Valore di Vendita
@@ -380,7 +380,7 @@ export default function ValuationPage() {
               Determinazione dei valori commerciali delle unita immobiliari
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 shrink-0">
             <div className="flex items-center gap-2 text-sm">
               {saving && (
                 <span className="flex items-center gap-1.5 text-slate-400">
@@ -580,7 +580,7 @@ export default function ValuationPage() {
 
               {/* Surfaces table */}
               <CardContent className="pt-0">
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto mobile-scroll-hint">
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="border-b border-slate-200">
@@ -884,7 +884,7 @@ export default function ValuationPage() {
             <CardTitle className="text-base">Riepilogo Valori</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto mobile-scroll-hint">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-slate-200">

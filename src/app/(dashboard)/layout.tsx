@@ -23,7 +23,7 @@ export default async function DashboardLayout({
     <MobileSidebarProvider>
       <div className="min-h-screen">
         <Sidebar />
-        <div className="md:ml-64">{children}</div>
+        <div className="min-w-0 md:ml-64">{children}</div>
       </div>
     </MobileSidebarProvider>
   );

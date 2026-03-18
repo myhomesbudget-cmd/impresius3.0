@@ -466,7 +466,7 @@ export default function MonitoringPage() {
               <p className="text-sm text-slate-400 mt-1">Clicca &ldquo;Registra Costo&rdquo; per iniziare il monitoraggio</p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto mobile-scroll-hint">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-slate-200">
