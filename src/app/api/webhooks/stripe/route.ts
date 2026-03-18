@@ -1,208 +1,96 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getStripe } from "@/lib/stripe";
-import { createClient } from "@supabase/supabase-js";
-import Stripe from "stripe";
-
-// Lazy-initialized service role client to bypass RLS — webhooks have no user session
-function getSupabaseAdmin() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
-}
+import { NextRequest, NextResponse } from 'next/server';
+import { getStripe } from '@/lib/stripe';
+import { getSupabaseAdmin } from '@/repositories/supabase-admin';
+import {
+  handleCheckoutCompleted,
+  handleCheckoutExpired,
+  handleSubscriptionUpdated,
+  handleSubscriptionDeleted,
+} from '@/services/stripe-webhook';
+import { logger } from '@/domain/errors';
+import type Stripe from 'stripe';
 
 export async function POST(request: NextRequest) {
   const body = await request.text();
-  const signature = request.headers.get("stripe-signature");
+  const signature = request.headers.get('stripe-signature');
 
   if (!signature) {
     return NextResponse.json(
-      { error: "Missing stripe-signature header" },
-      { status: 400 }
+      { error: 'Missing stripe-signature header' },
+      { status: 400 },
     );
   }
 
   let event: Stripe.Event;
-
   const stripe = getStripe();
 
   try {
-    event = stripe.webhooks.constructEvent(
-      body,
-      signature,
-      process.env.STRIPE_WEBHOOK_SECRET!
-    );
+    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+    if (!webhookSecret) {
+      throw new Error('STRIPE_WEBHOOK_SECRET not configured');
+    }
+    event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Unknown error";
-    console.error("Webhook signature verification failed:", message);
+    const message = err instanceof Error ? err.message : 'Unknown error';
+    logger.error('Webhook signature verification failed', {
+      operation: 'webhook.verify',
+      error: err,
+    });
     return NextResponse.json(
-      { error: "Invalid signature" },
-      { status: 400 }
+      { error: `Invalid signature: ${message}` },
+      { status: 400 },
     );
   }
+
+  const supabase = getSupabaseAdmin();
 
   try {
     switch (event.type) {
-      case "checkout.session.completed": {
+      case 'checkout.session.completed':
         await handleCheckoutCompleted(
-          event.data.object as Stripe.Checkout.Session
+          supabase,
+          event.data.object as Stripe.Checkout.Session,
         );
         break;
-      }
 
-      case "checkout.session.expired": {
+      case 'checkout.session.expired':
         await handleCheckoutExpired(
-          event.data.object as Stripe.Checkout.Session
+          supabase,
+          event.data.object as Stripe.Checkout.Session,
         );
         break;
-      }
 
-      case "customer.subscription.updated": {
+      case 'customer.subscription.updated':
         await handleSubscriptionUpdated(
-          event.data.object as Stripe.Subscription
+          supabase,
+          event.data.object as Stripe.Subscription,
         );
         break;
-      }
 
-      case "customer.subscription.deleted": {
+      case 'customer.subscription.deleted':
         await handleSubscriptionDeleted(
-          event.data.object as Stripe.Subscription
+          supabase,
+          event.data.object as Stripe.Subscription,
         );
         break;
-      }
+
+      default:
+        logger.info(`Webhook: unhandled event type ${event.type}`, {
+          operation: 'webhook.unhandled',
+          eventType: event.type,
+        });
     }
 
     return NextResponse.json({ received: true });
-  } catch (error) {
-    console.error("Webhook handler error:", error);
+  } catch (err) {
+    logger.error('Webhook handler error', {
+      operation: `webhook.${event.type}`,
+      error: err,
+      eventId: event.id,
+    });
     return NextResponse.json(
-      { error: "Webhook handler failed" },
-      { status: 500 }
+      { error: 'Webhook handler failed' },
+      { status: 500 },
     );
   }
-}
-
-// -------------------------------------------------------------------
-// checkout.session.completed
-// -------------------------------------------------------------------
-async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
-  const userId = session.metadata?.user_id;
-  const paymentId = session.metadata?.payment_id;
-  const type = session.metadata?.type;
-
-  if (!userId || !paymentId) {
-    console.error("Missing metadata in checkout session:", session.id);
-    return;
-  }
-
-  // Update payment record → completed
-  const paymentUpdate: Record<string, unknown> = {
-    status: "completed",
-    provider_payment_id: session.payment_intent as string || session.subscription as string,
-  };
-
-  // For subscriptions, store the actual amount from Stripe
-  if (type === "subscription" && session.amount_total) {
-    paymentUpdate.amount = session.amount_total;
-  }
-
-  await getSupabaseAdmin()
-    .from("payments")
-    .update(paymentUpdate)
-    .eq("id", paymentId);
-
-  if (type === "single_plan") {
-    // Single plan purchase: profile stays unchanged.
-    // The completed payment with plan_id = NULL acts as an available credit.
-    // It will be consumed (linked to a project) when the user creates one.
-  } else if (type === "subscription") {
-    // Premium subscription: derive expiration from Stripe subscription data
-    let expiresAt: string | null = null;
-
-    if (session.subscription) {
-      const subscription = await getStripe().subscriptions.retrieve(
-        session.subscription as string
-      );
-      const firstItem = subscription.items.data[0];
-      if (firstItem) {
-        expiresAt = new Date(
-          firstItem.current_period_end * 1000
-        ).toISOString();
-      }
-    }
-
-    await getSupabaseAdmin()
-      .from("profiles")
-      .update({
-        subscription_plan: "premium",
-        subscription_expires_at: expiresAt,
-      })
-      .eq("id", userId);
-  }
-}
-
-// -------------------------------------------------------------------
-// checkout.session.expired
-// -------------------------------------------------------------------
-async function handleCheckoutExpired(session: Stripe.Checkout.Session) {
-  const paymentId = session.metadata?.payment_id;
-  if (!paymentId) return;
-
-  await getSupabaseAdmin()
-    .from("payments")
-    .update({ status: "failed" })
-    .eq("id", paymentId);
-}
-
-// -------------------------------------------------------------------
-// customer.subscription.updated
-// Fires on renewal, plan change, or trial end — keeps expiration in sync
-// -------------------------------------------------------------------
-async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
-  const userId = subscription.metadata?.user_id;
-  if (!userId) return;
-
-  const isActive =
-    subscription.status === "active" || subscription.status === "trialing";
-
-  if (isActive) {
-    const firstItem = subscription.items?.data[0];
-    const expiresAt = firstItem
-      ? new Date(firstItem.current_period_end * 1000).toISOString()
-      : null;
-
-    await getSupabaseAdmin()
-      .from("profiles")
-      .update({
-        subscription_plan: "premium",
-        subscription_expires_at: expiresAt,
-      })
-      .eq("id", userId);
-  } else {
-    // past_due, unpaid, etc. — downgrade
-    await getSupabaseAdmin()
-      .from("profiles")
-      .update({
-        subscription_plan: "free",
-        subscription_expires_at: null,
-      })
-      .eq("id", userId);
-  }
-}
-
-// -------------------------------------------------------------------
-// customer.subscription.deleted
-// Subscription cancelled or expired — downgrade to free
-// -------------------------------------------------------------------
-async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
-  const userId = subscription.metadata?.user_id;
-  if (!userId) return;
-
-  await getSupabaseAdmin()
-    .from("profiles")
-    .update({
-      subscription_plan: "free",
-      subscription_expires_at: null,
-    })
-    .eq("id", userId);
 }

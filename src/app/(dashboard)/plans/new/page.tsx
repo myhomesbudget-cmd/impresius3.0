@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -13,7 +12,6 @@ import { AlertCircle, Sparkles, CreditCard, Loader2, Plus } from 'lucide-react';
 export default function NewPlanPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const supabase = createClient();
 
   const [name, setName] = useState('');
   const [city, setCity] = useState('');
@@ -30,53 +28,32 @@ export default function NewPlanPage() {
 
   const cancelled = searchParams.get('cancelled') === 'true';
 
+  // Check creation rights via server-side API
   useEffect(() => {
-    async function checkProfile() {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (!user) {
-        router.push('/login');
-        return;
-      }
-
-      const [{ data: profile }, { count: creditCount }] = await Promise.all([
-        supabase
-          .from('profiles')
-          .select('free_plan_used, subscription_plan')
-          .eq('id', user.id)
-          .single(),
-        supabase
-          .from('payments')
-          .select('*', { count: 'exact', head: true })
-          .eq('user_id', user.id)
-          .eq('type', 'single_plan')
-          .eq('status', 'completed')
-          .is('plan_id', null),
-      ]);
-
-      if (profile) {
-        const credits = creditCount ?? 0;
-        setAvailableCredits(credits);
-
-        if (profile.subscription_plan === 'premium') {
-          setCanCreate(true);
-        } else if (!profile.free_plan_used) {
-          setCanCreate(true);
-          setFreePlanAvailable(true);
-        } else if (credits > 0) {
-          setCanCreate(true);
-        } else {
-          setCanCreate(false);
+    async function checkRights() {
+      try {
+        const res = await fetch('/api/projects/check-rights');
+        if (res.status === 401) {
+          router.push('/login');
+          return;
         }
+        if (!res.ok) {
+          setCanCreate(false);
+          setCheckingProfile(false);
+          return;
+        }
+        const data = await res.json();
+        setCanCreate(data.canCreate);
+        setFreePlanAvailable(data.freePlanAvailable);
+        setAvailableCredits(data.availableCredits);
+      } catch {
+        setCanCreate(false);
       }
       setCheckingProfile(false);
     }
 
-    checkProfile();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    checkRights();
+  }, [router]);
 
   const handlePurchase = async () => {
     setPurchasing(true);
@@ -104,88 +81,48 @@ export default function NewPlanPage() {
     }
   };
 
+  // Submit: delegate ALL business logic to server
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!name.trim()) {
-      setError('Il nome dell\'operazione e obbligatorio.');
+      setError("Il nome dell'operazione e obbligatorio.");
       return;
     }
 
     setLoading(true);
     setError(null);
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    try {
+      const res = await fetch('/api/projects/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: name.trim(),
+          locationCity: city.trim() || undefined,
+          locationProvince: province.trim() || undefined,
+          strategy,
+        }),
+      });
 
-    if (!user) {
-      router.push('/login');
-      return;
-    }
+      const data = await res.json();
 
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('free_plan_used, subscription_plan')
-      .eq('id', user.id)
-      .single();
-
-    const isFree =
-      profile &&
-      profile.subscription_plan === 'free' &&
-      !profile.free_plan_used;
-
-    const isPremium = profile?.subscription_plan === 'premium';
-
-    const { data: project, error: createError } = await supabase
-      .from('projects')
-      .insert({
-        user_id: user.id,
-        name: name.trim(),
-        location_city: city.trim() || null,
-        location_province: province.trim() || null,
-        property_type: 'residenziale',
-        strategy,
-        status: 'draft',
-        is_free_plan: !!isFree,
-      })
-      .select()
-      .single();
-
-    if (createError) {
-      console.error('Error creating project:', createError);
-      setError('Si e verificato un errore. Riprova.');
-      setLoading(false);
-      return;
-    }
-
-    if (isFree) {
-      await supabase
-        .from('profiles')
-        .update({ free_plan_used: true })
-        .eq('id', user.id);
-    } else if (!isPremium) {
-      const { data: credit } = await supabase
-        .from('payments')
-        .select('id')
-        .eq('user_id', user.id)
-        .eq('type', 'single_plan')
-        .eq('status', 'completed')
-        .is('plan_id', null)
-        .order('created_at', { ascending: true })
-        .limit(1)
-        .single();
-
-      if (credit) {
-        await supabase
-          .from('payments')
-          .update({ plan_id: project.id })
-          .eq('id', credit.id)
-          .is('plan_id', null);
+      if (res.status === 401) {
+        router.push('/login');
+        return;
       }
-    }
 
-    router.push(`/plans/${project.id}`);
+      if (!res.ok) {
+        setError(data.error || 'Si e verificato un errore. Riprova.');
+        setLoading(false);
+        return;
+      }
+
+      router.push(`/plans/${data.project.id}`);
+    } catch {
+      setError('Errore di rete. Riprova.');
+      setLoading(false);
+    }
   };
 
   if (checkingProfile) {

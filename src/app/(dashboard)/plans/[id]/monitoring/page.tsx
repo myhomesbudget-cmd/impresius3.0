@@ -6,7 +6,7 @@ import { createClient } from '@/lib/supabase/client';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { cn, formatCurrency, formatPercentage, formatDate } from '@/lib/utils';
+import { cn, formatCurrency, formatDate } from '@/lib/utils';
 import { calculateProjectResults } from '@/lib/calculations';
 import type {
   Project,
@@ -25,8 +25,6 @@ import {
   Trash2,
   Save,
   Loader2,
-  TrendingUp,
-  TrendingDown,
   AlertTriangle,
   CheckCircle2,
   ArrowUpRight,

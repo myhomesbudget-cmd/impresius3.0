@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import Link from 'next/link';
 import { AlertTriangle } from 'lucide-react';
 
 export default function PlanError({
@@ -34,12 +35,12 @@ export default function PlanError({
           >
             Riprova
           </button>
-          <a
+          <Link
             href="/plans"
             className="rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
             Torna alle Operazioni
-          </a>
+          </Link>
         </div>
       </div>
     </div>

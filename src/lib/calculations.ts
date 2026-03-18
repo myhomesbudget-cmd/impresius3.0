@@ -1,6 +1,30 @@
 // =============================================
-// IMPRESIUS 3.0 - Motore di Calcolo
+// IMPRESIUS 3.0 - Motore di Calcolo Canonico
 // =============================================
+//
+// Questo modulo e la UNICA fonte di verita per tutti i calcoli
+// economico-finanziari del sistema. Nessun'altra parte dell'app
+// deve ricalcolare KPI, margini o incidenze con logiche proprie.
+//
+// Convenzioni di arrotondamento:
+// - Tutti gli importi monetari sono arrotondati a 2 decimali
+//   con Math.round(x * 100) / 100 (half-away-from-zero).
+// - Le percentuali sono arrotondamento a 2 decimali.
+// - Le superfici ragguagliate sono arrotondate a 2 decimali.
+//
+// Glossario indicatori:
+// - gross_margin: Ricavo totale - Costo totale
+// - margin_percentage: (gross_margin / total_cost) × 100
+//   → indica il guadagno per ogni euro investito
+// - margin_on_revenue: (gross_margin / total_revenue) × 100
+//   → indica la quota di ricavo che resta come margine
+// - roi: identico a margin_percentage (Return on Investment)
+// - acquisition_incidence: (total_acquisition_cost / total_cost) × 100
+// - construction_incidence: (total_construction_cost / total_cost) × 100
+// - operation_incidence: (total_operation_cost / total_cost) × 100
+//
+// Le tre incidenze sommano sempre a 100% (entro margine di arrotondamento).
+//
 
 import type {
   PropertyUnit,
@@ -15,6 +39,7 @@ import type {
 /**
  * Calcola la quantita di una singola misurazione.
  * Logica: se un campo e 0, viene ignorato nel prodotto.
+ * Se tutti i campi sono 0, restituisce 0.
  */
 export function calculateMeasurementQuantity(m: Measurement): number {
   const parts = m.parts || 0;

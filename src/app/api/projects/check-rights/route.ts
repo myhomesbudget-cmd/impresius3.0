@@ -1,28 +1,20 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { createStripeCheckoutUseCase } from '@/services/stripe-checkout';
+import { checkCreationRightsUseCase } from '@/services/check-creation-rights';
 import { AppError, logger } from '@/domain/errors';
 
-export async function POST(request: NextRequest) {
+export async function GET() {
   try {
     const supabase = await createClient();
-
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
       return NextResponse.json({ error: 'Non autenticato' }, { status: 401 });
     }
 
-    const body = await request.json();
-    const { type } = body as { type: 'single_plan' | 'subscription' };
+    const rights = await checkCreationRightsUseCase(supabase, user.id);
 
-    const result = await createStripeCheckoutUseCase(supabase, {
-      type,
-      userId: user.id,
-      userEmail: user.email || '',
-    });
-
-    return NextResponse.json({ sessionUrl: result.sessionUrl });
+    return NextResponse.json(rights);
   } catch (err) {
     if (err instanceof AppError) {
       return NextResponse.json(
@@ -31,8 +23,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    logger.error('Unhandled error in POST /api/payments/create-session', {
-      operation: 'api.payments.createSession',
+    logger.error('Unhandled error in GET /api/projects/check-rights', {
+      operation: 'api.projects.checkRights',
       error: err,
     });
 

@@ -3,8 +3,9 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { formatCurrency, formatDate } from '@/lib/utils';
+import { formatDate } from '@/lib/utils';
 import type { Project } from '@/types/database';
+import { getDashboardSummaryUseCase } from '@/services/dashboard-summary';
 import {
   Plus,
   FolderOpen,
@@ -12,8 +13,6 @@ import {
   Crown,
   MapPin,
   Building2,
-  ArrowRight,
-  TrendingUp,
 } from 'lucide-react';
 
 const strategyLabels: Record<string, string> = {
@@ -53,27 +52,7 @@ export default async function DashboardPage() {
     redirect('/login');
   }
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('full_name, subscription_plan')
-    .eq('id', user.id)
-    .single();
-
-  const { data: projects } = await supabase
-    .from('projects')
-    .select('*')
-    .eq('user_id', user.id)
-    .order('created_at', { ascending: false });
-
-  const allProjects = (projects || []) as Project[];
-  const totalProjects = allProjects.length;
-  const draftProjects = allProjects.filter((p) => p.status === 'draft').length;
-  const activeProjects = allProjects.filter((p) => p.status === 'active').length;
-  const isPremium = profile?.subscription_plan === 'premium';
-
-  const greeting = profile?.full_name
-    ? `Bentornato, ${profile.full_name}`
-    : 'Benvenuto';
+  const summary = await getDashboardSummaryUseCase(supabase, user.id);
 
   return (
     <div className="p-4 md:p-8 max-w-6xl mx-auto">
@@ -81,7 +60,7 @@ export default async function DashboardPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 sm:mb-10">
         <div>
           <h1 className="page-header-title">Dashboard</h1>
-          <p className="page-header-subtitle">{greeting}</p>
+          <p className="page-header-subtitle">{summary.greeting}</p>
         </div>
         <Link href="/plans/new">
           <Button variant="gradient" className="gap-2 w-full sm:w-auto">
@@ -102,8 +81,8 @@ export default async function DashboardPage() {
                 <FolderOpen className="w-5 h-5 text-blue-600" />
               </div>
             </div>
-            <p className="metric-value text-slate-900">{totalProjects}</p>
-            <p className="metric-sublabel">{activeProjects} attiv{activeProjects === 1 ? 'a' : 'e'}</p>
+            <p className="metric-value text-slate-900">{summary.totalProjects}</p>
+            <p className="metric-sublabel">{summary.activeProjects} attiv{summary.activeProjects === 1 ? 'a' : 'e'}</p>
           </div>
         </div>
 
@@ -116,7 +95,7 @@ export default async function DashboardPage() {
                 <FilePenLine className="w-5 h-5 text-amber-600" />
               </div>
             </div>
-            <p className="metric-value text-slate-900">{draftProjects}</p>
+            <p className="metric-value text-slate-900">{summary.draftProjects}</p>
             <p className="metric-sublabel">Da completare</p>
           </div>
         </div>
@@ -130,7 +109,7 @@ export default async function DashboardPage() {
                 <Crown className="w-5 h-5 text-indigo-600" />
               </div>
             </div>
-            {isPremium ? (
+            {summary.isPremium ? (
               <>
                 <p className="metric-value text-gradient-gold">Premium</p>
                 <p className="metric-sublabel">Operazioni illimitate</p>
@@ -159,7 +138,7 @@ export default async function DashboardPage() {
           <h2 className="section-header-title">Le tue Operazioni</h2>
         </div>
 
-        {allProjects.length === 0 ? (
+        {summary.projects.length === 0 ? (
           <Card className="border-dashed border-2 border-slate-200 bg-slate-50/50 hover:shadow-none">
             <CardContent className="flex flex-col items-center justify-center py-20">
               <div className="empty-state-icon">
@@ -182,7 +161,7 @@ export default async function DashboardPage() {
           </Card>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {allProjects.map((project) => (
+            {summary.projects.map((project: Project) => (
               <Link
                 key={project.id}
                 href={`/plans/${project.id}`}
