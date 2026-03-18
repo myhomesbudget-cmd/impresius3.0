@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn, formatCurrency, formatNumber } from '@/lib/utils';
@@ -89,7 +89,7 @@ export default function ComputoMetricoPage() {
   // ---- Fetch data ----
   useEffect(() => {
     async function fetchData() {
-      const [{ data: itemsData }, { data: measurementsData }] = await Promise.all([
+      const [{ data: itemsData }] = await Promise.all([
         supabase
           .from('construction_items')
           .select('*')

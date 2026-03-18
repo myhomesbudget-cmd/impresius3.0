@@ -6,19 +6,13 @@ import { createClient } from '@/lib/supabase/client';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { cn, formatCurrency, formatNumber, formatPercentage } from '@/lib/utils';
 import { calculateProjectResults } from '@/lib/calculations';
+import { loadProjectDataset } from '@/repositories/project-data';
 import { OPERATION_SECTIONS, FLOORS } from '@/types/database';
 import type {
   Project,
   ProjectResults,
-  PropertyUnit,
-  UnitSurface,
-  AcquisitionCost,
-  OperationCost,
-  ConstructionItem,
-  Measurement,
 } from '@/types/database';
 import {
-  Loader2,
   TrendingUp,
   TrendingDown,
   DollarSign,
@@ -51,61 +45,22 @@ export default function SummaryPage() {
     async function fetchAllData() {
       setLoading(true);
 
-      const [
-        { data: projectData },
-        { data: units },
-        { data: surfaces },
-        { data: acquisitionCosts },
-        { data: operationCosts },
-        { data: constructionItems },
-        { data: measurements },
-      ] = await Promise.all([
+      const [{ data: projectData }, dataset] = await Promise.all([
         supabase.from('projects').select('*').eq('id', projectId).single(),
-        supabase
-          .from('property_units')
-          .select('*')
-          .eq('project_id', projectId)
-          .order('sort_order'),
-        supabase.from('unit_surfaces').select('*').order('sort_order'),
-        supabase
-          .from('acquisition_costs')
-          .select('*')
-          .eq('project_id', projectId)
-          .order('sort_order'),
-        supabase
-          .from('operation_costs')
-          .select('*')
-          .eq('project_id', projectId)
-          .order('sort_order'),
-        supabase
-          .from('construction_items')
-          .select('*')
-          .eq('project_id', projectId)
-          .order('sort_order'),
-        supabase.from('measurements').select('*').order('sort_order'),
+        loadProjectDataset(supabase, projectId),
       ]);
 
       if (projectData) {
         setProject(projectData as Project);
       }
 
-      const unitIds = (units || []).map((u: PropertyUnit) => u.id);
-      const projectSurfaces = (surfaces || []).filter((s: UnitSurface) =>
-        unitIds.includes(s.unit_id)
-      );
-
-      const itemIds = (constructionItems || []).map((i: ConstructionItem) => i.id);
-      const projectMeasurements = (measurements || []).filter((m: Measurement) =>
-        itemIds.includes(m.item_id)
-      );
-
       const calculated = calculateProjectResults(
-        (units || []) as PropertyUnit[],
-        projectSurfaces as UnitSurface[],
-        (acquisitionCosts || []) as AcquisitionCost[],
-        (operationCosts || []) as OperationCost[],
-        (constructionItems || []) as ConstructionItem[],
-        projectMeasurements as Measurement[]
+        dataset.units,
+        dataset.surfaces,
+        dataset.acquisitionCosts,
+        dataset.operationCosts,
+        dataset.constructionItems,
+        dataset.measurements,
       );
 
       setResults(calculated);

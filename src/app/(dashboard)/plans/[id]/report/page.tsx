@@ -12,12 +12,11 @@ import {
   calculateItemTotal,
   calculateItemQuantity,
 } from '@/lib/calculations';
+import { loadProjectDataset } from '@/repositories/project-data';
 import { FLOORS, OPERATION_SECTIONS, CONSTRUCTION_CATEGORIES } from '@/types/database';
 import type {
   Project,
   ProjectResults,
-  PropertyUnit,
-  UnitSurface,
   AcquisitionCost,
   OperationCost,
   ConstructionItem,
@@ -86,51 +85,32 @@ export default function ReportPage() {
   const [operationCosts, setOperationCosts] = useState<OperationCost[]>([]);
   const [constructionItems, setConstructionItems] = useState<ConstructionItem[]>([]);
   const [measurements, setMeasurements] = useState<Measurement[]>([]);
-  const [units, setUnits] = useState<PropertyUnit[]>([]);
-  const [surfaces, setSurfaces] = useState<UnitSurface[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchAllData() {
       setLoading(true);
 
-      const [
-        { data: projectData },
-        { data: unitsData },
-        { data: surfacesData },
-        { data: acqData },
-        { data: opData },
-        { data: ciData },
-        { data: measData },
-      ] = await Promise.all([
+      const [{ data: projectData }, dataset] = await Promise.all([
         supabase.from('projects').select('*').eq('id', projectId).single(),
-        supabase.from('property_units').select('*').eq('project_id', projectId).order('sort_order'),
-        supabase.from('unit_surfaces').select('*').order('sort_order'),
-        supabase.from('acquisition_costs').select('*').eq('project_id', projectId).order('sort_order'),
-        supabase.from('operation_costs').select('*').eq('project_id', projectId).order('sort_order'),
-        supabase.from('construction_items').select('*').eq('project_id', projectId).order('sort_order'),
-        supabase.from('measurements').select('*').order('sort_order'),
+        loadProjectDataset(supabase, projectId),
       ]);
 
       if (projectData) setProject(projectData as Project);
 
-      const typedUnits = (unitsData || []) as PropertyUnit[];
-      const unitIds = typedUnits.map((u) => u.id);
-      const projectSurfaces = ((surfacesData || []) as UnitSurface[]).filter((s) => unitIds.includes(s.unit_id));
-      const typedItems = (ciData || []) as ConstructionItem[];
-      const itemIds = typedItems.map((i) => i.id);
-      const projectMeasurements = ((measData || []) as Measurement[]).filter((m) => itemIds.includes(m.item_id));
-      const typedAcq = (acqData || []) as AcquisitionCost[];
-      const typedOp = (opData || []) as OperationCost[];
+      setAcquisitionCosts(dataset.acquisitionCosts);
+      setOperationCosts(dataset.operationCosts);
+      setConstructionItems(dataset.constructionItems);
+      setMeasurements(dataset.measurements);
 
-      setUnits(typedUnits);
-      setSurfaces(projectSurfaces);
-      setAcquisitionCosts(typedAcq);
-      setOperationCosts(typedOp);
-      setConstructionItems(typedItems);
-      setMeasurements(projectMeasurements);
-
-      const calculated = calculateProjectResults(typedUnits, projectSurfaces, typedAcq, typedOp, typedItems, projectMeasurements);
+      const calculated = calculateProjectResults(
+        dataset.units,
+        dataset.surfaces,
+        dataset.acquisitionCosts,
+        dataset.operationCosts,
+        dataset.constructionItems,
+        dataset.measurements,
+      );
       setResults(calculated);
       setLoading(false);
     }
@@ -177,12 +157,6 @@ export default function ReportPage() {
     { name: 'Costi Operativi', value: results.total_operation_cost },
     { name: 'Lavori', value: results.total_construction_cost },
   ].filter(d => d.value > 0);
-
-  const costiRicaviData = [
-    { name: 'Costi Totali', Costi: results.total_cost, Ricavi: 0 },
-    { name: 'Ricavi Totali', Costi: 0, Ricavi: results.total_revenue },
-    { name: 'Margine', Costi: 0, Ricavi: 0, Margine: results.gross_margin },
-  ];
 
   const operationSectionData = results.operation_cost_by_section
     .filter(s => s.total > 0)

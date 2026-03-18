@@ -8,7 +8,6 @@ import {
   Loader2,
   Percent,
   Plus,
-  Trash2,
   X,
   Hash,
   Euro,
