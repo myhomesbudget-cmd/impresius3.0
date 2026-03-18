@@ -264,7 +264,7 @@ export default function SummaryPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="overflow-x-auto -mx-6">
+            <div className="overflow-x-auto mobile-scroll-hint -mx-6">
               <table className="w-full table-premium">
                 <thead>
                   <tr>
@@ -341,7 +341,7 @@ export default function SummaryPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="overflow-x-auto -mx-6">
+            <div className="overflow-x-auto mobile-scroll-hint -mx-6">
               <table className="w-full table-premium">
                 <thead>
                   <tr>
