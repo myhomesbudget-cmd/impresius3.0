@@ -23,10 +23,10 @@ const strategyLabels: Record<string, string> = {
 };
 
 const strategyColors: Record<string, string> = {
-  ristrutturazione: 'bg-blue-50 text-blue-700 border border-blue-200',
-  frazionamento: 'bg-purple-50 text-purple-700 border border-purple-200',
-  nuova_costruzione: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
-  rivendita: 'bg-amber-50 text-amber-700 border border-amber-200',
+  ristrutturazione: 'bg-blue-500/10 text-blue-700 dark:text-blue-400 border border-blue-500/20',
+  frazionamento: 'bg-purple-500/10 text-purple-700 dark:text-purple-400 border border-purple-500/20',
+  nuova_costruzione: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20',
+  rivendita: 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20',
 };
 
 const statusLabels: Record<string, string> = {
@@ -36,9 +36,9 @@ const statusLabels: Record<string, string> = {
 };
 
 const statusColors: Record<string, string> = {
-  draft: 'bg-slate-50 text-slate-600 border border-slate-200',
-  active: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
-  archived: 'bg-red-50 text-red-600 border border-red-200',
+  draft: 'bg-muted text-muted-foreground border border-border',
+  active: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20',
+  archived: 'bg-destructive/10 text-destructive border border-destructive/20',
 };
 
 export default async function DashboardPage() {
@@ -77,11 +77,11 @@ export default async function DashboardPage() {
           <div className="p-5">
             <div className="flex items-center justify-between mb-3">
               <span className="metric-label">Operazioni Totali</span>
-              <div className="icon-container icon-container-md rounded-xl bg-blue-50">
-                <FolderOpen className="w-5 h-5 text-blue-600" />
+              <div className="icon-container icon-container-md rounded-xl bg-blue-500/10 dark:bg-blue-500/20">
+                <FolderOpen className="w-5 h-5 text-blue-600 dark:text-blue-400" />
               </div>
             </div>
-            <p className="metric-value text-slate-900">{summary.totalProjects}</p>
+            <p className="metric-value">{summary.totalProjects}</p>
             <p className="metric-sublabel">{summary.activeProjects} attiv{summary.activeProjects === 1 ? 'a' : 'e'}</p>
           </div>
         </div>
@@ -91,11 +91,11 @@ export default async function DashboardPage() {
           <div className="p-5">
             <div className="flex items-center justify-between mb-3">
               <span className="metric-label">In Bozza</span>
-              <div className="icon-container icon-container-md rounded-xl bg-amber-50">
-                <FilePenLine className="w-5 h-5 text-amber-600" />
+              <div className="icon-container icon-container-md rounded-xl bg-amber-500/10 dark:bg-amber-500/20">
+                <FilePenLine className="w-5 h-5 text-amber-600 dark:text-amber-400" />
               </div>
             </div>
-            <p className="metric-value text-slate-900">{summary.draftProjects}</p>
+            <p className="metric-value">{summary.draftProjects}</p>
             <p className="metric-sublabel">Da completare</p>
           </div>
         </div>
@@ -105,8 +105,8 @@ export default async function DashboardPage() {
           <div className="p-5">
             <div className="flex items-center justify-between mb-3">
               <span className="metric-label">Piano Attivo</span>
-              <div className="icon-container icon-container-md rounded-xl bg-indigo-50">
-                <Crown className="w-5 h-5 text-indigo-600" />
+              <div className="icon-container icon-container-md rounded-xl bg-indigo-500/10 dark:bg-indigo-500/20">
+                <Crown className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
               </div>
             </div>
             {summary.isPremium ? (
@@ -116,9 +116,9 @@ export default async function DashboardPage() {
               </>
             ) : (
               <>
-                <p className="metric-value text-slate-900">Free</p>
+                <p className="metric-value">Free</p>
                 <div className="mt-1">
-                  <span className="badge-premium bg-amber-50 text-amber-700 border border-amber-200">
+                  <span className="badge-premium bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20">
                     <Crown className="w-3 h-3" />
                     Passa a Premium
                   </span>
@@ -132,22 +132,22 @@ export default async function DashboardPage() {
       {/* Projects List */}
       <div>
         <div className="section-header">
-          <div className="icon-container icon-container-sm rounded-lg bg-slate-100">
-            <Building2 className="w-4 h-4 text-slate-600" />
+          <div className="icon-container icon-container-sm rounded-lg bg-muted">
+            <Building2 className="w-4 h-4 text-muted-foreground" />
           </div>
           <h2 className="section-header-title">Le tue Operazioni</h2>
         </div>
 
         {summary.projects.length === 0 ? (
-          <Card className="border-dashed border-2 border-slate-200 bg-slate-50/50 hover:shadow-none">
+          <Card className="border-dashed border-2 border-border bg-muted/50 hover:shadow-none">
             <CardContent className="flex flex-col items-center justify-center py-20">
               <div className="empty-state-icon">
-                <Building2 className="w-9 h-9 text-blue-500" />
+                <Building2 className="w-9 h-9 text-primary" />
               </div>
-              <h3 className="text-lg font-bold text-slate-900 mb-2">
+              <h3 className="text-lg font-bold text-foreground mb-2">
                 Nessuna operazione
               </h3>
-              <p className="text-sm text-slate-500 mb-8 text-center max-w-sm leading-relaxed">
+              <p className="text-sm text-muted-foreground mb-8 text-center max-w-sm leading-relaxed">
                 Crea la tua prima operazione immobiliare per iniziare ad
                 analizzare costi, ricavi e margini.
               </p>
@@ -167,25 +167,25 @@ export default async function DashboardPage() {
                 href={`/plans/${project.id}`}
                 className="block group"
               >
-                <Card className="h-full cursor-pointer hover:border-blue-200 group-hover:shadow-[0_0_0_1px_rgb(59_130_246/0.1),0_8px_20px_rgb(0_0_0/0.06)]">
+                <Card className="h-full cursor-pointer hover:border-primary/30 group-hover:shadow-[0_0_0_1px_hsl(var(--primary)/0.1),0_8px_20px_hsl(var(--foreground)/0.06)]">
                   <CardContent className="p-5">
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-center gap-2.5">
-                        <div className="icon-container icon-container-sm rounded-lg bg-blue-50 group-hover:bg-blue-100 transition-colors">
-                          <FolderOpen className="w-3.5 h-3.5 text-blue-600" />
+                        <div className="icon-container icon-container-sm rounded-lg bg-primary/10 group-hover:bg-primary/15 transition-colors">
+                          <FolderOpen className="w-3.5 h-3.5 text-primary" />
                         </div>
-                        <h3 className="font-bold text-slate-900 line-clamp-1">
+                        <h3 className="font-bold text-foreground line-clamp-1">
                           {project.name}
                         </h3>
                       </div>
                       <div className="flex items-center gap-1.5 ml-2 shrink-0">
                         {project.is_free_plan && (
-                          <span className="badge-premium bg-slate-50 text-slate-600 border border-slate-200">
+                          <span className="badge-premium bg-muted text-muted-foreground border border-border">
                             Free
                           </span>
                         )}
                         <span
-                          className={`badge-premium ${statusColors[project.status] || 'bg-slate-50 text-slate-600 border border-slate-200'}`}
+                          className={`badge-premium ${statusColors[project.status] || 'bg-muted text-muted-foreground border border-border'}`}
                         >
                           {statusLabels[project.status] || project.status}
                         </span>
@@ -193,8 +193,8 @@ export default async function DashboardPage() {
                     </div>
 
                     {(project.location_city || project.location_province) && (
-                      <div className="flex items-center gap-1.5 text-sm text-slate-500 mb-3">
-                        <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                      <div className="flex items-center gap-1.5 text-sm text-muted-foreground mb-3">
+                        <MapPin className="w-3.5 h-3.5" />
                         <span>
                           {[project.location_city, project.location_province]
                             .filter(Boolean)
@@ -203,13 +203,13 @@ export default async function DashboardPage() {
                       </div>
                     )}
 
-                    <div className="flex items-center justify-between mt-auto pt-3 border-t border-slate-100">
+                    <div className="flex items-center justify-between mt-auto pt-3 border-t border-border/50">
                       <span
-                        className={`badge-premium ${strategyColors[project.strategy] || 'bg-slate-50 text-slate-600 border border-slate-200'}`}
+                        className={`badge-premium ${strategyColors[project.strategy] || 'bg-muted text-muted-foreground border border-border'}`}
                       >
                         {strategyLabels[project.strategy] || project.strategy}
                       </span>
-                      <span className="text-xs font-medium text-slate-400">
+                      <span className="text-xs font-medium text-muted-foreground">
                         {formatDate(project.created_at)}
                       </span>
                     </div>

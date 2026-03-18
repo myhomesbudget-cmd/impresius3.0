@@ -109,7 +109,7 @@ export default function DatiGeneraliPage() {
           </div>
           <div className="flex items-center gap-2 text-sm">
             {saving && (
-              <span className="flex items-center gap-1.5 text-slate-400 font-medium">
+              <span className="flex items-center gap-1.5 text-muted-foreground font-medium">
                 <Loader2 className="w-4 h-4 animate-spin" />
                 Salvataggio...
               </span>
@@ -130,7 +130,7 @@ export default function DatiGeneraliPage() {
         <Card>
           <CardHeader>
             <div className="flex items-center gap-2.5">
-              <div className="icon-container icon-container-sm rounded-lg bg-blue-50">
+              <div className="icon-container icon-container-sm rounded-lg bg-blue-500/10 dark:bg-blue-500/20">
                 <FileText className="w-4 h-4 text-blue-600" />
               </div>
               <CardTitle>Operazione</CardTitle>
@@ -144,13 +144,13 @@ export default function DatiGeneraliPage() {
               onChange={(e) => handleChange('name', e.target.value)}
             />
             <div className="w-full">
-              <label className="block text-sm font-semibold text-slate-700 mb-2">
+              <label className="block text-sm font-semibold text-foreground mb-2">
                 Descrizione
               </label>
               <textarea
                 className={cn(
-                  'flex w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 transition-all duration-200',
-                  'placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-[3px] focus:ring-blue-500/15',
+                  'flex w-full rounded-lg border border-border bg-card px-3.5 py-2.5 text-sm text-foreground transition-all duration-200',
+                  'placeholder:text-muted-foreground focus:border-blue-500 focus:outline-none focus:ring-[3px] focus:ring-blue-500/15',
                   'disabled:cursor-not-allowed disabled:opacity-50',
                   'min-h-[100px] resize-y'
                 )}
@@ -166,7 +166,7 @@ export default function DatiGeneraliPage() {
         <Card>
           <CardHeader>
             <div className="flex items-center gap-2.5">
-              <div className="icon-container icon-container-sm rounded-lg bg-emerald-50">
+              <div className="icon-container icon-container-sm rounded-lg bg-emerald-500/10 dark:bg-emerald-500/20">
                 <MapPin className="w-4 h-4 text-emerald-600" />
               </div>
               <CardTitle>Localizzazione</CardTitle>
@@ -202,7 +202,7 @@ export default function DatiGeneraliPage() {
         <Card>
           <CardHeader>
             <div className="flex items-center gap-2.5">
-              <div className="icon-container icon-container-sm rounded-lg bg-indigo-50">
+              <div className="icon-container icon-container-sm rounded-lg bg-indigo-500/10 dark:bg-indigo-500/20">
                 <Settings2 className="w-4 h-4 text-indigo-600" />
               </div>
               <CardTitle>Tipologia e Strategia</CardTitle>
@@ -210,12 +210,12 @@ export default function DatiGeneraliPage() {
           </CardHeader>
           <CardContent className="space-y-5">
             <div className="w-full">
-              <label className="block text-sm font-semibold text-slate-700 mb-2">
+              <label className="block text-sm font-semibold text-foreground mb-2">
                 Tipologia Immobile
               </label>
               <select
                 className={cn(
-                  'flex h-11 w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 transition-all duration-200',
+                  'flex h-11 w-full rounded-lg border border-border bg-card px-3.5 py-2.5 text-sm text-foreground transition-all duration-200',
                   'focus:border-blue-500 focus:outline-none focus:ring-[3px] focus:ring-blue-500/15'
                 )}
                 value={form.property_type}
@@ -230,12 +230,12 @@ export default function DatiGeneraliPage() {
             </div>
 
             <div className="w-full">
-              <label className="block text-sm font-semibold text-slate-700 mb-2">
+              <label className="block text-sm font-semibold text-foreground mb-2">
                 Strategia
               </label>
               <select
                 className={cn(
-                  'flex h-11 w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 transition-all duration-200',
+                  'flex h-11 w-full rounded-lg border border-border bg-card px-3.5 py-2.5 text-sm text-foreground transition-all duration-200',
                   'focus:border-blue-500 focus:outline-none focus:ring-[3px] focus:ring-blue-500/15'
                 )}
                 value={form.strategy}

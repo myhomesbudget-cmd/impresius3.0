@@ -3,13 +3,13 @@ import { Building2 } from "lucide-react";
 
 export function Footer() {
   return (
-    <footer className="bg-slate-900 text-slate-400 py-16">
+    <footer className="bg-slate-900 dark:bg-slate-950 text-slate-400 py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid md:grid-cols-4 gap-12">
           {/* Brand */}
           <div className="md:col-span-2">
             <Link href="/" className="flex items-center gap-2.5 mb-5">
-              <div className="w-9 h-9 icon-gradient rounded-xl flex items-center justify-center shadow-[0_2px_8px_rgb(59_130_246/0.3)]">
+              <div className="w-9 h-9 icon-gradient rounded-xl flex items-center justify-center shadow-[0_2px_8px_hsl(224_76%_48%/0.3)]">
                 <Building2 className="w-5 h-5 text-white" />
               </div>
               <span className="text-xl font-extrabold text-white">Impresius</span>

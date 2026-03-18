@@ -12,21 +12,21 @@ export default function PrivacyPage() {
     <main className="min-h-screen relative">
       <Navbar />
       <div className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-2">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-foreground mb-2">
           Privacy Policy
         </h1>
-        <p className="text-sm text-slate-500 mb-10">
+        <p className="text-sm text-muted-foreground mb-10">
           Ultimo aggiornamento: 18 marzo 2026
         </p>
 
-        <div className="prose prose-slate max-w-none space-y-8 text-slate-700 leading-relaxed">
+        <div className="prose prose-slate max-w-none space-y-8 text-foreground leading-relaxed">
           <section>
-            <h2 className="text-xl font-bold text-slate-900 mb-3">1. Titolare del Trattamento</h2>
+            <h2 className="text-xl font-bold text-foreground mb-3">1. Titolare del Trattamento</h2>
             <p>
               Il titolare del trattamento dei dati personali &egrave;:
             </p>
-            <address className="not-italic bg-slate-50 rounded-xl p-5 text-sm leading-relaxed mt-3">
-              <strong className="text-slate-900">Studio Tecnico Lombardo</strong><br />
+            <address className="not-italic bg-muted rounded-xl p-5 text-sm leading-relaxed mt-3">
+              <strong className="text-foreground">Studio Tecnico Lombardo</strong><br />
               Geom. Lombardo Marco<br />
               Via Sant&apos;Antonio n. 5<br />
               22070 &mdash; Locate Varesino (CO)<br />
@@ -36,7 +36,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-slate-900 mb-3">2. Dati Raccolti</h2>
+            <h2 className="text-xl font-bold text-foreground mb-3">2. Dati Raccolti</h2>
             <p>
               Raccogliamo le seguenti categorie di dati personali:
             </p>
@@ -60,7 +60,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-slate-900 mb-3">3. Finalit&agrave; del Trattamento</h2>
+            <h2 className="text-xl font-bold text-foreground mb-3">3. Finalit&agrave; del Trattamento</h2>
             <p>I dati personali sono trattati per le seguenti finalit&agrave;:</p>
             <ul className="list-disc pl-6 space-y-2 mt-3">
               <li>Fornitura e gestione del servizio Impresius.</li>
@@ -73,7 +73,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-slate-900 mb-3">4. Base Giuridica del Trattamento</h2>
+            <h2 className="text-xl font-bold text-foreground mb-3">4. Base Giuridica del Trattamento</h2>
             <p>Il trattamento dei dati si basa su:</p>
             <ul className="list-disc pl-6 space-y-2 mt-3">
               <li>
@@ -92,7 +92,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-slate-900 mb-3">5. Conservazione dei Dati</h2>
+            <h2 className="text-xl font-bold text-foreground mb-3">5. Conservazione dei Dati</h2>
             <p>
               I dati personali sono conservati per il tempo strettamente necessario al perseguimento delle
               finalit&agrave; per cui sono stati raccolti. In particolare:
@@ -105,7 +105,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-slate-900 mb-3">6. Condivisione dei Dati</h2>
+            <h2 className="text-xl font-bold text-foreground mb-3">6. Condivisione dei Dati</h2>
             <p>I dati possono essere condivisi con:</p>
             <ul className="list-disc pl-6 space-y-2 mt-3">
               <li>
@@ -125,7 +125,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-slate-900 mb-3">7. Trasferimento dei Dati Extra-UE</h2>
+            <h2 className="text-xl font-bold text-foreground mb-3">7. Trasferimento dei Dati Extra-UE</h2>
             <p>
               Alcuni dei nostri fornitori di servizi (Supabase, Stripe, Vercel) possono trasferire i dati
               al di fuori dello Spazio Economico Europeo. Tali trasferimenti avvengono sulla base di
@@ -135,7 +135,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-slate-900 mb-3">8. Diritti dell&apos;Interessato</h2>
+            <h2 className="text-xl font-bold text-foreground mb-3">8. Diritti dell&apos;Interessato</h2>
             <p>Ai sensi degli articoli 15-22 del GDPR, hai il diritto di:</p>
             <ul className="list-disc pl-6 space-y-2 mt-3">
               <li><strong>Accesso:</strong> ottenere conferma del trattamento e una copia dei tuoi dati.</li>
@@ -154,7 +154,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-slate-900 mb-3">9. Sicurezza dei Dati</h2>
+            <h2 className="text-xl font-bold text-foreground mb-3">9. Sicurezza dei Dati</h2>
             <p>
               Adottiamo misure tecniche e organizzative adeguate per proteggere i dati personali, tra cui:
               crittografia dei dati in transito (TLS/SSL), hashing delle password, controllo degli
@@ -163,7 +163,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-slate-900 mb-3">10. Modifiche alla Privacy Policy</h2>
+            <h2 className="text-xl font-bold text-foreground mb-3">10. Modifiche alla Privacy Policy</h2>
             <p>
               Ci riserviamo il diritto di aggiornare questa informativa in qualsiasi momento. Le modifiche
               saranno pubblicate su questa pagina con indicazione della data di ultimo aggiornamento.

@@ -24,9 +24,9 @@ interface ProjectSidebarProps {
 }
 
 const statusConfig = {
-  draft: { label: 'Bozza', className: 'bg-amber-50 text-amber-700 border border-amber-200' },
-  active: { label: 'Attivo', className: 'bg-emerald-50 text-emerald-700 border border-emerald-200' },
-  archived: { label: 'Archiviato', className: 'bg-slate-50 text-slate-600 border border-slate-200' },
+  draft: { label: 'Bozza', className: 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20' },
+  active: { label: 'Attivo', className: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20' },
+  archived: { label: 'Archiviato', className: 'bg-muted text-muted-foreground border border-border' },
 } as const;
 
 function ProjectSidebarContent({ project, onNavigate }: { project: Project; onNavigate?: () => void }) {
@@ -49,12 +49,12 @@ function ProjectSidebarContent({ project, onNavigate }: { project: Project; onNa
   return (
     <>
       {/* Project Header */}
-      <div className="px-4 py-5 border-b border-slate-100 bg-slate-50/50">
-        <h2 className="text-sm font-bold text-slate-900 truncate" title={project.name}>
+      <div className="px-4 py-5 border-b border-border bg-muted/50">
+        <h2 className="text-sm font-bold text-foreground truncate" title={project.name}>
           {project.name}
         </h2>
         {project.location_city && (
-          <p className="mt-1 text-xs text-slate-500 truncate flex items-center gap-1">
+          <p className="mt-1 text-xs text-muted-foreground truncate flex items-center gap-1">
             <MapPin className="w-3 h-3 flex-shrink-0" />
             {project.location_city}
             {project.location_province ? ` (${project.location_province})` : ''}
@@ -85,17 +85,17 @@ function ProjectSidebarContent({ project, onNavigate }: { project: Project; onNa
               className={cn(
                 'flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] font-medium transition-all duration-150 relative',
                 isActive
-                  ? 'bg-gradient-to-r from-blue-50 to-indigo-50/50 text-blue-700 font-semibold'
-                  : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                  ? 'bg-sidebar-accent text-sidebar-accent-foreground font-semibold'
+                  : 'text-muted-foreground hover:bg-accent hover:text-foreground'
               )}
             >
               {isActive && (
-                <div className="absolute left-0 top-1.5 bottom-1.5 w-[3px] bg-gradient-to-b from-blue-500 to-indigo-500 rounded-full" />
+                <div className="absolute left-0 top-1.5 bottom-1.5 w-[3px] bg-gradient-to-b from-primary to-[hsl(243_75%_59%)] rounded-full" />
               )}
               <item.icon
                 className={cn(
                   'w-4 h-4 flex-shrink-0',
-                  isActive ? 'text-blue-600' : 'text-slate-400'
+                  isActive ? 'text-primary' : 'text-muted-foreground'
                 )}
               />
               <span className="truncate">{item.label}</span>
@@ -105,13 +105,13 @@ function ProjectSidebarContent({ project, onNavigate }: { project: Project; onNa
       </nav>
 
       {/* Back Link */}
-      <div className="px-3 py-4 border-t border-slate-100">
+      <div className="px-3 py-4 border-t border-border">
         <Link
           href="/dashboard"
           onClick={onNavigate}
-          className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] font-medium text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition-colors"
+          className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
         >
-          <ArrowLeft className="w-4 h-4 text-slate-400" />
+          <ArrowLeft className="w-4 h-4" />
           Torna alla Dashboard
         </Link>
       </div>
@@ -125,7 +125,7 @@ export function ProjectSidebar({ project }: ProjectSidebarProps) {
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className="hidden lg:flex fixed left-64 top-0 h-full w-56 bg-white/90 backdrop-blur-md border-r border-slate-200/80 flex-col z-30">
+      <aside className="hidden lg:flex fixed left-64 top-0 h-full w-56 bg-sidebar/90 backdrop-blur-md border-r border-sidebar-border flex-col z-30">
         <ProjectSidebarContent project={project} />
       </aside>
 
@@ -140,14 +140,14 @@ export function ProjectSidebar({ project }: ProjectSidebarProps) {
       {/* Mobile drawer */}
       <aside
         className={cn(
-          'lg:hidden fixed left-0 top-0 h-full w-72 bg-white/95 backdrop-blur-md border-r border-slate-200/80 flex flex-col z-50 transition-transform duration-300 ease-in-out shadow-2xl',
+          'lg:hidden fixed left-0 top-0 h-full w-72 bg-sidebar/95 backdrop-blur-md border-r border-sidebar-border flex flex-col z-50 transition-transform duration-300 ease-in-out shadow-2xl',
           isOpen ? 'translate-x-0' : '-translate-x-full'
         )}
       >
-        <div className="h-14 flex items-center justify-between px-4 border-b border-slate-100">
-          <span className="text-sm font-bold text-slate-700">Navigazione Progetto</span>
-          <button onClick={close} className="p-1.5 rounded-lg hover:bg-slate-100 transition-colors">
-            <X className="w-5 h-5 text-slate-500" />
+        <div className="h-14 flex items-center justify-between px-4 border-b border-border">
+          <span className="text-sm font-bold text-foreground">Navigazione Progetto</span>
+          <button onClick={close} className="p-1.5 rounded-lg hover:bg-accent transition-colors">
+            <X className="w-5 h-5 text-muted-foreground" />
           </button>
         </div>
         <ProjectSidebarContent project={project} onNavigate={close} />

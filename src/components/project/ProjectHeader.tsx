@@ -34,20 +34,20 @@ export function ProjectHeader({ projectId }: ProjectHeaderProps) {
   return (
     <>
       {/* Top bar with hamburger — mobile/tablet only */}
-      <div className="lg:hidden flex items-center justify-between px-4 py-3 border-b border-slate-200/80 bg-white/80 backdrop-blur-md">
+      <div className="lg:hidden flex items-center justify-between px-4 py-3 border-b border-border bg-card/80 backdrop-blur-md">
         <button
           onClick={toggle}
-          className="p-2 -ml-2 rounded-lg hover:bg-slate-100 transition-colors"
+          className="p-2 -ml-2 rounded-lg hover:bg-accent transition-colors"
           aria-label="Apri menu progetto"
         >
-          <Menu className="w-5 h-5 text-slate-600" />
+          <Menu className="w-5 h-5 text-muted-foreground" />
         </button>
-        <span className="text-sm font-bold text-slate-700 truncate mx-3">Navigazione</span>
+        <span className="text-sm font-bold text-foreground truncate mx-3">Navigazione</span>
         <div className="w-9" />
       </div>
 
       {/* Bottom tab bar — mobile/tablet only */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] safe-bottom">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-card/95 backdrop-blur-md border-t border-border shadow-[0_-4px_12px_hsl(var(--foreground)/0.05)] safe-bottom">
         <nav className="flex items-stretch justify-around px-1">
           {mobileNavItems.map((item) => {
             const fullHref = `${basePath}${item.href}`;
@@ -62,17 +62,17 @@ export function ProjectHeader({ projectId }: ProjectHeaderProps) {
                 className={cn(
                   'flex flex-col items-center justify-center py-2.5 px-1 min-w-0 flex-1 transition-colors relative',
                   isActive
-                    ? 'text-blue-600'
-                    : 'text-slate-400 hover:text-slate-600'
+                    ? 'text-primary'
+                    : 'text-muted-foreground hover:text-foreground'
                 )}
               >
                 {isActive && (
-                  <div className="absolute top-0 left-1/4 right-1/4 h-0.5 bg-blue-600 rounded-full" />
+                  <div className="absolute top-0 left-1/4 right-1/4 h-0.5 bg-primary rounded-full" />
                 )}
-                <item.icon className={cn('w-5 h-5', isActive && 'text-blue-600')} />
+                <item.icon className={cn('w-5 h-5', isActive && 'text-primary')} />
                 <span className={cn(
                   'text-[10px] mt-0.5 font-semibold truncate',
-                  isActive ? 'text-blue-600' : 'text-slate-500'
+                  isActive ? 'text-primary' : 'text-muted-foreground'
                 )}>
                   {item.label}
                 </span>
@@ -82,7 +82,7 @@ export function ProjectHeader({ projectId }: ProjectHeaderProps) {
           {/* "Altro" button opens full drawer */}
           <button
             onClick={toggle}
-            className="flex flex-col items-center justify-center py-2.5 px-1 min-w-0 flex-1 text-slate-400 hover:text-slate-600 transition-colors"
+            className="flex flex-col items-center justify-center py-2.5 px-1 min-w-0 flex-1 text-muted-foreground hover:text-foreground transition-colors"
           >
             <MoreHorizontal className="w-5 h-5" />
             <span className="text-[10px] mt-0.5 font-semibold">Altro</span>

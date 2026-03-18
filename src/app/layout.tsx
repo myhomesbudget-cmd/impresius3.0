@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -21,15 +22,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="it">
+    <html lang="it" suppressHydrationWarning>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
       </head>
       <body className="font-sans antialiased overflow-x-hidden">
-        {/* Global background image applied to all screens */}
-        <div className="hero-bg" aria-hidden="true" />
-        <div className="hero-bg-overlay" aria-hidden="true" />
-        {children}
+        <ThemeProvider>
+          {/* Global background image applied to all screens */}
+          <div className="hero-bg" aria-hidden="true" />
+          <div className="hero-bg-overlay" aria-hidden="true" />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

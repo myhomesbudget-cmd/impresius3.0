@@ -12,23 +12,23 @@ export default function TermsPage() {
     <main className="min-h-screen relative">
       <Navbar />
       <div className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-2">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-foreground mb-2">
           Termini di Servizio
         </h1>
-        <p className="text-sm text-slate-500 mb-10">
+        <p className="text-sm text-muted-foreground mb-10">
           Ultimo aggiornamento: 18 marzo 2026
         </p>
 
-        <div className="prose prose-slate max-w-none space-y-8 text-slate-700 leading-relaxed">
+        <div className="prose prose-slate max-w-none space-y-8 text-foreground leading-relaxed">
           <section>
-            <h2 className="text-xl font-bold text-slate-900 mb-3">1. Premessa</h2>
+            <h2 className="text-xl font-bold text-foreground mb-3">1. Premessa</h2>
             <p>
               I presenti Termini di Servizio (&ldquo;Termini&rdquo;) regolano l&apos;utilizzo della
               piattaforma Impresius (&ldquo;Servizio&rdquo;), accessibile all&apos;indirizzo{" "}
               <strong>impresius.com</strong>, fornita da:
             </p>
-            <address className="not-italic bg-slate-50 rounded-xl p-5 text-sm leading-relaxed mt-3">
-              <strong className="text-slate-900">Studio Tecnico Lombardo</strong><br />
+            <address className="not-italic bg-muted rounded-xl p-5 text-sm leading-relaxed mt-3">
+              <strong className="text-foreground">Studio Tecnico Lombardo</strong><br />
               Geom. Lombardo Marco<br />
               Via Sant&apos;Antonio n. 5<br />
               22070 &mdash; Locate Varesino (CO)<br />
@@ -41,7 +41,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-slate-900 mb-3">2. Descrizione del Servizio</h2>
+            <h2 className="text-xl font-bold text-foreground mb-3">2. Descrizione del Servizio</h2>
             <p>
               Impresius &egrave; una piattaforma SaaS (Software as a Service) che consente ai professionisti
               del settore immobiliare di:
@@ -57,7 +57,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-slate-900 mb-3">3. Registrazione e Account</h2>
+            <h2 className="text-xl font-bold text-foreground mb-3">3. Registrazione e Account</h2>
             <ul className="list-disc pl-6 space-y-2">
               <li>Per utilizzare il Servizio &egrave; necessario creare un account fornendo informazioni veritiere e aggiornate.</li>
               <li>L&apos;utente &egrave; responsabile della riservatezza delle proprie credenziali di accesso.</li>
@@ -67,7 +67,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-slate-900 mb-3">4. Piani e Pagamenti</h2>
+            <h2 className="text-xl font-bold text-foreground mb-3">4. Piani e Pagamenti</h2>
             <ul className="list-disc pl-6 space-y-2">
               <li>Il Servizio &egrave; disponibile in diversi piani tariffari, incluso un piano gratuito con funzionalit&agrave; limitate.</li>
               <li>I pagamenti vengono elaborati tramite Stripe Inc. in modo sicuro e conforme agli standard PCI-DSS.</li>
@@ -78,7 +78,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-slate-900 mb-3">5. Utilizzo Consentito</h2>
+            <h2 className="text-xl font-bold text-foreground mb-3">5. Utilizzo Consentito</h2>
             <p>L&apos;utente si impegna a:</p>
             <ul className="list-disc pl-6 space-y-2 mt-3">
               <li>Utilizzare il Servizio esclusivamente per finalit&agrave; professionali lecite.</li>
@@ -90,7 +90,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-slate-900 mb-3">6. Propriet&agrave; Intellettuale</h2>
+            <h2 className="text-xl font-bold text-foreground mb-3">6. Propriet&agrave; Intellettuale</h2>
             <p>
               Il Servizio, inclusi software, design, loghi, testi e struttura, &egrave; di propriet&agrave;
               esclusiva di Studio Tecnico Lombardo ed &egrave; protetto dalle leggi italiane e internazionali
@@ -104,7 +104,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-slate-900 mb-3">7. Limitazione di Responsabilit&agrave;</h2>
+            <h2 className="text-xl font-bold text-foreground mb-3">7. Limitazione di Responsabilit&agrave;</h2>
             <ul className="list-disc pl-6 space-y-2">
               <li>
                 Il Servizio &egrave; fornito &ldquo;cos&igrave; com&apos;&egrave;&rdquo; (as is). Non garantiamo che il Servizio
@@ -125,7 +125,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-slate-900 mb-3">8. Disponibilit&agrave; del Servizio</h2>
+            <h2 className="text-xl font-bold text-foreground mb-3">8. Disponibilit&agrave; del Servizio</h2>
             <p>
               Ci impegniamo a garantire la massima disponibilit&agrave; del Servizio. Tuttavia, possono
               verificarsi interruzioni per manutenzione programmata o cause di forza maggiore. In caso
@@ -134,7 +134,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-slate-900 mb-3">9. Cancellazione dell&apos;Account</h2>
+            <h2 className="text-xl font-bold text-foreground mb-3">9. Cancellazione dell&apos;Account</h2>
             <ul className="list-disc pl-6 space-y-2">
               <li>L&apos;utente pu&ograve; cancellare il proprio account in qualsiasi momento dalle impostazioni del profilo.</li>
               <li>La cancellazione comporta l&apos;eliminazione dei dati dell&apos;account entro 30 giorni, salvo obblighi legali di conservazione.</li>
@@ -143,7 +143,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-slate-900 mb-3">10. Modifiche ai Termini</h2>
+            <h2 className="text-xl font-bold text-foreground mb-3">10. Modifiche ai Termini</h2>
             <p>
               Ci riserviamo il diritto di modificare i presenti Termini in qualsiasi momento.
               Le modifiche saranno comunicate tramite la piattaforma o via email. L&apos;utilizzo
@@ -153,7 +153,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-slate-900 mb-3">11. Legge Applicabile e Foro Competente</h2>
+            <h2 className="text-xl font-bold text-foreground mb-3">11. Legge Applicabile e Foro Competente</h2>
             <p>
               I presenti Termini sono regolati dalla legge italiana. Per qualsiasi controversia derivante
               dall&apos;utilizzo del Servizio sar&agrave; competente in via esclusiva il Foro di Como,
@@ -162,7 +162,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-slate-900 mb-3">12. Contatti</h2>
+            <h2 className="text-xl font-bold text-foreground mb-3">12. Contatti</h2>
             <p>
               Per qualsiasi domanda relativa ai presenti Termini, contattaci all&apos;indirizzo{" "}
               <a href="mailto:info@impresius.com" className="text-blue-600 hover:underline">info@impresius.com</a>.

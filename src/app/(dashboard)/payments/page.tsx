@@ -20,10 +20,10 @@ import {
 } from 'lucide-react';
 
 const STATUS_CONFIG: Record<string, { label: string; icon: typeof CheckCircle2; color: string }> = {
-  completed: { label: 'Completato', icon: CheckCircle2, color: 'text-emerald-700 bg-emerald-50 border border-emerald-200' },
-  pending: { label: 'In attesa', icon: Clock, color: 'text-amber-700 bg-amber-50 border border-amber-200' },
-  failed: { label: 'Fallito', icon: XCircle, color: 'text-red-700 bg-red-50 border border-red-200' },
-  refunded: { label: 'Rimborsato', icon: RefreshCw, color: 'text-blue-700 bg-blue-50 border border-blue-200' },
+  completed: { label: 'Completato', icon: CheckCircle2, color: 'text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 dark:bg-emerald-500/20 border border-emerald-500/20' },
+  pending: { label: 'In attesa', icon: Clock, color: 'text-amber-700 dark:text-amber-400 bg-amber-500/10 dark:bg-amber-500/20 border border-amber-500/20' },
+  failed: { label: 'Fallito', icon: XCircle, color: 'text-red-700 dark:text-red-400 bg-red-500/10 dark:bg-red-500/20 border border-red-500/20' },
+  refunded: { label: 'Rimborsato', icon: RefreshCw, color: 'text-blue-700 dark:text-blue-400 bg-blue-500/10 dark:bg-blue-500/20 border border-blue-500/20' },
 };
 
 const TYPE_LABELS: Record<string, string> = {
@@ -156,23 +156,23 @@ export default function PaymentsPage() {
         <div className="kpi-card kpi-card-indigo">
           <div className="p-5">
             <div className="flex items-center gap-3 mb-4">
-              <div className="icon-container icon-container-md rounded-xl bg-indigo-50">
-                <Crown className="w-5 h-5 text-indigo-600" />
+              <div className="icon-container icon-container-md rounded-xl bg-indigo-500/10 dark:bg-indigo-500/20">
+                <Crown className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
               </div>
               <div>
                 <p className="metric-label">Piano Attuale</p>
-                <p className="text-lg font-bold text-slate-900">
+                <p className="text-lg font-bold text-foreground">
                   {profile ? PLAN_LABELS[profile.subscription_plan] || profile.subscription_plan : '—'}
                 </p>
               </div>
             </div>
             {profile?.subscription_plan === 'premium' && profile?.subscription_expires_at && (
-              <p className="text-xs font-medium text-slate-500">
+              <p className="text-xs font-medium text-muted-foreground">
                 Scade il {formatDate(profile.subscription_expires_at)}
               </p>
             )}
             {profile?.subscription_plan === 'free' && (
-              <div className={cn('badge-premium mt-1', 'bg-slate-50 text-slate-600 border border-slate-200')}>
+              <div className={cn('badge-premium mt-1', 'bg-muted text-muted-foreground border border-border')}>
                 {profile.free_plan_used ? 'Piano gratuito utilizzato' : 'Piano gratuito disponibile'}
               </div>
             )}
@@ -195,15 +195,15 @@ export default function PaymentsPage() {
         <div className="kpi-card kpi-card-emerald">
           <div className="p-5">
             <div className="flex items-center gap-3 mb-4">
-              <div className="icon-container icon-container-md rounded-xl bg-emerald-50">
-                <CreditCard className="w-5 h-5 text-emerald-600" />
+              <div className="icon-container icon-container-md rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20">
+                <CreditCard className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
               </div>
               <div>
                 <p className="metric-label">Totale Speso</p>
-                <p className="text-lg font-bold text-slate-900">{formatCurrency(totalSpent / 100)}</p>
+                <p className="text-lg font-bold text-foreground">{formatCurrency(totalSpent / 100)}</p>
               </div>
             </div>
-            <p className="text-xs font-medium text-slate-500">
+            <p className="text-xs font-medium text-muted-foreground">
               {completedPayments.length} pagament{completedPayments.length === 1 ? 'o' : 'i'} completat{completedPayments.length === 1 ? 'o' : 'i'}
             </p>
           </div>
@@ -213,15 +213,15 @@ export default function PaymentsPage() {
         <div className="kpi-card kpi-card-blue">
           <div className="p-5">
             <div className="flex items-center gap-3 mb-4">
-              <div className="icon-container icon-container-md rounded-xl bg-blue-50">
-                <Receipt className="w-5 h-5 text-blue-600" />
+              <div className="icon-container icon-container-md rounded-xl bg-blue-500/10 dark:bg-blue-500/20">
+                <Receipt className="w-5 h-5 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
                 <p className="metric-label">Transazioni</p>
-                <p className="text-lg font-bold text-slate-900">{payments.length}</p>
+                <p className="text-lg font-bold text-foreground">{payments.length}</p>
               </div>
             </div>
-            <p className="text-xs font-medium text-slate-500">
+            <p className="text-xs font-medium text-muted-foreground">
               Totale operazioni registrate
             </p>
           </div>
@@ -232,8 +232,8 @@ export default function PaymentsPage() {
       <Card>
         <CardHeader>
           <div className="flex items-center gap-2.5">
-            <div className="icon-container icon-container-sm rounded-lg bg-slate-100">
-              <Receipt className="w-4 h-4 text-slate-600" />
+            <div className="icon-container icon-container-sm rounded-lg bg-muted">
+              <Receipt className="w-4 h-4 text-muted-foreground" />
             </div>
             <CardTitle>Storico Pagamenti</CardTitle>
           </div>
@@ -242,10 +242,10 @@ export default function PaymentsPage() {
           {payments.length === 0 ? (
             <div className="text-center py-16">
               <div className="empty-state-icon mx-auto">
-                <Receipt className="w-9 h-9 text-slate-400" />
+                <Receipt className="w-9 h-9 text-muted-foreground" />
               </div>
-              <p className="text-slate-600 font-semibold">Nessun pagamento registrato</p>
-              <p className="text-sm text-slate-400 mt-1">I tuoi pagamenti appariranno qui</p>
+              <p className="text-foreground font-semibold">Nessun pagamento registrato</p>
+              <p className="text-sm text-muted-foreground mt-1">I tuoi pagamenti appariranno qui</p>
             </div>
           ) : (
             <div className="overflow-x-auto -mx-6">
@@ -266,16 +266,16 @@ export default function PaymentsPage() {
 
                     return (
                       <tr key={payment.id}>
-                        <td className="font-medium text-slate-900">
+                        <td className="font-medium text-foreground">
                           {formatDate(payment.created_at)}
                         </td>
-                        <td className="text-slate-700">
+                        <td className="text-foreground">
                           {TYPE_LABELS[payment.type] || payment.type}
                         </td>
-                        <td className="text-slate-700">
+                        <td className="text-foreground">
                           {PROVIDER_LABELS[payment.provider] || payment.provider}
                         </td>
-                        <td className="text-right font-bold text-slate-900">
+                        <td className="text-right font-bold text-foreground">
                           {formatCurrency(payment.amount / 100)}
                         </td>
                         <td>
