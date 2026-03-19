@@ -206,7 +206,7 @@ export default function ComputoMetricoPage() {
       }).eq('id', itemId);
 
       if (itemError) {
-        toast({ title: 'Errore', description: 'Impossibile salvare la voce.', variant: 'destructive' });
+        toast('Errore: impossibile salvare la voce. Riprova.', 'error');
         setSavingItems(prev => { const next = new Set(prev); next.delete(itemId); return next; });
         return;
       }
@@ -234,14 +234,14 @@ export default function ComputoMetricoPage() {
     });
 
     if (measurementError) {
-      toast({ title: 'Errore Parziale', description: 'Alcune misurazioni non sono state salvate correttamente.', variant: 'destructive' });
+      toast('Errore: alcune misurazioni non sono state salvate. Riprova.', 'error');
     } else {
       setUnsavedItems(prev => {
         const next = new Set(prev);
         next.delete(itemId);
         return next;
       });
-      toast({ title: 'Voce Salvata', description: 'Le modifiche alla voce e alle misure sono state salvate nel cloud.' });
+      toast('Voce salvata correttamente nel cloud ✓', 'success');
     }
   }, [items, measurementsByItem, supabase]);
 
