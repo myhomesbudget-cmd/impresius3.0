@@ -22,7 +22,7 @@ import type {
   ConstructionItem,
   Measurement,
 } from '@/types/database';
-import { Printer, Loader2, FileText, MapPin, Calendar, Target, Building2 } from 'lucide-react';
+import { Printer, Loader2, FileText, MapPin, Building2 } from 'lucide-react';
 import {
   PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Legend,
@@ -42,14 +42,15 @@ const PROPERTY_TYPE_LABELS: Record<string, string> = {
 };
 
 const SECTION_LABELS: Record<string, string> = {
-  management: 'Costi Fissi di Gestione - Vendite - Marketing',
+  management: 'Costi Fissi (Gestione, Vendite, Marketing)',
   utilities: 'Costi di Utenze ed Allacciamenti',
   professionals: 'Costi Professionisti',
   permits: 'Costi e Spese Titoli Edilizi',
 };
 
-const CHART_COLORS = ['#2563eb', '#f59e0b', '#10b981', '#8b5cf6', '#ef4444', '#06b6d4', '#ec4899'];
-const COST_BREAKDOWN_COLORS = ['#2563eb', '#f59e0b', '#10b981'];
+// Combinazione di colori severa/aziendale per i grafici
+const CHART_COLORS = ['#1e293b', '#475569', '#64748b', '#94a3b8', '#cbd5e1', '#e2e8f0'];
+const COST_BREAKDOWN_COLORS = ['#1e293b', '#64748b', '#cbd5e1'];
 
 const getFloorLabel = (value: string) => {
   const floor = FLOORS.find((f) => f.value === value);
@@ -64,10 +65,10 @@ const getCategoryLabel = (value: string) => {
 function CustomTooltip({ active, payload, label }: { active?: boolean; payload?: Array<{ name: string; value: number; color: string }>; label?: string }) {
   if (!active || !payload) return null;
   return (
-    <div className="bg-popover text-popover-foreground border border-border rounded-lg shadow-xl p-3 text-xs print:bg-white print:text-black print:border-gray-300">
-      {label && <p className="font-semibold mb-1">{label}</p>}
+    <div className="bg-white border text-slate-800 border-slate-300 rounded shadow-sm p-2 text-xs">
+      {label && <p className="font-semibold mb-1 border-b pb-1">{label}</p>}
       {payload.map((entry, idx) => (
-        <p key={idx} style={{ color: entry.color }} className="font-medium">
+        <p key={idx} style={{ color: entry.color }} className="font-medium mt-1">
           {entry.name}: {formatCurrency(entry.value)}
         </p>
       ))}
@@ -122,8 +123,8 @@ export default function ReportPage() {
     return (
       <div className="p-4 md:p-8 max-w-5xl mx-auto flex items-center justify-center min-h-[60vh]">
         <div className="flex flex-col items-center gap-3">
-          <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
-          <p className="text-sm text-muted-foreground">Caricamento report...</p>
+          <Loader2 className="w-8 h-8 animate-spin text-slate-400" />
+          <p className="text-sm font-medium text-slate-500 uppercase tracking-widest">Generazione Documento...</p>
         </div>
       </div>
     );
@@ -154,7 +155,7 @@ export default function ReportPage() {
   // Chart data
   const costBreakdownData = [
     { name: 'Acquisizione', value: results.total_acquisition_cost },
-    { name: 'Costi Operativi', value: results.total_operation_cost },
+    { name: 'Cost. Operativi', value: results.total_operation_cost },
     { name: 'Lavori', value: results.total_construction_cost },
   ].filter(d => d.value > 0);
 
@@ -162,12 +163,7 @@ export default function ReportPage() {
     .filter(s => s.total > 0)
     .map(s => ({ name: SECTION_LABELS[s.section] || s.section, value: s.total }));
 
-  const constructionFloorData = results.construction_by_floor
-    .filter(f => f.total > 0)
-    .map(f => ({ name: getFloorLabel(f.floor), value: f.total }));
-
-  const reportDate = new Date().toLocaleDateString('it-IT', { day: '2-digit', month: 'long', year: 'numeric' });
-  const createdDate = new Date(project.created_at).toLocaleDateString('it-IT', { day: '2-digit', month: 'long', year: 'numeric' });
+  const reportDate = new Date().toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
   return (
     <>
@@ -177,6 +173,8 @@ export default function ReportPage() {
             background: white !important;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
+            font-size: 11pt !important;
+            line-height: 1.4 !important;
           }
           body * {
             visibility: hidden;
@@ -192,6 +190,7 @@ export default function ReportPage() {
             width: 100%;
             margin: 0;
             padding: 0;
+            background: white !important;
           }
           .no-print {
             display: none !important;
@@ -199,381 +198,263 @@ export default function ReportPage() {
           .print-page-break {
             page-break-before: always;
           }
+          .print-break-inside-avoid {
+            page-break-inside: avoid;
+            break-inside: avoid;
+          }
           @page {
-            margin: 12mm 15mm;
+            margin: 15mm 20mm;
             size: A4;
           }
-          .recharts-wrapper {
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-          }
+          /* Fix per gradienti visibili ai bordi delle celle nere in alcune stampanti */
+          th { border-bottom: 2px solid #000 !important; }
         }
       `}</style>
 
       <div className="p-4 md:p-8 max-w-5xl mx-auto">
         {/* Header bar - non stampabile */}
         <div className="no-print mb-8 flex items-center justify-between">
-          <div>
-            <h1 className="page-header-title flex items-center gap-2">
-              <FileText className="w-6 h-6" />
-              Genera Report
-            </h1>
-            <p className="page-header-subtitle">
-              Anteprima del report professionale dell&apos;operazione
-            </p>
+          <div className="flex items-center gap-3">
+            <div className="bg-slate-100 p-2.5 rounded-lg border border-slate-200">
+              <FileText className="w-5 h-5 text-slate-700" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-slate-900">Documento Ufficiale</h1>
+              <p className="text-sm text-slate-500 font-medium">Anteprima di stampa dell&apos;Executive Summary</p>
+            </div>
           </div>
-          <Button variant="default" className="flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-700 hover:to-teal-600 text-white shadow-lg shadow-emerald-500/20" onClick={() => window.print()}>
+          <Button variant="default" className="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white rounded-md px-5" onClick={() => window.print()}>
             <Printer className="w-4 h-4" />
-            Stampa / Salva PDF
+            Stampa / Genera PDF
           </Button>
         </div>
 
         {/* ============ REPORT CONTENT ============ */}
-        <div id="report-content" className="bg-white text-foreground rounded-2xl md:shadow-[0_4px_24px_rgba(0,0,0,0.06)] overflow-hidden border border-slate-200/60 print:shadow-none print:border-none">
-
-          {/* ======= COVER PAGE ======= */}
-          <div className="relative overflow-hidden print:h-[297mm] print:flex print:flex-col print:justify-center print:page-break-after">
-            {/* Header gradient band */}
-            <div className="absolute top-0 left-0 w-full h-4" style={{ background: 'linear-gradient(to right, #2563eb, #3b82f6, #60a5fa)' }} />
-
-            <div className="px-10 md:px-16 pt-24 pb-16 flex flex-col h-full justify-center">
-              {/* Logo + Brand */}
-              <div className="flex items-center gap-4 mb-20">
-                <div className="w-16 h-16 icon-gradient rounded-2xl flex items-center justify-center shadow-xl">
-                  <Building2 className="w-8 h-8 text-white" />
+        <div id="report-content" className="bg-white text-slate-900 mx-auto max-w-[210mm] shadow-2xl print:shadow-none print:max-w-full">
+          
+          {/* FOGLIO A4 PADDING */}
+          <div className="p-10 md:p-14">
+            
+            {/* INTESTAZIONE DOCUMENTO */}
+            <div className="border-b-4 border-slate-900 pb-5 mb-8 flex justify-between items-end">
+              <div className="max-w-[70%]">
+                <div className="flex items-center gap-2 mb-4">
+                  <Building2 className="w-6 h-6 text-slate-800" />
+                  <span className="text-sm font-extrabold uppercase tracking-[0.2em] text-slate-500">Impresius Pro</span>
                 </div>
-                <div>
-                  <span className="text-3xl font-extrabold text-gradient leading-tight tracking-tight">Impresius</span>
-                  <span className="block text-sm font-bold text-muted-foreground uppercase tracking-[0.2em] mt-1">Executive Summary</span>
-                </div>
-              </div>
-
-              {/* Project Title */}
-              <h1 className="text-5xl md:text-7xl font-extrabold text-foreground tracking-tight mb-8 leading-tight">
-                {project.name}
-              </h1>
-
-              {project.description && (
-                <p className="text-xl text-muted-foreground mb-16 max-w-3xl leading-relaxed border-l-4 border-indigo-500 pl-6 py-2">
-                  {project.description}
-                </p>
-              )}
-
-              {/* Project Meta */}
-              <div className="flex flex-col gap-6 text-lg text-slate-600 print:text-gray-600 mb-20 bg-slate-50 p-8 rounded-2xl border border-slate-200">
-                {(project.location_city || project.location_province) && (
-                  <span className="flex items-center gap-4 font-medium">
-                    <div className="w-10 h-10 rounded-full bg-blue-500/10 dark:bg-blue-500/20 flex items-center justify-center"><MapPin className="w-5 h-5 text-blue-600 dark:text-blue-400" /></div>
-                    <span className="text-foreground print:text-black">{[project.location_address, project.location_city, project.location_province].filter(Boolean).join(', ')}</span>
-                  </span>
+                <h1 className="text-3xl md:text-4xl font-extrabold uppercase tracking-tight text-slate-900 leading-none">
+                  {project.name}
+                </h1>
+                {project.location_address && (
+                  <p className="text-sm text-slate-600 font-medium mt-3 flex items-center gap-1.5 flex-wrap">
+                    <MapPin className="w-3.5 h-3.5" />
+                    {[project.location_address, project.location_city, project.location_province].filter(Boolean).join(', ')}
+                  </p>
                 )}
-                <span className="flex items-center gap-4 font-medium">
-                  <div className="w-10 h-10 rounded-full bg-indigo-500/10 dark:bg-indigo-500/20 flex items-center justify-center"><Target className="w-5 h-5 text-indigo-600 dark:text-indigo-400" /></div>
-                  <span className="text-foreground print:text-black">{STRATEGY_LABELS[project.strategy] || project.strategy} &middot; {PROPERTY_TYPE_LABELS[project.property_type] || project.property_type}</span>
-                </span>
-                <span className="flex items-center gap-4 font-medium">
-                  <div className="w-10 h-10 rounded-full bg-amber-500/10 dark:bg-amber-500/20 flex items-center justify-center"><Calendar className="w-5 h-5 text-amber-600 dark:text-amber-400" /></div>
-                  <span className="text-foreground print:text-black">Data di creazione: {createdDate}</span>
-                </span>
               </div>
+              <div className="text-right pb-1">
+                <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">DOCUMENTO</div>
+                <div className="text-lg font-black text-slate-900 tracking-tight">EXECUTIVE SUMMARY</div>
+                <div className="text-xs text-slate-500 font-medium mt-1">Data emissione: {reportDate}</div>
+              </div>
+            </div>
 
-              {/* KPI Cards Highlights */}
-              <div className="grid grid-cols-2 gap-6 mt-auto">
-                <div className="rounded-2xl p-8 border hover:border-emerald-300 transition-colors shadow-sm bg-white border-slate-200">
-                  <div className="h-1.5 w-full bg-gradient-to-r from-emerald-400 to-emerald-600 rounded-full mb-6 print:hidden" />
-                  <p className="text-sm font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest mb-2">Ricavo Stimato</p>
-                  <p className="text-4xl font-extrabold text-foreground print:text-emerald-900">{formatCurrency(results.total_revenue)}</p>
-                </div>
-                <div className={cn(
-                  "rounded-2xl p-8 border shadow-lg bg-black/5 dark:bg-white/[0.02]",
-                  results.gross_margin >= 0 
-                    ? "border-border hover:border-indigo-500/50 print:bg-indigo-50 print:border-indigo-200" 
-                    : "border-red-500/30 dark:bg-red-500/5 print:bg-red-50 print:border-red-200"
-                )}>
-                  <div className={cn("h-1.5 w-full rounded-full mb-6 print:hidden", results.gross_margin >= 0 ? "bg-gradient-to-r from-indigo-400 to-purple-600" : "bg-gradient-to-r from-red-400 to-red-600")} />
-                  <p className={cn("text-sm font-bold uppercase tracking-widest mb-2", results.gross_margin >= 0 ? "text-indigo-600 dark:text-indigo-400" : "text-red-600 dark:text-red-400")}>Ritorno (ROI)</p>
-                  <p className={cn("text-4xl font-extrabold text-foreground", results.gross_margin >= 0 ? "print:text-indigo-900" : "print:text-red-900")}>{formatPercentage(results.roi)}</p>
+            {/* DESCRIPTION IN LINE WITH A4 FORMAT */}
+            {project.description && (
+              <p className="text-sm text-slate-700 leading-relaxed mb-6 italic border-l-2 border-slate-300 pl-4 py-1">
+                &ldquo;{project.description}&rdquo;
+              </p>
+            )}
+
+            {/* PROJECT META GRID */}
+            <div className="grid grid-cols-3 gap-6 mb-8 mt-4">
+              <div className="border-l-2 border-slate-300 pl-3">
+                <div className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Strategia Operativa</div>
+                <div className="text-sm font-semibold text-slate-900 mt-0.5">{STRATEGY_LABELS[project.strategy] || project.strategy}</div>
+              </div>
+              <div className="border-l-2 border-slate-300 pl-3">
+                <div className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Tipologia Immobile</div>
+                <div className="text-sm font-semibold text-slate-900 mt-0.5">{PROPERTY_TYPE_LABELS[project.property_type] || project.property_type}</div>
+              </div>
+              <div className="border-l-2 border-slate-300 pl-3">
+                <div className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Superficie Target</div>
+                <div className="text-sm font-semibold text-slate-900 mt-0.5">
+                  {formatNumber(results.units_summary.reduce((sum, u) => sum + u.adjusted_surface, 0))} mq
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* ======= CHARTS SECTION ======= */}
-          <div className="px-8 md:px-12 py-8">
-            <h2 className="text-lg font-bold text-foreground mb-6 flex items-center gap-2">
-              <span className="w-1 h-5 rounded-full" style={{ background: 'linear-gradient(to bottom, #2563eb, #4f46e5)' }} />
-              Analisi Grafica
-            </h2>
+            {/* KEY METRICS GRID COMPACT BANCARIO */}
+            <div className="grid grid-cols-4 gap-px bg-slate-300 border border-slate-300 mb-10 overflow-hidden rounded-sm">
+              <div className="bg-white p-4">
+                <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">Costo Totale</div>
+                <div className="text-xl font-bold text-slate-900 tracking-tight">{formatCurrency(results.total_cost)}</div>
+              </div>
+              <div className="bg-white p-4">
+                <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">Ricavo Stimato</div>
+                <div className="text-xl font-bold text-slate-900 tracking-tight">{formatCurrency(results.total_revenue)}</div>
+              </div>
+              <div className="bg-white p-4">
+                <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">Margine Operativo</div>
+                <div className={cn("text-xl font-bold tracking-tight", results.gross_margin >= 0 ? "text-slate-900" : "text-red-700")}>
+                  {formatCurrency(results.gross_margin)}
+                </div>
+              </div>
+              <div className="bg-slate-50 p-4 border-l border-slate-200">
+                <div className="text-[10px] text-slate-600 font-bold uppercase tracking-wider mb-1">ROI (Ritorno)</div>
+                <div className={cn("text-xl font-bold tracking-tight", results.gross_margin >= 0 ? "text-slate-900" : "text-red-700")}>
+                  {formatPercentage(results.roi)}
+                </div>
+              </div>
+            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-2">
-              {/* Pie Chart - Cost Breakdown */}
+            {/* GRAFICI A GRIGLIA COMPATTA */}
+            <div className="grid grid-cols-2 gap-6 mb-12 print-break-inside-avoid">
               {costBreakdownData.length > 0 && (
-                <div className="rounded-xl p-5 border shadow-sm bg-black/5 dark:bg-white/[0.02] border-border print:bg-white print:border-gray-200">
-                  <h3 className="text-sm font-bold text-foreground mb-4 text-center">Composizione Costi</h3>
-                  <ResponsiveContainer width="100%" height={220}>
+                <div className="border border-slate-200 p-4 rounded-sm bg-slate-50/50">
+                  <div className="text-[10px] font-bold text-slate-800 uppercase tracking-widest mb-3 pb-2 border-b border-slate-200">
+                    Composizione Spese
+                  </div>
+                  <ResponsiveContainer width="100%" height={150}>
                     <PieChart>
                       <Pie
                         data={costBreakdownData}
                         cx="50%"
                         cy="50%"
-                        innerRadius={50}
-                        outerRadius={85}
-                        paddingAngle={3}
+                        innerRadius={40}
+                        outerRadius={65}
+                        paddingAngle={2}
                         dataKey="value"
-                        strokeWidth={2}
-                        stroke="#fff"
+                        stroke="none"
                       >
                         {costBreakdownData.map((_, index) => (
                           <Cell key={`cell-${index}`} fill={COST_BREAKDOWN_COLORS[index % COST_BREAKDOWN_COLORS.length]} />
                         ))}
                       </Pie>
                       <Tooltip content={<CustomTooltip />} />
-                      <Legend
-                        verticalAlign="bottom"
-                        iconType="circle"
-                        iconSize={8}
-                        wrapperStyle={{ fontSize: '11px', fontWeight: 600 }}
-                      />
+                      <Legend verticalAlign="bottom" height={24} iconType="square" iconSize={8} wrapperStyle={{ fontSize: '10px' }} />
                     </PieChart>
                   </ResponsiveContainer>
                 </div>
               )}
 
-              {/* Bar Chart - Costi vs Ricavi */}
-              <div className="rounded-xl p-5 border shadow-sm bg-black/5 dark:bg-white/[0.02] border-border print:bg-white print:border-gray-200">
-                <h3 className="text-sm font-bold text-foreground mb-4 text-center">Costi vs Ricavi vs Margine</h3>
-                <ResponsiveContainer width="100%" height={220}>
+              <div className="border border-slate-200 p-4 rounded-sm bg-slate-50/50">
+                <div className="text-[10px] font-bold text-slate-800 uppercase tracking-widest mb-3 pb-2 border-b border-slate-200">
+                  Flussi (Spese vs Valore)
+                </div>
+                <ResponsiveContainer width="100%" height={150}>
                   <BarChart data={[
                     { name: 'Costi', value: results.total_cost },
                     { name: 'Ricavi', value: results.total_revenue },
                     { name: 'Margine', value: Math.abs(results.gross_margin) },
-                  ]} barSize={40}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                    <XAxis dataKey="name" tick={{ fontSize: 11, fontWeight: 600, fill: '#64748b' }} />
-                    <YAxis tick={{ fontSize: 10, fill: '#94a3b8' }} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
+                  ]} barSize={28} margin={{ top: 10, right: 10, bottom: 0, left: -20 }}>
+                    <CartesianGrid strokeDasharray="2 2" vertical={false} stroke="#e2e8f0" />
+                    <XAxis dataKey="name" tick={{ fontSize: 9, fontWeight: 600, fill: '#475569' }} axisLine={false} tickLine={false} />
+                    <YAxis tick={{ fontSize: 9, fill: '#94a3b8' }} axisLine={false} tickLine={false} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
                     <Tooltip content={<CustomTooltip />} />
-                    <Bar dataKey="value" radius={[6, 6, 0, 0]}>
-                      <Cell fill="#2563eb" />
-                      <Cell fill="#10b981" />
-                      <Cell fill={results.gross_margin >= 0 ? '#f59e0b' : '#ef4444'} />
+                    <Bar dataKey="value" radius={[2, 2, 0, 0]}>
+                      <Cell fill="#64748b" />
+                      <Cell fill="#1e293b" />
+                      <Cell fill={results.gross_margin >= 0 ? '#94a3b8' : '#ef4444'} />
                     </Bar>
                   </BarChart>
                 </ResponsiveContainer>
               </div>
-
-              {/* Pie Chart - Operation Cost by Section */}
-              {operationSectionData.length > 0 && (
-                <div className="rounded-xl p-5 border shadow-sm bg-black/5 dark:bg-white/[0.02] border-border print:bg-white print:border-gray-200">
-                  <h3 className="text-sm font-bold text-foreground mb-4 text-center">Costi Operativi per Sezione</h3>
-                  <ResponsiveContainer width="100%" height={220}>
-                    <PieChart>
-                      <Pie
-                        data={operationSectionData}
-                        cx="50%"
-                        cy="50%"
-                        outerRadius={80}
-                        paddingAngle={2}
-                        dataKey="value"
-                        strokeWidth={2}
-                        stroke="#fff"
-                      >
-                        {operationSectionData.map((_, index) => (
-                          <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip content={<CustomTooltip />} />
-                      <Legend
-                        verticalAlign="bottom"
-                        iconType="circle"
-                        iconSize={8}
-                        wrapperStyle={{ fontSize: '10px', fontWeight: 600 }}
-                        formatter={(value: string) => value.length > 30 ? value.slice(0, 30) + '...' : value}
-                      />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-              )}
-
-              {/* Bar Chart - Construction by Floor */}
-              {constructionFloorData.length > 0 && (
-                <div className="rounded-xl p-5 border shadow-sm bg-black/5 dark:bg-white/[0.02] border-border print:bg-white print:border-gray-200">
-                  <h3 className="text-sm font-bold text-foreground mb-4 text-center">Lavori per Piano</h3>
-                  <ResponsiveContainer width="100%" height={220}>
-                    <BarChart data={constructionFloorData} barSize={32}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                      <XAxis dataKey="name" tick={{ fontSize: 10, fontWeight: 600, fill: '#64748b' }} />
-                      <YAxis tick={{ fontSize: 10, fill: '#94a3b8' }} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
-                      <Tooltip content={<CustomTooltip />} />
-                      <Bar dataKey="value" name="Importo" radius={[6, 6, 0, 0]}>
-                        {constructionFloorData.map((_, index) => (
-                          <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
-                        ))}
-                      </Bar>
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              )}
             </div>
-          </div>
 
-          {/* Separator */}
-          <div className="h-px bg-gradient-to-r from-transparent via-slate-300 to-transparent mx-8" />
-
-          {/* ======= SECTION A - Riepilogo Economico ======= */}
-          <div className="px-8 md:px-12 py-8 print-page-break">
-            <SectionHeader number="A" title="Riepilogo Economico" color="#2563eb" />
-            <table className="w-full text-sm border-collapse rounded-xl overflow-hidden border border-border print:border-none">
-              <thead>
-                <tr className="bg-black/5 dark:bg-white/[0.03] print:bg-gray-50">
-                  <th className="text-left py-3 px-6 font-bold text-muted-foreground print:text-gray-500 text-xs uppercase tracking-wider border-b border-border print:border-gray-200">Voce di Costo</th>
-                  <th className="text-right py-3 px-6 font-bold text-muted-foreground print:text-gray-500 text-xs uppercase tracking-wider border-b border-border print:border-gray-200">Importo</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="border-b border-border hover:bg-blue-500/10">
-                  <td className="py-2.5 px-4 text-foreground font-medium">
-                    <span className="inline-block w-2 h-2 rounded-full bg-blue-500 mr-2" />
-                    Acquisizione Immobile
-                  </td>
-                  <td className="py-2.5 px-4 text-right text-foreground font-semibold">{formatCurrency(results.total_acquisition_cost)}</td>
-                </tr>
-                {results.operation_cost_by_section.filter(s => s.total > 0).map((section) => (
-                  <tr key={section.section} className="border-b border-border hover:bg-amber-500/10">
-                    <td className="py-2.5 px-4 text-foreground font-medium">
-                      <span className="inline-block w-2 h-2 rounded-full bg-amber-500 mr-2" />
-                      {SECTION_LABELS[section.section] || section.section}
-                    </td>
-                    <td className="py-2.5 px-4 text-right text-foreground font-semibold">{formatCurrency(section.total)}</td>
+            {/* ======= SECTION A - Riepilogo Economico ======= */}
+            <div className="mb-10 print-break-inside-avoid">
+              <SectionHeader id="A" title="Conto Economico di Sintesi" />
+              <table className="w-full text-xs text-left">
+                <thead>
+                  <tr className="border-b-2 border-slate-800 text-slate-800">
+                    <th className="py-2.5 px-2 font-bold uppercase tracking-wider w-2/3">Voce di Costo / Sezione</th>
+                    <th className="py-2.5 px-2 font-bold uppercase tracking-wider text-right w-1/3">Importo Valutato</th>
                   </tr>
-                ))}
-                {results.construction_by_floor.map((floor) => (
-                  <tr key={floor.floor} className="border-b border-border hover:bg-emerald-500/10">
-                    <td className="py-2.5 px-4 text-foreground font-medium">
-                      <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 mr-2" />
-                      Lavori - {getFloorLabel(floor.floor)}
-                    </td>
-                    <td className="py-2.5 px-4 text-right text-foreground font-semibold">{formatCurrency(floor.total)}</td>
+                </thead>
+                <tbody>
+                  <tr className="border-b border-slate-200">
+                    <td className="py-2.5 px-2 font-semibold text-slate-800">1. Acquisizione Immobile</td>
+                    <td className="py-2.5 px-2 text-right font-medium text-slate-700">{formatCurrency(results.total_acquisition_cost)}</td>
                   </tr>
-                ))}
-              </tbody>
-              <tfoot>
-                <tr style={{ background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)' }}>
-                  <td className="py-3 px-4 text-white font-bold text-sm">TOTALE COSTI</td>
-                  <td className="py-3 px-4 text-right text-white font-bold text-sm">{formatCurrency(results.total_cost)}</td>
-                </tr>
-              </tfoot>
-            </table>
-          </div>
-
-          {/* Separator */}
-          <div className="h-px bg-gradient-to-r from-transparent via-slate-300 to-transparent mx-8" />
-
-          {/* ======= SECTION B - Dettaglio Acquisizione ======= */}
-          <div className="px-8 md:px-12 py-8">
-            <SectionHeader number="B" title="Dettaglio Acquisizione" color="#2563eb" />
-            <table className="w-full text-sm border-collapse">
-              <thead>
-                <tr style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)' }}>
-                  <th className="text-left py-3 px-4 font-bold text-muted-foreground text-xs uppercase tracking-wider border-b-2 border-border">Voce</th>
-                  <th className="text-center py-3 px-4 font-bold text-muted-foreground text-xs uppercase tracking-wider border-b-2 border-border">Tipo</th>
-                  <th className="text-right py-3 px-4 font-bold text-muted-foreground text-xs uppercase tracking-wider border-b-2 border-border">Importo</th>
-                </tr>
-              </thead>
-              <tbody>
-                {acquisitionCosts.map((cost) => (
-                  <tr key={cost.id} className="border-b border-border">
-                    <td className="py-2.5 px-4 text-foreground font-medium">{cost.label}</td>
-                    <td className="py-2.5 px-4 text-center">
-                      <span className={cn(
-                        "inline-flex items-center px-2 py-0.5 rounded-full text-[0.65rem] font-bold",
-                        cost.calculation_type === 'percentage' ? "bg-blue-500/10 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400" : "bg-muted text-muted-foreground"
-                      )}>
-                        {cost.calculation_type === 'percentage' ? `${formatNumber(cost.percentage)}%` : 'Fisso'}
-                      </span>
-                    </td>
-                    <td className="py-2.5 px-4 text-right text-foreground font-semibold">{formatCurrency(calculateAcquisitionAmount(cost))}</td>
+                  {results.operation_cost_by_section.filter(s => s.total > 0).map((section, idx) => (
+                    <tr key={section.section} className="border-b border-slate-200">
+                      <td className="py-2.5 px-2 font-semibold text-slate-800">2.{idx+1} {SECTION_LABELS[section.section] || section.section}</td>
+                      <td className="py-2.5 px-2 text-right font-medium text-slate-700">{formatCurrency(section.total)}</td>
+                    </tr>
+                  ))}
+                  <tr className="border-b border-slate-200">
+                    <td className="py-2.5 px-2 font-semibold text-slate-800">3. Interventi e Opere Edili</td>
+                    <td className="py-2.5 px-2 text-right font-medium text-slate-700">{formatCurrency(results.total_construction_cost)}</td>
                   </tr>
-                ))}
-              </tbody>
-              <tfoot>
-                <tr style={{ background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)' }}>
-                  <td colSpan={2} className="py-3 px-4 text-white font-bold text-sm">TOTALE ACQUISIZIONE</td>
-                  <td className="py-3 px-4 text-right text-white font-bold text-sm">{formatCurrency(results.total_acquisition_cost)}</td>
-                </tr>
-              </tfoot>
-            </table>
-          </div>
+                </tbody>
+                <tfoot>
+                  <tr className="border-b-2 border-slate-800 bg-slate-50">
+                    <td className="py-3 px-2 font-bold text-slate-900 uppercase">Totale Capitale Investito (Costi)</td>
+                    <td className="py-3 px-2 text-right font-bold text-slate-900">{formatCurrency(results.total_cost)}</td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
 
-          {/* Separator */}
-          <div className="h-px bg-gradient-to-r from-transparent via-slate-300 to-transparent mx-8" />
+            {/* ======= SECTION B - Dettaglio ======= */}
+            <div className="mb-10 print-break-inside-avoid print-page-break">
+              <SectionHeader id="B" title="Dettaglio: Costi Operativi e Gestione" />
+              {OPERATION_SECTIONS.map((section) => {
+                const sectionCosts = opCostsBySection.get(section.value) || [];
+                if (sectionCosts.length === 0) return null;
+                const sectionTotal = sectionCosts.reduce((sum, c) => sum + calculateOperationAmount(c), 0);
 
-          {/* ======= SECTION C - Dettaglio Costi Operativi ======= */}
-          <div className="px-8 md:px-12 py-8 print-page-break">
-            <SectionHeader number="C" title="Dettaglio Costi Operativi" color="#f59e0b" />
-            {OPERATION_SECTIONS.map((section) => {
-              const sectionCosts = opCostsBySection.get(section.value) || [];
-              if (sectionCosts.length === 0) return null;
-              const sectionTotal = sectionCosts.reduce((sum, c) => sum + calculateOperationAmount(c), 0);
-
-              return (
-                <div key={section.value} className="mb-6">
-                  <h4 className="text-xs font-bold text-muted-foreground mb-2 uppercase tracking-wider pl-4 border-l-3 border-amber-400" style={{ borderLeftWidth: '3px', borderLeftColor: '#f59e0b' }}>
-                    {SECTION_LABELS[section.value]}
-                  </h4>
-                  <table className="w-full text-sm border-collapse mb-2">
-                    <tbody>
-                      {sectionCosts.map((cost) => (
-                        <tr key={cost.id} className="border-b border-border">
-                          <td className="py-2 px-4 text-foreground">{cost.label}</td>
-                          <td className="py-2 px-4 text-right text-foreground font-semibold">{formatCurrency(calculateOperationAmount(cost))}</td>
+                return (
+                  <div key={section.value} className="mb-6">
+                    <h4 className="text-[11px] font-bold text-slate-600 mb-1 uppercase tracking-widest border-l-2 border-slate-400 pl-2">
+                      {SECTION_LABELS[section.value]}
+                    </h4>
+                    <table className="w-full text-xs text-left mb-2">
+                      <tbody>
+                        {sectionCosts.map((cost) => (
+                          <tr key={cost.id} className="border-b border-slate-100">
+                            <td className="py-1.5 px-2 text-slate-700">{cost.label}</td>
+                            <td className="py-1.5 px-2 text-right font-medium text-slate-700 w-1/3 text-[11px]">{formatCurrency(calculateOperationAmount(cost))}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                      <tfoot>
+                        <tr>
+                          <td className="py-1.5 px-2 font-semibold text-slate-800 text-right text-[10px] uppercase">Subtotale:</td>
+                          <td className="py-1.5 px-2 text-right font-bold text-slate-900 border-t border-slate-300 bg-slate-50">{formatCurrency(sectionTotal)}</td>
                         </tr>
-                      ))}
-                    </tbody>
-                    <tfoot>
-                      <tr className="bg-amber-500/10 dark:bg-amber-500/20">
-                        <td className="py-2 px-4 text-amber-800 font-bold text-xs">Subtotale</td>
-                        <td className="py-2 px-4 text-right text-amber-800 font-bold">{formatCurrency(sectionTotal)}</td>
-                      </tr>
-                    </tfoot>
-                  </table>
-                </div>
-              );
-            })}
-            <div style={{ background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)' }} className="rounded-lg px-4 py-3 flex justify-between text-sm">
-              <span className="text-white font-bold">TOTALE COSTI OPERATIVI</span>
-              <span className="text-white font-bold">{formatCurrency(results.total_operation_cost)}</span>
+                      </tfoot>
+                    </table>
+                  </div>
+                );
+              })}
             </div>
-          </div>
 
-          {/* Separator */}
-          <div className="h-px bg-gradient-to-r from-transparent via-slate-300 to-transparent mx-8" />
+            {/* ======= SECTION C - Computo Metrico ======= */}
+            <div className="mb-10 print-break-inside-avoid print-page-break">
+              <SectionHeader id="C" title="Sintesi Computo Metrico Estimativo" />
+              {FLOORS.map((floor) => {
+                const floorItems = itemsByFloor.get(floor.value) || [];
+                if (floorItems.length === 0) return null;
+                const floorTotal = floorItems.reduce((sum, item) => {
+                  const itemMeas = measurementsByItem.get(item.id) || [];
+                  return sum + calculateItemTotal(item, itemMeas);
+                }, 0);
 
-          {/* ======= SECTION D - Computo Metrico ======= */}
-          <div className="px-8 md:px-12 py-8 print-page-break">
-            <SectionHeader number="D" title="Computo Metrico Estimativo" color="#10b981" />
-            {FLOORS.map((floor) => {
-              const floorItems = itemsByFloor.get(floor.value) || [];
-              if (floorItems.length === 0) return null;
-              const floorTotal = floorItems.reduce((sum, item) => {
-                const itemMeas = measurementsByItem.get(item.id) || [];
-                return sum + calculateItemTotal(item, itemMeas);
-              }, 0);
-
-              return (
-                <div key={floor.value} className="mb-6">
-                  <h4 className="text-xs font-bold text-muted-foreground mb-2 uppercase tracking-wider pl-4" style={{ borderLeftWidth: '3px', borderLeftColor: '#10b981' }}>
-                    {floor.label}
-                  </h4>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm border-collapse mb-2">
+                return (
+                  <div key={floor.value} className="mb-8">
+                    <h4 className="text-[11px] font-bold text-slate-600 mb-2 uppercase tracking-widest border-l-2 border-slate-400 pl-2">
+                      Misure {floor.label}
+                    </h4>
+                    <table className="w-full text-xs text-left">
                       <thead>
-                        <tr className="bg-muted">
-                          <th className="text-left py-2 px-3 font-semibold text-muted-foreground text-[0.65rem] uppercase tracking-wider border-b border-border">Lavorazione</th>
-                          <th className="text-left py-2 px-3 font-semibold text-muted-foreground text-[0.65rem] uppercase tracking-wider border-b border-border">Categoria</th>
-                          <th className="text-center py-2 px-3 font-semibold text-muted-foreground text-[0.65rem] uppercase tracking-wider border-b border-border">U.M.</th>
-                          <th className="text-right py-2 px-3 font-semibold text-muted-foreground text-[0.65rem] uppercase tracking-wider border-b border-border">Qta</th>
-                          <th className="text-right py-2 px-3 font-semibold text-muted-foreground text-[0.65rem] uppercase tracking-wider border-b border-border">P.U.</th>
-                          <th className="text-right py-2 px-3 font-semibold text-muted-foreground text-[0.65rem] uppercase tracking-wider border-b border-border">Totale</th>
+                        <tr className="border-y border-slate-300 bg-slate-50">
+                          <th className="py-1.5 px-2 font-semibold text-slate-600">Lavorazione</th>
+                          <th className="py-1.5 px-2 font-semibold text-slate-600 text-center w-12">U.M.</th>
+                          <th className="py-1.5 px-2 font-semibold text-slate-600 text-right w-16">Q.tà</th>
+                          <th className="py-1.5 px-2 font-semibold text-slate-600 text-right w-20">P. Unit.</th>
+                          <th className="py-1.5 px-2 font-semibold text-slate-800 text-right w-24">Totale</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -582,118 +463,95 @@ export default function ReportPage() {
                           const qty = calculateItemQuantity(itemMeas);
                           const total = calculateItemTotal(item, itemMeas);
                           return (
-                            <tr key={item.id} className="border-b border-border">
-                              <td className="py-1.5 px-3 text-foreground font-medium">{item.title}</td>
-                              <td className="py-1.5 px-3 text-muted-foreground text-xs">{getCategoryLabel(item.category)}</td>
-                              <td className="py-1.5 px-3 text-center text-muted-foreground text-xs">{item.unit_of_measure}</td>
-                              <td className="py-1.5 px-3 text-right text-foreground">{formatNumber(qty)}</td>
-                              <td className="py-1.5 px-3 text-right text-foreground">{formatCurrency(item.unit_price)}</td>
-                              <td className="py-1.5 px-3 text-right text-foreground font-semibold">{formatCurrency(total)}</td>
+                            <tr key={item.id} className="border-b border-slate-100">
+                              <td className="py-1.5 px-2 text-slate-800 font-medium">{item.title}
+                                <div className="text-[9px] text-slate-400 uppercase tracking-widest mt-0.5">{getCategoryLabel(item.category)}</div>
+                              </td>
+                              <td className="py-1.5 px-2 text-center text-slate-600">{item.unit_of_measure}</td>
+                              <td className="py-1.5 px-2 text-right text-slate-700">{formatNumber(qty)}</td>
+                              <td className="py-1.5 px-2 text-right text-slate-700">{formatCurrency(item.unit_price)}</td>
+                              <td className="py-1.5 px-2 text-right font-semibold text-slate-800">{formatCurrency(total)}</td>
                             </tr>
                           );
                         })}
                       </tbody>
                       <tfoot>
-                        <tr className="bg-emerald-500/10 dark:bg-emerald-500/20">
-                          <td colSpan={5} className="py-2 px-3 text-emerald-800 font-bold text-xs">Subtotale {floor.label}</td>
-                          <td className="py-2 px-3 text-right text-emerald-800 font-bold">{formatCurrency(floorTotal)}</td>
+                        <tr>
+                          <td colSpan={4} className="py-2 px-2 text-right font-semibold uppercase text-[10px] text-slate-600">Totale {floor.label}:</td>
+                          <td className="py-2 px-2 text-right font-bold text-slate-900 border-t-2 border-slate-800 bg-slate-50">{formatCurrency(floorTotal)}</td>
                         </tr>
                       </tfoot>
                     </table>
                   </div>
-                </div>
-              );
-            })}
-            <div style={{ background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)' }} className="rounded-lg px-4 py-3 flex justify-between text-sm">
-              <span className="text-white font-bold">TOTALE LAVORI</span>
-              <span className="text-white font-bold">{formatCurrency(results.total_construction_cost)}</span>
+                );
+              })}
             </div>
-          </div>
 
-          {/* Separator */}
-          <div className="h-px bg-gradient-to-r from-transparent via-slate-300 to-transparent mx-8" />
-
-          {/* ======= SECTION E - Stima Valore di Vendita ======= */}
-          <div className="px-8 md:px-12 py-8 print-page-break">
-            <SectionHeader number="E" title="Stima Valore di Vendita" color="#8b5cf6" />
-            <table className="w-full text-sm border-collapse">
-              <thead>
-                <tr style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)' }}>
-                  <th className="text-left py-3 px-4 font-bold text-muted-foreground text-xs uppercase tracking-wider border-b-2 border-border">Unita</th>
-                  <th className="text-left py-3 px-4 font-bold text-muted-foreground text-xs uppercase tracking-wider border-b-2 border-border">Piano</th>
-                  <th className="text-right py-3 px-4 font-bold text-muted-foreground text-xs uppercase tracking-wider border-b-2 border-border">Sup. Ragg.</th>
-                  <th className="text-right py-3 px-4 font-bold text-muted-foreground text-xs uppercase tracking-wider border-b-2 border-border">Val. Calcolato</th>
-                  <th className="text-right py-3 px-4 font-bold text-muted-foreground text-xs uppercase tracking-wider border-b-2 border-border">Prezzo Vendita</th>
-                </tr>
-              </thead>
-              <tbody>
-                {results.units_summary.map((unit, idx) => (
-                  <tr key={idx} className="border-b border-border">
-                    <td className="py-2.5 px-4 text-foreground font-semibold">{unit.name}</td>
-                    <td className="py-2.5 px-4 text-muted-foreground">{getFloorLabel(unit.floor)}</td>
-                    <td className="py-2.5 px-4 text-right text-foreground">{formatNumber(unit.adjusted_surface)} mq</td>
-                    <td className="py-2.5 px-4 text-right text-muted-foreground">{formatCurrency(unit.calculated_value)}</td>
-                    <td className="py-2.5 px-4 text-right text-foreground font-bold">{formatCurrency(unit.target_price)}</td>
+            {/* ======= SECTION D - Stima e Unita ======= */}
+            <div className="mb-8 print-break-inside-avoid print-page-break">
+              <SectionHeader id="D" title="Quadro Unità e Stima Valore Base" />
+              <table className="w-full text-xs text-left">
+                <thead>
+                  <tr className="border-b-2 border-slate-800 text-slate-800">
+                    <th className="py-2.5 px-2 font-bold uppercase tracking-wider">Unità Formata</th>
+                    <th className="py-2.5 px-2 font-bold uppercase tracking-wider text-right">Sup. Comm.</th>
+                    <th className="py-2.5 px-2 font-bold uppercase tracking-wider text-right">Val. Statistico</th>
+                    <th className="py-2.5 px-2 font-bold uppercase tracking-wider text-right">Target Price (Vendita)</th>
                   </tr>
-                ))}
-              </tbody>
-              <tfoot>
-                <tr style={{ background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)' }}>
-                  <td colSpan={2} className="py-3 px-4 text-white font-bold text-sm">TOTALE</td>
-                  <td className="py-3 px-4 text-right text-white font-bold text-sm">
-                    {formatNumber(results.units_summary.reduce((sum, u) => sum + u.adjusted_surface, 0))} mq
-                  </td>
-                  <td className="py-3 px-4 text-right text-slate-300 font-semibold text-sm">
-                    {formatCurrency(results.units_summary.reduce((sum, u) => sum + u.calculated_value, 0))}
-                  </td>
-                  <td className="py-3 px-4 text-right text-white font-bold text-sm">{formatCurrency(results.total_revenue)}</td>
-                </tr>
-              </tfoot>
-            </table>
-          </div>
-
-          {/* Separator */}
-          <div className="h-px bg-gradient-to-r from-transparent via-slate-300 to-transparent mx-8" />
-
-          {/* ======= SECTION F - Indicatori ======= */}
-          <div className="px-8 md:px-12 py-8">
-            <SectionHeader number="F" title="Indicatori di Performance" color="#7c3aed" />
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <IndicatorCard
-                label="Margine Lordo"
-                value={formatCurrency(results.gross_margin)}
-                color={results.gross_margin >= 0 ? '#10b981' : '#ef4444'}
-                accent={results.gross_margin >= 0 ? '#ecfdf5' : '#fef2f2'}
-              />
-              <IndicatorCard label="% Margine su Costo" value={formatPercentage(results.margin_percentage)} color="#2563eb" accent="#eff6ff" />
-              <IndicatorCard label="% Margine su Ricavo" value={formatPercentage(results.margin_on_revenue)} color="#4f46e5" accent="#eef2ff" />
-              <IndicatorCard label="ROI" value={formatPercentage(results.roi)} color="#7c3aed" accent="#f5f3ff" />
-              <IndicatorCard label="Costo / mq" value={formatCurrency(results.cost_per_sqm)} color="#0891b2" accent="#ecfeff" />
-              <IndicatorCard label="Ricavo / mq" value={formatCurrency(results.revenue_per_sqm)} color="#059669" accent="#ecfdf5" />
+                </thead>
+                <tbody>
+                  {results.units_summary.map((unit, idx) => (
+                    <tr key={idx} className="border-b border-slate-200">
+                      <td className="py-2 px-2 font-medium text-slate-800">
+                        {unit.name} <span className="text-slate-500 font-normal">({getFloorLabel(unit.floor)})</span>
+                      </td>
+                      <td className="py-2 px-2 text-right text-slate-700">{formatNumber(unit.adjusted_surface)} mq</td>
+                      <td className="py-2 px-2 text-right text-slate-500">{formatCurrency(unit.calculated_value)}</td>
+                      <td className="py-2 px-2 text-right font-bold text-slate-900">{formatCurrency(unit.target_price)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+                <tfoot>
+                  <tr className="border-b-2 border-slate-800 bg-slate-50">
+                    <td className="py-3 px-2 font-bold text-slate-900 uppercase">Totale Asset</td>
+                    <td className="py-3 px-2 text-right font-bold text-slate-900">{formatNumber(results.units_summary.reduce((sum, u) => sum + u.adjusted_surface, 0))} mq</td>
+                    <td className="py-3 px-2 flex-grow border-0"></td>
+                    <td className="py-3 px-2 text-right font-bold text-slate-900">{formatCurrency(results.total_revenue)}</td>
+                  </tr>
+                </tfoot>
+              </table>
             </div>
 
-            <div className="mt-6">
-              <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">Incidenza sui Costi Totali</h4>
-              <div className="space-y-3">
-                <IncidenceBar label="Acquisizione" value={results.acquisition_incidence} color="#2563eb" />
-                <IncidenceBar label="Costi Operativi" value={results.operation_incidence} color="#f59e0b" />
-                <IncidenceBar label="Lavori" value={results.construction_incidence} color="#10b981" />
+            {/* ======= SECTION INCIDETIONS ======= */}
+            <div className="mt-12 pt-8 border-t-2 border-slate-900 print-break-inside-avoid">
+              <div className="flex justify-between items-end mb-6">
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900 uppercase tracking-widest mb-1">Rapporti di Incidenza</h3>
+                  <p className="text-xs text-slate-500">Valutazione delle aliquote sul Costo Totale</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-8">
+                <div>
+                  <div className="flex justify-between text-[11px] font-bold text-slate-800 uppercase mb-1.5"><span>Acquisizione</span><span>{formatPercentage(results.acquisition_incidence)}</span></div>
+                  <div className="h-1.5 w-full bg-slate-200 rounded-sm overflow-hidden"><div className="h-full bg-slate-900" style={{ width: `${Math.min(results.acquisition_incidence, 100)}%` }} /></div>
+                </div>
+                <div>
+                  <div className="flex justify-between text-[11px] font-bold text-slate-800 uppercase mb-1.5"><span>Lavorazioni Edili</span><span>{formatPercentage(results.construction_incidence)}</span></div>
+                  <div className="h-1.5 w-full bg-slate-200 rounded-sm overflow-hidden"><div className="h-full bg-slate-700" style={{ width: `${Math.min(results.construction_incidence, 100)}%` }} /></div>
+                </div>
+                <div>
+                  <div className="flex justify-between text-[11px] font-bold text-slate-800 uppercase mb-1.5"><span>Oneri e C. Operativi</span><span>{formatPercentage(results.operation_incidence)}</span></div>
+                  <div className="h-1.5 w-full bg-slate-200 rounded-sm overflow-hidden"><div className="h-full bg-slate-500" style={{ width: `${Math.min(results.operation_incidence, 100)}%` }} /></div>
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* ======= FOOTER ======= */}
-          <div className="h-1" style={{ background: 'linear-gradient(to right, #2563eb, #3b82f6, #60a5fa)' }} />
-          <div className="px-8 md:px-12 py-4 flex items-center justify-between bg-muted/80">
-            <div className="flex items-center gap-2">
-              <div className="w-5 h-5 icon-gradient rounded flex items-center justify-center">
-                <Building2 className="w-3 h-3 text-white" />
-              </div>
-              <span className="text-xs font-bold text-gradient">Impresius</span>
-            </div>
-            <p className="text-[0.6rem] text-muted-foreground font-medium">
-              Report generato il {reportDate} &middot; Documento riservato
-            </p>
+          </div>
+          
+          {/* FOGLIO A4 FOOTER BAND */}
+          <div className="bg-slate-900 px-10 md:px-14 py-4 flex items-center justify-between text-white">
+            <span className="text-[10px] uppercase font-bold tracking-[0.2em]">{project.name} &middot; Confidential</span>
+            <span className="text-[10px] font-medium opacity-70">Generato con Impresius Pro V3</span>
           </div>
         </div>
       </div>
@@ -701,44 +559,13 @@ export default function ReportPage() {
   );
 }
 
-/* ======= Sub-components ======= */
-
-function SectionHeader({ number, title, color }: { number: string; title: string; color: string }) {
+// Helper components strictly for the report
+function SectionHeader({ id, title }: { id: string; title: string }) {
   return (
-    <div className="flex items-center gap-3 mb-5">
-      <span
-        className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-extrabold shadow-sm"
-        style={{ background: color }}
-      >
-        {number}
-      </span>
-      <h3 className="text-lg font-bold text-foreground">{title}</h3>
-    </div>
-  );
-}
-
-function IndicatorCard({ label, value, color, accent }: { label: string; value: string; color: string; accent: string }) {
-  return (
-    <div className="rounded-xl p-4 border border-border" style={{ background: accent, borderLeftWidth: '4px', borderLeftColor: color }}>
-      <p className="text-[0.65rem] font-bold uppercase tracking-wider mb-1" style={{ color }}>{label}</p>
-      <p className="text-lg font-extrabold text-foreground">{value}</p>
-    </div>
-  );
-}
-
-function IncidenceBar({ label, value, color }: { label: string; value: number; color: string }) {
-  return (
-    <div>
-      <div className="flex justify-between text-xs mb-1">
-        <span className="font-semibold text-muted-foreground">{label}</span>
-        <span className="font-bold" style={{ color }}>{formatPercentage(value)}</span>
-      </div>
-      <div className="h-2.5 bg-muted rounded-full overflow-hidden">
-        <div
-          className="h-full rounded-full transition-all duration-500"
-          style={{ width: `${Math.min(value, 100)}%`, background: color }}
-        />
-      </div>
+    <div className="border-b border-slate-900 pb-2 mb-4">
+      <h2 className="text-sm font-extrabold text-slate-900 uppercase tracking-widest">
+        <span className="text-slate-400 mr-2">{id}.</span> {title}
+      </h2>
     </div>
   );
 }
