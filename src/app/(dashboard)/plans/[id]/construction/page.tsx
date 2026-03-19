@@ -202,7 +202,6 @@ export default function ComputoMetricoPage() {
         description: itemToSave.description,
         unit_of_measure: itemToSave.unit_of_measure,
         unit_price: itemToSave.unit_price,
-        updated_at: new Date().toISOString()
       }).eq('id', itemId);
 
       if (itemError) {
