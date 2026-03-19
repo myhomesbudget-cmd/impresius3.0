@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
@@ -27,6 +27,7 @@ import {
   Loader2,
   CheckCircle2,
   Building2,
+  Save
 } from 'lucide-react';
 
 // ---------------------------------------------------------------------------
@@ -79,13 +80,13 @@ export default function ComputoMetricoPage() {
   const [items, setItems] = useState<ConstructionItem[]>([]);
   const [measurements, setMeasurements] = useState<Measurement[]>([]);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
   const [activeFloor, setActiveFloor] = useState<string>('');
   const [expandedItemId, setExpandedItemId] = useState<string | null>(null);
   const [activeFloors, setActiveFloors] = useState<string[]>([]);
-
-  const debounceRefs = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
+  
+  // Tracking modifications
+  const [unsavedItems, setUnsavedItems] = useState<Set<string>>(new Set());
+  const [savingItems, setSavingItems] = useState<Set<string>>(new Set());
 
   // ---- Fetch data ----
   useEffect(() => {
@@ -103,11 +104,9 @@ export default function ComputoMetricoPage() {
           .order('sort_order', { ascending: true }),
       ]);
 
-      // Measurements need to be fetched via item ids
       const fetchedItems = (itemsData ?? []) as ConstructionItem[];
       setItems(fetchedItems);
 
-      // Now fetch measurements for all items
       if (fetchedItems.length > 0) {
         const itemIds = fetchedItems.map((i) => i.id);
         const { data: mData } = await supabase
@@ -120,7 +119,6 @@ export default function ComputoMetricoPage() {
         setMeasurements([]);
       }
 
-      // Determine active floors
       const usedFloors = [...new Set(fetchedItems.map((i) => i.floor))];
       const defaultFloors = usedFloors.length > 0 ? usedFloors : ['PT'];
       setActiveFloors(
@@ -155,13 +153,11 @@ export default function ComputoMetricoPage() {
     return map;
   }, [items]);
 
-  // ---- Current floor items ----
   const currentFloorItems = useMemo(
     () => itemsByFloor.get(activeFloor) ?? [],
     [itemsByFloor, activeFloor]
   );
 
-  // ---- Floor total ----
   const floorTotal = useMemo(
     () =>
       currentFloorItems.reduce(
@@ -171,7 +167,6 @@ export default function ComputoMetricoPage() {
     [currentFloorItems, measurementsByItem]
   );
 
-  // ---- Grand total ----
   const grandTotal = useMemo(
     () =>
       items.reduce(
@@ -181,59 +176,74 @@ export default function ComputoMetricoPage() {
     [items, measurementsByItem]
   );
 
-  // ---- Debounced save helper ----
-  const debouncedSave = useCallback(
-    (key: string, saveFn: () => Promise<void>) => {
-      const existing = debounceRefs.current.get(key);
-      if (existing) clearTimeout(existing);
-      debounceRefs.current.set(
-        key,
-        setTimeout(async () => {
-          setSaving(true);
-          setSaved(false);
-          await saveFn();
-          setSaving(false);
-          setSaved(true);
-          setTimeout(() => setSaved(false), 2500);
-        }, 1000)
-      );
-    },
-    []
-  );
+  // ---- Update item field in local state only ----
+  const updateItem = useCallback((itemId: string, field: keyof ConstructionItem, value: string | number) => {
+    setItems((prev) => prev.map((item) => (item.id === itemId ? { ...item, [field]: value } : item)));
+    setUnsavedItems((prev) => new Set([...prev, itemId]));
+  }, []);
 
-  // ---- Update item field ----
-  const updateItem = useCallback(
-    (itemId: string, field: keyof ConstructionItem, value: string | number) => {
-      setItems((prev) =>
-        prev.map((item) => (item.id === itemId ? { ...item, [field]: value } : item))
-      );
+  // ---- Update measurement field in local state only ----
+  const updateMeasurement = useCallback((measurementId: string, itemId: string, field: keyof Measurement, value: string | number) => {
+    setMeasurements((prev) => prev.map((m) => (m.id === measurementId ? { ...m, [field]: value } : m)));
+    setUnsavedItems((prev) => new Set([...prev, itemId]));
+  }, []);
 
-      debouncedSave(`item-${itemId}`, async () => {
-        await supabase
-          .from('construction_items')
-          .update({ [field]: value, updated_at: new Date().toISOString() } as Record<string, unknown>)
-          .eq('id', itemId);
+  // ---- Explicit Save Function ----
+  const saveItem = useCallback(async (itemId: string) => {
+    setSavingItems(prev => new Set([...prev, itemId]));
+
+    const itemToSave = items.find(i => i.id === itemId);
+    const measurementsToSave = measurementsByItem.get(itemId) ?? [];
+
+    if (itemToSave) {
+      const { error: itemError } = await supabase.from('construction_items').update({
+        title: itemToSave.title,
+        category: itemToSave.category,
+        description: itemToSave.description,
+        unit_of_measure: itemToSave.unit_of_measure,
+        unit_price: itemToSave.unit_price,
+        updated_at: new Date().toISOString()
+      }).eq('id', itemId);
+
+      if (itemError) {
+        toast({ title: 'Errore', description: 'Impossibile salvare la voce.', variant: 'destructive' });
+        setSavingItems(prev => { const next = new Set(prev); next.delete(itemId); return next; });
+        return;
+      }
+    }
+
+    // Process measurements
+    let measurementError = false;
+    for (const m of measurementsToSave) {
+      if (!m.id.startsWith('temp-')) {
+        const { error: mError } = await supabase.from('measurements').update({
+          description: m.description,
+          parts: m.parts,
+          length: m.length,
+          width: m.width,
+          height_weight: m.height_weight
+        }).eq('id', m.id);
+        if (mError) measurementError = true;
+      }
+    }
+
+    setSavingItems(prev => {
+      const next = new Set(prev);
+      next.delete(itemId);
+      return next;
+    });
+
+    if (measurementError) {
+      toast({ title: 'Errore Parziale', description: 'Alcune misurazioni non sono state salvate correttamente.', variant: 'destructive' });
+    } else {
+      setUnsavedItems(prev => {
+        const next = new Set(prev);
+        next.delete(itemId);
+        return next;
       });
-    },
-    [debouncedSave, supabase]
-  );
-
-  // ---- Update measurement field ----
-  const updateMeasurement = useCallback(
-    (measurementId: string, field: keyof Measurement, value: string | number) => {
-      setMeasurements((prev) =>
-        prev.map((m) => (m.id === measurementId ? { ...m, [field]: value } : m))
-      );
-
-      debouncedSave(`measurement-${measurementId}`, async () => {
-        await supabase
-          .from('measurements')
-          .update({ [field]: value } as Record<string, unknown>)
-          .eq('id', measurementId);
-      });
-    },
-    [debouncedSave, supabase]
-  );
+      toast({ title: 'Voce Salvata', description: 'Le modifiche alla voce e alle misure sono state salvate nel cloud.' });
+    }
+  }, [items, measurementsByItem, supabase]);
 
   // ---- Add new item ----
   const addItem = useCallback(async () => {
@@ -264,6 +274,8 @@ export default function ComputoMetricoPage() {
       const created = data as ConstructionItem;
       setItems((prev) => [...prev, created]);
       setExpandedItemId(created.id);
+      // Automatically mark as unsaved so the user clicks save when they finish editing the new item.
+      setUnsavedItems(prev => new Set([...prev, created.id]));
     }
   }, [activeFloor, items, projectId, supabase]);
 
@@ -275,6 +287,11 @@ export default function ComputoMetricoPage() {
       setItems((prev) => prev.filter((i) => i.id !== itemId));
       setMeasurements((prev) => prev.filter((m) => m.item_id !== itemId));
       if (expandedItemId === itemId) setExpandedItemId(null);
+      setUnsavedItems((prev) => {
+        const next = new Set(prev);
+        next.delete(itemId);
+        return next;
+      });
     },
     [expandedItemId, supabase]
   );
@@ -303,6 +320,7 @@ export default function ComputoMetricoPage() {
 
       if (!error && data) {
         setMeasurements((prev) => [...prev, data as Measurement]);
+        setUnsavedItems((prev) => new Set([...prev, itemId]));
       }
     },
     [measurementsByItem, supabase]
@@ -310,9 +328,10 @@ export default function ComputoMetricoPage() {
 
   // ---- Delete measurement ----
   const deleteMeasurement = useCallback(
-    async (measurementId: string) => {
+    async (measurementId: string, itemId: string) => {
       await supabase.from('measurements').delete().eq('id', measurementId);
       setMeasurements((prev) => prev.filter((m) => m.id !== measurementId));
+      setUnsavedItems((prev) => new Set([...prev, itemId]));
     },
     [supabase]
   );
@@ -352,20 +371,6 @@ export default function ComputoMetricoPage() {
               <p className="page-header-subtitle">
                 Area 2 &mdash; Dettaglio lavorazioni e misurazioni per piano
               </p>
-            </div>
-            <div className="flex items-center gap-3">
-              {saving && (
-                <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Salvataggio...
-                </span>
-              )}
-              {saved && (
-                <span className="flex items-center gap-1.5 text-sm text-emerald-600">
-                  <CheckCircle2 className="w-4 h-4" />
-                  Salvato
-                </span>
-              )}
             </div>
           </div>
         </div>
@@ -430,21 +435,25 @@ export default function ComputoMetricoPage() {
               const totalQuantity = calculateItemQuantity(itemMeasurements);
               const totalPrice = calculateItemTotal(item, itemMeasurements);
               const isExpanded = expandedItemId === item.id;
+              const isUnsaved = unsavedItems.has(item.id);
+              const isSaving = savingItems.has(item.id);
 
               return (
                 <Card
                   key={item.id}
                   className={cn(
-                    'transition-all duration-200',
-                    isExpanded && 'ring-2 ring-blue-500/20 shadow-md'
+                    'transition-all duration-200 border-2',
+                    isUnsaved ? 'border-amber-400/50 outline outline-2 outline-amber-400/20' : 'border-border',
+                    isExpanded && !isUnsaved && 'ring-2 ring-blue-500/20 shadow-md border-transparent'
                   )}
                 >
                   {/* ---- Collapsed Header ---- */}
                   <div
-                    className="flex items-center gap-2 sm:gap-4 px-3 sm:px-5 py-3 sm:py-4 cursor-pointer select-none"
-                    onClick={() =>
-                      setExpandedItemId(isExpanded ? null : item.id)
-                    }
+                    className={cn(
+                      "flex items-center gap-2 sm:gap-4 px-3 sm:px-5 py-3 sm:py-4 cursor-pointer select-none",
+                      isUnsaved && "bg-amber-50/30"
+                    )}
+                    onClick={() => setExpandedItemId(isExpanded ? null : item.id)}
                   >
                     <div className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-muted text-muted-foreground text-xs font-bold shrink-0">
                       {item.item_number}
@@ -456,10 +465,13 @@ export default function ComputoMetricoPage() {
                       <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
                     )}
 
-                    <div className="flex-1 min-w-0">
+                    <div className="flex-1 min-w-0 flex items-center gap-2">
                       <p className="text-sm font-medium text-foreground truncate">
                         {item.title}
                       </p>
+                      {isUnsaved && !isExpanded && (
+                        <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" title="Modifiche non salvate" />
+                      )}
                     </div>
 
                     <span
@@ -492,15 +504,13 @@ export default function ComputoMetricoPage() {
 
                   {/* ---- Expanded Content ---- */}
                   {isExpanded && (
-                    <CardContent className="border-t border-border pt-5">
+                    <CardContent className={cn("border-t border-border pt-5", isUnsaved && "bg-amber-50/10")}>
                       {/* Item Details */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                         <Input
                           label="Titolo"
                           value={item.title}
-                          onChange={(e) =>
-                            updateItem(item.id, 'title', e.target.value)
-                          }
+                          onChange={(e) => updateItem(item.id, 'title', e.target.value)}
                         />
                         <div className="grid grid-cols-2 gap-3">
                           <div className="w-full">
@@ -513,9 +523,7 @@ export default function ComputoMetricoPage() {
                                 'focus:border-blue-500 focus:outline-none focus:ring-[3px] focus:ring-blue-500/15'
                               )}
                               value={item.category}
-                              onChange={(e) =>
-                                updateItem(item.id, 'category', e.target.value)
-                              }
+                              onChange={(e) => updateItem(item.id, 'category', e.target.value)}
                             >
                               {CONSTRUCTION_CATEGORIES.map((c) => (
                                 <option key={c.value} value={c.value}>
@@ -534,13 +542,7 @@ export default function ComputoMetricoPage() {
                                 'focus:border-blue-500 focus:outline-none focus:ring-[3px] focus:ring-blue-500/15'
                               )}
                               value={item.unit_of_measure}
-                              onChange={(e) =>
-                                updateItem(
-                                  item.id,
-                                  'unit_of_measure',
-                                  e.target.value
-                                )
-                              }
+                              onChange={(e) => updateItem(item.id, 'unit_of_measure', e.target.value)}
                             >
                               {UNITS_OF_MEASURE.map((u) => (
                                 <option key={u.value} value={u.value}>
@@ -563,9 +565,7 @@ export default function ComputoMetricoPage() {
                             )}
                             placeholder="Descrizione della lavorazione..."
                             value={item.description ?? ''}
-                            onChange={(e) =>
-                              updateItem(item.id, 'description', e.target.value)
-                            }
+                            onChange={(e) => updateItem(item.id, 'description', e.target.value)}
                           />
                         </div>
 
@@ -577,13 +577,7 @@ export default function ComputoMetricoPage() {
                             min="0"
                             suffix="€"
                             value={item.unit_price}
-                            onChange={(e) =>
-                              updateItem(
-                                item.id,
-                                'unit_price',
-                                parseFloat(e.target.value) || 0
-                              )
-                            }
+                            onChange={(e) => updateItem(item.id, 'unit_price', parseFloat(e.target.value) || 0)}
                           />
                         </div>
                       </div>
@@ -609,29 +603,18 @@ export default function ComputoMetricoPage() {
                           {/* Table Header */}
                           <div className="grid grid-cols-[minmax(120px,1fr)_60px_70px_70px_70px_80px_32px] md:grid-cols-[1fr_70px_80px_80px_80px_90px_32px] gap-px bg-muted text-xs font-semibold text-muted-foreground uppercase tracking-wide min-w-[520px]">
                             <div className="px-2 md:px-3 py-2" style={{ background: 'rgba(255,255,255,0.03)' }}>Descrizione</div>
-                            <div className="px-1 md:px-2 py-2 text-center" style={{ background: 'rgba(255,255,255,0.03)' }}>
-                              Par.ug
-                            </div>
-                            <div className="px-1 md:px-2 py-2 text-center" style={{ background: 'rgba(255,255,255,0.03)' }}>
-                              Lung.
-                            </div>
-                            <div className="px-1 md:px-2 py-2 text-center" style={{ background: 'rgba(255,255,255,0.03)' }}>
-                              Larg.
-                            </div>
-                            <div className="px-1 md:px-2 py-2 text-center" style={{ background: 'rgba(255,255,255,0.03)' }}>
-                              H/peso
-                            </div>
-                            <div className="px-1 md:px-2 py-2 text-right" style={{ background: 'rgba(255,255,255,0.03)' }}>
-                              Quantita
-                            </div>
+                            <div className="px-1 md:px-2 py-2 text-center" style={{ background: 'rgba(255,255,255,0.03)' }}>Par.ug</div>
+                            <div className="px-1 md:px-2 py-2 text-center" style={{ background: 'rgba(255,255,255,0.03)' }}>Lung.</div>
+                            <div className="px-1 md:px-2 py-2 text-center" style={{ background: 'rgba(255,255,255,0.03)' }}>Larg.</div>
+                            <div className="px-1 md:px-2 py-2 text-center" style={{ background: 'rgba(255,255,255,0.03)' }}>H/peso</div>
+                            <div className="px-1 md:px-2 py-2 text-right" style={{ background: 'rgba(255,255,255,0.03)' }}>Quantita</div>
                             <div style={{ background: 'rgba(255,255,255,0.03)' }} />
                           </div>
 
                           {/* Table Rows */}
                           {itemMeasurements.length === 0 ? (
                             <div className="px-3 py-4 text-sm text-muted-foreground text-center">
-                              Nessuna misurazione &mdash; clicca &ldquo;Aggiungi
-                              Misurazione&rdquo;
+                              Nessuna misurazione &mdash; clicca &ldquo;Aggiungi Misurazione&rdquo;
                             </div>
                           ) : (
                             itemMeasurements.map((m) => {
@@ -644,16 +627,10 @@ export default function ComputoMetricoPage() {
                                   <div className="px-2 py-1">
                                     <input
                                       type="text"
-                                      className="h-8 border-transparent bg-transparent text-sm hover:border-border focus:border-blue-500 focus:bg-black/5 dark:focus:bg-white/[0.03] focus:outline-none focus:ring-1 focus:ring-blue-400"
+                                      className="h-8 w-full border-transparent bg-transparent text-sm hover:border-border focus:border-blue-500 focus:bg-black/5 dark:focus:bg-white/[0.03] focus:outline-none focus:ring-1 focus:ring-blue-400"
                                       placeholder="Descrizione"
                                       value={m.description ?? ''}
-                                      onChange={(e) =>
-                                        updateMeasurement(
-                                          m.id,
-                                          'description',
-                                          e.target.value
-                                        )
-                                      }
+                                      onChange={(e) => updateMeasurement(m.id, item.id, 'description', e.target.value)}
                                     />
                                   </div>
                                   <div className="px-1 py-1">
@@ -663,13 +640,7 @@ export default function ComputoMetricoPage() {
                                       min="0"
                                       className="h-8 w-full rounded border-0 bg-transparent px-1 text-sm text-center text-foreground focus:bg-blue-500/10 dark:focus:bg-blue-500/20 focus:outline-none focus:ring-1 focus:ring-blue-400"
                                       value={m.parts || ''}
-                                      onChange={(e) =>
-                                        updateMeasurement(
-                                          m.id,
-                                          'parts',
-                                          parseFloat(e.target.value) || 0
-                                        )
-                                      }
+                                      onChange={(e) => updateMeasurement(m.id, item.id, 'parts', parseFloat(e.target.value) || 0)}
                                     />
                                   </div>
                                   <div className="px-1 py-1">
@@ -679,13 +650,7 @@ export default function ComputoMetricoPage() {
                                       min="0"
                                       className="h-8 w-full rounded border-0 bg-transparent px-1 text-sm text-center text-foreground focus:bg-blue-500/10 dark:focus:bg-blue-500/20 focus:outline-none focus:ring-1 focus:ring-blue-400"
                                       value={m.length || ''}
-                                      onChange={(e) =>
-                                        updateMeasurement(
-                                          m.id,
-                                          'length',
-                                          parseFloat(e.target.value) || 0
-                                        )
-                                      }
+                                      onChange={(e) => updateMeasurement(m.id, item.id, 'length', parseFloat(e.target.value) || 0)}
                                     />
                                   </div>
                                   <div className="px-1 py-1">
@@ -695,13 +660,7 @@ export default function ComputoMetricoPage() {
                                       min="0"
                                       className="h-8 w-full rounded border-0 bg-transparent px-1 text-sm text-center text-foreground focus:bg-blue-500/10 dark:focus:bg-blue-500/20 focus:outline-none focus:ring-1 focus:ring-blue-400"
                                       value={m.width || ''}
-                                      onChange={(e) =>
-                                        updateMeasurement(
-                                          m.id,
-                                          'width',
-                                          parseFloat(e.target.value) || 0
-                                        )
-                                      }
+                                      onChange={(e) => updateMeasurement(m.id, item.id, 'width', parseFloat(e.target.value) || 0)}
                                     />
                                   </div>
                                   <div className="px-1 py-1">
@@ -711,13 +670,7 @@ export default function ComputoMetricoPage() {
                                       min="0"
                                       className="h-8 w-full rounded border-0 bg-transparent px-1 text-sm text-center text-foreground focus:bg-blue-500/10 dark:focus:bg-blue-500/20 focus:outline-none focus:ring-1 focus:ring-blue-400"
                                       value={m.height_weight || ''}
-                                      onChange={(e) =>
-                                        updateMeasurement(
-                                          m.id,
-                                          'height_weight',
-                                          parseFloat(e.target.value) || 0
-                                        )
-                                      }
+                                      onChange={(e) => updateMeasurement(m.id, item.id, 'height_weight', parseFloat(e.target.value) || 0)}
                                     />
                                   </div>
                                   <div className="flex items-center justify-end px-2 py-1">
@@ -727,7 +680,7 @@ export default function ComputoMetricoPage() {
                                   </div>
                                   <div className="flex items-center justify-center py-1">
                                     <button
-                                      onClick={() => deleteMeasurement(m.id)}
+                                      onClick={() => deleteMeasurement(m.id, item.id)}
                                       className="p-1 rounded text-muted-foreground/50 hover:text-red-500 hover:bg-red-500/10 dark:hover:bg-red-500/20 transition-colors"
                                     >
                                       <X className="w-3.5 h-3.5" />
@@ -764,16 +717,44 @@ export default function ComputoMetricoPage() {
                         </div>
                       </div>
 
-                      {/* Delete Item */}
-                      <div className="flex justify-end pt-3 border-t border-border">
+                      {/* Manual Action Buttons */}
+                      <div className="flex justify-between items-center pt-5 mt-6 border-t border-border">
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => deleteItem(item.id)}
                           className="gap-1.5 text-red-500 hover:text-red-700 hover:bg-red-500/10 dark:hover:bg-red-500/20"
                         >
-                          <Trash2 className="w-3.5 h-3.5" />
+                          <Trash2 className="w-4 h-4" />
                           Elimina voce
+                        </Button>
+
+                        <Button
+                          variant={isUnsaved ? "default" : "outline"}
+                          size="default"
+                          onClick={() => saveItem(item.id)}
+                          disabled={!isUnsaved || isSaving}
+                          className={cn(
+                            "gap-2 font-semibold shadow-sm px-6 py-5 transition-all",
+                            isUnsaved && !isSaving ? "bg-amber-500 hover:bg-amber-600 text-white shadow-amber-500/30 ring-2 ring-amber-500/20" : ""
+                          )}
+                        >
+                          {isSaving ? (
+                            <>
+                              <Loader2 className="w-5 h-5 animate-spin" />
+                              Salvataggio...
+                            </>
+                          ) : isUnsaved ? (
+                            <>
+                              <Save className="w-5 h-5" />
+                              Salva Modifiche
+                            </>
+                          ) : (
+                            <>
+                              <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                              Tutto Salvato
+                            </>
+                          )}
                         </Button>
                       </div>
                     </CardContent>
@@ -790,10 +771,10 @@ export default function ComputoMetricoPage() {
             <Button
               variant="outline"
               onClick={addItem}
-              className="gap-1.5 w-full border-dashed border-2 hover:border-blue-400 hover:bg-blue-500/10 dark:hover:bg-blue-500/20"
+              className="gap-1.5 w-full border-dashed border-2 hover:border-blue-400 hover:bg-blue-500/10 dark:hover:bg-blue-500/20 py-6"
             >
-              <Plus className="w-4 h-4" />
-              Aggiungi Voce
+              <Plus className="w-5 h-5" />
+              Aggiungi Nuova Voce al Piano
             </Button>
           </div>
         )}
