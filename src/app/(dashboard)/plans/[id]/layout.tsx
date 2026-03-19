@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import { ProjectSidebar } from '@/components/project/ProjectSidebar';
 import { ProjectHeader } from '@/components/project/ProjectHeader';
 import { MobileProjectSidebarProvider } from '@/components/project/MobileProjectSidebarContext';
+import { ProjectProgress } from '@/components/project/ProjectProgress';
 
 export default async function ProjectLayout({
   children,
@@ -29,6 +30,7 @@ export default async function ProjectLayout({
       <div className="flex min-h-screen">
         <ProjectSidebar project={project} />
         <div className="flex-1 min-w-0 lg:ml-56">
+          <ProjectProgress projectId={id} />
           <ProjectHeader projectId={id} />
           <div className="pb-20 lg:pb-0">{children}</div>
         </div>

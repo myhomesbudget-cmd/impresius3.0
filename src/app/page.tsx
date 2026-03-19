@@ -7,7 +7,10 @@ import { Footer } from "@/components/landing/Footer";
 
 export default function Home() {
   return (
-    <main className="min-h-screen relative">
+    <main
+      className="min-h-screen relative"
+      style={{ background: "#0a0e1e" }}
+    >
       <Navbar />
       <Hero />
       <Features />

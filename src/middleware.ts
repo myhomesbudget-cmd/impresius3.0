@@ -30,7 +30,28 @@ export async function middleware(request: NextRequest) {
   );
 
   // Refresh the auth session
-  await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  // Define route categories
+  const isAuthRoute = request.nextUrl.pathname.startsWith('/login') || 
+                      request.nextUrl.pathname.startsWith('/register') || 
+                      request.nextUrl.pathname.startsWith('/reset-password');
+                      
+  const isProtectedRoute = request.nextUrl.pathname.startsWith('/dashboard') || 
+                           request.nextUrl.pathname.startsWith('/plans') || 
+                           request.nextUrl.pathname.startsWith('/update-password') || 
+                           request.nextUrl.pathname.startsWith('/settings');
+
+  // Redirect logic
+  if (user && isAuthRoute) {
+    return NextResponse.redirect(new URL('/dashboard', request.url));
+  }
+
+  if (!user && isProtectedRoute) {
+    const redirectUrl = new URL('/login', request.url);
+    redirectUrl.searchParams.set('redirectedFrom', request.nextUrl.pathname);
+    return NextResponse.redirect(redirectUrl);
+  }
 
   return supabaseResponse;
 }

@@ -149,7 +149,7 @@ export default function DatiGeneraliPage() {
               </label>
               <textarea
                 className={cn(
-                  'flex w-full rounded-lg border border-border bg-card px-3.5 py-2.5 text-sm text-foreground transition-all duration-200',
+                  'flex w-full rounded-lg border border-border bg-black/5 dark:bg-white/[0.03] px-3.5 py-2.5 text-sm text-foreground transition-all duration-200',
                   'placeholder:text-muted-foreground focus:border-blue-500 focus:outline-none focus:ring-[3px] focus:ring-blue-500/15',
                   'disabled:cursor-not-allowed disabled:opacity-50',
                   'min-h-[100px] resize-y'
@@ -215,7 +215,7 @@ export default function DatiGeneraliPage() {
               </label>
               <select
                 className={cn(
-                  'flex h-11 w-full rounded-lg border border-border bg-card px-3.5 py-2.5 text-sm text-foreground transition-all duration-200',
+                  'flex h-11 w-full rounded-lg border border-border bg-black/5 dark:bg-white/[0.03] px-3.5 py-2.5 text-sm text-foreground transition-all duration-200',
                   'focus:border-blue-500 focus:outline-none focus:ring-[3px] focus:ring-blue-500/15'
                 )}
                 value={form.property_type}
@@ -235,7 +235,7 @@ export default function DatiGeneraliPage() {
               </label>
               <select
                 className={cn(
-                  'flex h-11 w-full rounded-lg border border-border bg-card px-3.5 py-2.5 text-sm text-foreground transition-all duration-200',
+                  'flex h-11 w-full rounded-lg border border-border bg-black/5 dark:bg-white/[0.03] px-3.5 py-2.5 text-sm text-foreground transition-all duration-200',
                   'focus:border-blue-500 focus:outline-none focus:ring-[3px] focus:ring-blue-500/15'
                 )}
                 value={form.strategy}

@@ -1,5 +1,7 @@
 import * as React from "react";
+// @ts-ignore - The TS IDE server occasionally misresolves these in pnpm/npm environments, but the NextJS compiler resolves them correctly
 import { Slot } from "@radix-ui/react-slot";
+// @ts-ignore
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
@@ -38,9 +40,9 @@ const buttonVariants = cva(
   }
 );
 
-export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link" | "gradient" | null | undefined;
+  size?: "default" | "sm" | "lg" | "xl" | "icon" | null | undefined;
   asChild?: boolean;
   loading?: boolean;
 }

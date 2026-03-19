@@ -2,10 +2,13 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
 import { useMobileProjectSidebar } from './MobileProjectSidebarContext';
 import type { Project } from '@/types/database';
 import {
+  CheckCircle2,
   FileText,
   Receipt,
   Hammer,
@@ -23,15 +26,53 @@ interface ProjectSidebarProps {
   project: Project;
 }
 
+interface Completion {
+  acquisition: boolean;
+  construction: boolean;
+  valuation: boolean;
+}
+
 const statusConfig = {
   draft: { label: 'Bozza', className: 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20' },
   active: { label: 'Attivo', className: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20' },
   archived: { label: 'Archiviato', className: 'bg-muted text-muted-foreground border border-border' },
 } as const;
 
+function getCompletionForPath(href: string, completion: Completion): boolean {
+  if (href.includes('/acquisition')) return completion.acquisition;
+  if (href.includes('/construction')) return completion.construction;
+  if (href.includes('/valuation')) return completion.valuation;
+  if (href.includes('/summary')) return completion.acquisition && completion.construction && completion.valuation;
+  return false;
+}
+
+function useProjectCompletion(projectId: string): Completion | null {
+  const [completion, setCompletion] = useState<Completion | null>(null);
+
+  useEffect(() => {
+    async function check() {
+      const supabase = createClient();
+      const [{ data: acq }, { data: con }, { data: val }] = await Promise.all([
+        supabase.from('acquisition_costs').select('id').eq('project_id', projectId).limit(1),
+        supabase.from('construction_items').select('id').eq('project_id', projectId).limit(1),
+        supabase.from('property_units').select('id').eq('project_id', projectId).limit(1),
+      ]);
+      setCompletion({
+        acquisition: (acq?.length ?? 0) > 0,
+        construction: (con?.length ?? 0) > 0,
+        valuation: (val?.length ?? 0) > 0,
+      });
+    }
+    check();
+  }, [projectId]);
+
+  return completion;
+}
+
 function ProjectSidebarContent({ project, onNavigate }: { project: Project; onNavigate?: () => void }) {
   const pathname = usePathname();
   const basePath = `/plans/${project.id}`;
+  const completion = useProjectCompletion(project.id);
 
   const navItems = [
     { href: basePath, icon: FileText, label: 'Dati Generali', exact: true },
@@ -49,7 +90,7 @@ function ProjectSidebarContent({ project, onNavigate }: { project: Project; onNa
   return (
     <>
       {/* Project Header */}
-      <div className="px-4 py-5 border-b border-border bg-muted/50">
+      <div className="px-4 py-5 border-b border-slate-200 bg-slate-50">
         <h2 className="text-sm font-bold text-foreground truncate" title={project.name}>
           {project.name}
         </h2>
@@ -76,6 +117,7 @@ function ProjectSidebarContent({ project, onNavigate }: { project: Project; onNa
           const isActive = item.exact
             ? pathname === item.href
             : pathname.startsWith(item.href);
+          const isDone = completion ? getCompletionForPath(item.href, completion) : false;
 
           return (
             <Link
@@ -90,7 +132,7 @@ function ProjectSidebarContent({ project, onNavigate }: { project: Project; onNa
               )}
             >
               {isActive && (
-                <div className="absolute left-0 top-1.5 bottom-1.5 w-[3px] bg-gradient-to-b from-primary to-[hsl(243_75%_59%)] rounded-full" />
+                <div className="absolute left-0 top-1.5 bottom-1.5 w-[3px] bg-blue-500 rounded-full" />
               )}
               <item.icon
                 className={cn(
@@ -98,7 +140,10 @@ function ProjectSidebarContent({ project, onNavigate }: { project: Project; onNa
                   isActive ? 'text-primary' : 'text-muted-foreground'
                 )}
               />
-              <span className="truncate">{item.label}</span>
+              <span className="truncate flex-1">{item.label}</span>
+              {isDone && (
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 ml-auto flex-shrink-0" />
+              )}
             </Link>
           );
         })}
@@ -125,7 +170,7 @@ export function ProjectSidebar({ project }: ProjectSidebarProps) {
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className="hidden lg:flex fixed left-64 top-0 h-full w-56 bg-sidebar/90 backdrop-blur-md border-r border-sidebar-border flex-col z-30">
+      <aside className="hidden lg:flex fixed left-64 top-0 h-full w-56 bg-white border-r border-slate-200 flex-col z-30">
         <ProjectSidebarContent project={project} />
       </aside>
 
@@ -140,7 +185,7 @@ export function ProjectSidebar({ project }: ProjectSidebarProps) {
       {/* Mobile drawer */}
       <aside
         className={cn(
-          'lg:hidden fixed left-0 top-0 h-full w-72 bg-sidebar/95 backdrop-blur-md border-r border-sidebar-border flex flex-col z-50 transition-transform duration-300 ease-in-out shadow-2xl',
+          'lg:hidden fixed left-0 top-0 h-full w-72 bg-white border-r border-slate-200 flex flex-col z-50 transition-transform duration-300 ease-in-out shadow-2xl',
           isOpen ? 'translate-x-0' : '-translate-x-full'
         )}
       >

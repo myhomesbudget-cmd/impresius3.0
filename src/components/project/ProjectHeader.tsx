@@ -34,7 +34,7 @@ export function ProjectHeader({ projectId }: ProjectHeaderProps) {
   return (
     <>
       {/* Top bar with hamburger — mobile/tablet only */}
-      <div className="lg:hidden flex items-center justify-between px-4 py-3 border-b border-border bg-card/80 backdrop-blur-md">
+      <div className="lg:hidden flex items-center justify-between px-4 py-3 border-b border-slate-200 bg-white">
         <button
           onClick={toggle}
           className="p-2 -ml-2 rounded-lg hover:bg-accent transition-colors"
@@ -47,7 +47,7 @@ export function ProjectHeader({ projectId }: ProjectHeaderProps) {
       </div>
 
       {/* Bottom tab bar — mobile/tablet only */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-card/95 backdrop-blur-md border-t border-border shadow-[0_-4px_12px_hsl(var(--foreground)/0.05)] safe-bottom">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-slate-200 shadow-[0_-2px_8px_rgba(0,0,0,0.04)] safe-bottom">
         <nav className="flex items-stretch justify-around px-1">
           {mobileNavItems.map((item) => {
             const fullHref = `${basePath}${item.href}`;

@@ -8,11 +8,16 @@ const Card = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "rounded-xl border border-border bg-card text-card-foreground shadow-[0_0_0_1px_hsl(var(--border)/0.5),0_1px_3px_hsl(var(--foreground)/0.04),0_4px_12px_hsl(var(--foreground)/0.03)] transition-all duration-200",
+      "relative rounded-2xl overflow-hidden text-card-foreground transition-all duration-200",
+      "bg-white border border-border/60",
+      "shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.03)]",
+      "hover:shadow-[0_4px_16px_rgba(0,0,0,0.06),0_8px_24px_rgba(0,0,0,0.04)]",
       className
     )}
     {...props}
-  />
+  >
+    {props.children}
+  </div>
 ));
 Card.displayName = "Card";
 

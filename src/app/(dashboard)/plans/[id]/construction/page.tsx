@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn, formatCurrency, formatNumber } from '@/lib/utils';
+import { toast } from '@/components/ui/toast';
 import {
   CONSTRUCTION_CATEGORIES,
   FLOORS,
@@ -607,23 +608,23 @@ export default function ComputoMetricoPage() {
                         <div className="border border-border rounded-lg overflow-hidden overflow-x-auto mobile-scroll-hint">
                           {/* Table Header */}
                           <div className="grid grid-cols-[minmax(120px,1fr)_60px_70px_70px_70px_80px_32px] md:grid-cols-[1fr_70px_80px_80px_80px_90px_32px] gap-px bg-muted text-xs font-semibold text-muted-foreground uppercase tracking-wide min-w-[520px]">
-                            <div className="bg-muted px-2 md:px-3 py-2">Descrizione</div>
-                            <div className="bg-muted px-1 md:px-2 py-2 text-center">
+                            <div className="px-2 md:px-3 py-2" style={{ background: 'rgba(255,255,255,0.03)' }}>Descrizione</div>
+                            <div className="px-1 md:px-2 py-2 text-center" style={{ background: 'rgba(255,255,255,0.03)' }}>
                               Par.ug
                             </div>
-                            <div className="bg-muted px-1 md:px-2 py-2 text-center">
+                            <div className="px-1 md:px-2 py-2 text-center" style={{ background: 'rgba(255,255,255,0.03)' }}>
                               Lung.
                             </div>
-                            <div className="bg-muted px-1 md:px-2 py-2 text-center">
+                            <div className="px-1 md:px-2 py-2 text-center" style={{ background: 'rgba(255,255,255,0.03)' }}>
                               Larg.
                             </div>
-                            <div className="bg-muted px-1 md:px-2 py-2 text-center">
+                            <div className="px-1 md:px-2 py-2 text-center" style={{ background: 'rgba(255,255,255,0.03)' }}>
                               H/peso
                             </div>
-                            <div className="bg-muted px-1 md:px-2 py-2 text-right">
+                            <div className="px-1 md:px-2 py-2 text-right" style={{ background: 'rgba(255,255,255,0.03)' }}>
                               Quantita
                             </div>
-                            <div className="bg-muted" />
+                            <div style={{ background: 'rgba(255,255,255,0.03)' }} />
                           </div>
 
                           {/* Table Rows */}
@@ -638,12 +639,12 @@ export default function ComputoMetricoPage() {
                               return (
                                 <div
                                   key={m.id}
-                                  className="grid grid-cols-[minmax(120px,1fr)_60px_70px_70px_70px_80px_32px] md:grid-cols-[1fr_70px_80px_80px_80px_90px_32px] gap-px border-t border-border bg-card min-w-[520px]"
+                                  className="grid grid-cols-[minmax(120px,1fr)_60px_70px_70px_70px_80px_32px] md:grid-cols-[1fr_70px_80px_80px_80px_90px_32px] gap-px border-t border-border bg-black/5 dark:bg-white/[0.02] min-w-[520px]"
                                 >
                                   <div className="px-2 py-1">
                                     <input
                                       type="text"
-                                      className="h-8 w-full rounded border-0 bg-transparent px-1 text-sm text-foreground focus:bg-blue-500/10 dark:focus:bg-blue-500/20 focus:outline-none focus:ring-1 focus:ring-blue-400"
+                                      className="h-8 border-transparent bg-transparent text-sm hover:border-border focus:border-blue-500 focus:bg-black/5 dark:focus:bg-white/[0.03] focus:outline-none focus:ring-1 focus:ring-blue-400"
                                       placeholder="Descrizione"
                                       value={m.description ?? ''}
                                       onChange={(e) =>
@@ -820,9 +821,9 @@ export default function ComputoMetricoPage() {
       </div>
 
       {/* ---- Sticky Grand Total Bar ---- */}
-      <div className="fixed bottom-[4.5rem] lg:bottom-0 left-0 right-0 bg-card/95 backdrop-blur-sm border-t border-border shadow-[0_-4px_12px_rgba(0,0,0,0.05)] z-30">
+      <div className="fixed bottom-[4.5rem] lg:bottom-0 left-0 right-0 backdrop-blur-md z-30 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] bg-white/95 border-t border-slate-200">
         <div className="max-w-6xl mx-auto px-4 md:px-8 py-2.5 flex items-center justify-between">
-          <div className="hidden sm:flex items-center gap-6">
+          <div className="hidden sm:flex items-center gap-7">
             {activeFloors.map((floor) => {
               const floorItems = itemsByFloor.get(floor) ?? [];
               const ft = floorItems.reduce(
@@ -832,19 +833,15 @@ export default function ComputoMetricoPage() {
               );
               return (
                 <div key={floor} className="text-center">
-                  <p className="text-xs text-muted-foreground">{floor}</p>
-                  <p className="text-sm font-medium text-foreground">
-                    {formatCurrency(ft)}
-                  </p>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{floor}</p>
+                  <p className="text-sm font-bold text-slate-900">{formatCurrency(ft)}</p>
                 </div>
               );
             })}
           </div>
           <div className="text-right ml-auto">
-            <p className="text-[0.65rem] text-muted-foreground uppercase tracking-wide font-medium">
-              Totale Computo
-            </p>
-            <p className="text-lg md:text-xl font-bold text-foreground">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Totale Computo</p>
+            <p className="text-lg md:text-xl font-extrabold tabular-nums text-blue-600">
               {formatCurrency(grandTotal)}
             </p>
           </div>

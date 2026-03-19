@@ -32,6 +32,7 @@ import {
   Tooltip,
   Legend,
 } from 'recharts';
+import CountUp from 'react-countup';
 
 export default function SummaryPage() {
   const { id: projectId } = useParams<{ id: string }>();
@@ -175,7 +176,7 @@ export default function SummaryPage() {
                 </div>
               </div>
               <p className={cn('metric-value', marginColor)}>
-                {formatCurrency(results.gross_margin)}
+                <CountUp end={results.gross_margin} duration={1.5} formattingFn={formatCurrency} />
               </p>
               <div className="flex items-center gap-1.5 mt-2">
                 {results.gross_margin >= 0 ? (
@@ -200,7 +201,7 @@ export default function SummaryPage() {
                 </div>
               </div>
               <p className="metric-value text-blue-700">
-                {formatPercentage(results.roi)}
+                <CountUp end={results.roi} decimals={4} duration={1.5} formattingFn={formatPercentage} />
               </p>
               <p className="metric-sublabel mt-2">
                 Return on Investment
@@ -218,7 +219,7 @@ export default function SummaryPage() {
                 </div>
               </div>
               <p className="metric-value text-foreground">
-                {formatCurrency(results.total_cost)}
+                <CountUp end={results.total_cost} duration={1.5} formattingFn={formatCurrency} />
               </p>
               <div className="flex items-center gap-1.5 mt-2">
                 <Ruler className="w-3.5 h-3.5 text-muted-foreground" />
@@ -239,7 +240,7 @@ export default function SummaryPage() {
                 </div>
               </div>
               <p className="metric-value text-foreground">
-                {formatCurrency(results.total_revenue)}
+                <CountUp end={results.total_revenue} duration={1.5} formattingFn={formatCurrency} />
               </p>
               <div className="flex items-center gap-1.5 mt-2">
                 <Ruler className="w-3.5 h-3.5 text-muted-foreground" />

@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { cn, formatCurrency, formatNumber } from '@/lib/utils';
+import { toast } from '@/components/ui/toast';
 import {
   calculateAdjustedSurface,
   calculateSurfaceValue,
@@ -629,7 +630,7 @@ export default function ValuationPage() {
                             <td className="py-1.5 px-2">
                               <select
                                 className={cn(
-                                  'w-full rounded border border-border bg-card px-2 py-1 text-xs',
+                                  'w-full rounded border border-border bg-black/5 dark:bg-white/[0.03] px-2 py-1 text-xs',
                                   'focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/20'
                                 )}
                                 value={surface.floor_reference || ''}
@@ -733,7 +734,7 @@ export default function ValuationPage() {
 
                             {/* Adjusted surface (read-only) */}
                             <td className="py-1.5 px-2">
-                              <div className="bg-muted rounded px-2 py-1 text-xs text-right text-foreground font-medium">
+                              <div className="bg-black/5 dark:bg-white/[0.03] rounded px-2 py-1 text-xs text-right text-foreground font-medium">
                                 {formatNumber(adjusted)}
                               </div>
                             </td>
@@ -745,7 +746,7 @@ export default function ValuationPage() {
                                 min={0}
                                 step={50}
                                 className={cn(
-                                  'w-full rounded border border-border bg-card px-2 py-1 text-xs text-right',
+                                  'w-full rounded border border-border bg-black/5 dark:bg-white/[0.03] px-2 py-1 text-xs text-right',
                                   'focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/20'
                                 )}
                                 value={surface.unit_price ?? ''}
@@ -764,7 +765,7 @@ export default function ValuationPage() {
 
                             {/* Value (read-only) */}
                             <td className="py-1.5 px-2">
-                              <div className="bg-muted rounded px-2 py-1 text-xs text-right text-foreground font-semibold">
+                              <div className="bg-black/5 dark:bg-white/[0.03] rounded px-2 py-1 text-xs text-right text-foreground font-semibold">
                                 {formatCurrency(value)}
                               </div>
                             </td>

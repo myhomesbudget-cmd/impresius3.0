@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
   if (token_hash && type) {
     // Determine redirect destination based on auth type
     let redirectPath = next;
-    if (type === "recovery") {
+    if (type === "recovery" || type === "invite") {
       redirectPath = "/update-password";
     } else if (type === "signup" || type === "email") {
       redirectPath = "/login?confirmed=true";

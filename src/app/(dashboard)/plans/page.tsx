@@ -234,7 +234,7 @@ export default function PlansPage() {
 
       {/* Projects Table / List */}
       {filteredProjects.length === 0 ? (
-        <Card className="border-dashed border-2 border-border bg-muted/50 hover:shadow-none">
+        <Card className="border-dashed border-2 border-border bg-black/5 dark:bg-white/[0.02] hover:shadow-none">
           <CardContent className="flex flex-col items-center justify-center py-20">
             <div className="empty-state-icon">
               <Building2 className="w-9 h-9 text-blue-500" />
@@ -342,7 +342,7 @@ export default function PlansPage() {
                         </button>
 
                         {openMenuId === project.id && (
-                          <div className="absolute right-0 top-full mt-1.5 w-48 bg-card rounded-xl shadow-[0_4px_12px_rgb(0_0_0/0.1),0_1px_3px_rgb(0_0_0/0.06)] border border-border py-1.5 z-50 animate-scale-in">
+                          <div className="absolute right-0 top-full mt-1.5 w-48 bg-black/40 dark:bg-white/[0.03] backdrop-blur-xl rounded-xl shadow-[0_8px_32px_rgb(0_0_0/0.4)] border border-border py-1.5 z-50 animate-scale-in">
                             <Link
                               href={`/plans/${project.id}`}
                               onClick={(e) => e.stopPropagation()}

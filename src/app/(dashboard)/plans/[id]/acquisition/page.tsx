@@ -17,6 +17,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { cn, formatCurrency } from '@/lib/utils';
+import { toast } from '@/components/ui/toast';
 import {
   calculateAcquisitionAmount,
   calculateOperationAmount,
@@ -121,6 +122,7 @@ export default function AcquisitionPage() {
           .eq('id', id);
       } finally {
         setSaving(false);
+        toast('Dati salvati', 'success');
       }
     },
     [supabase],
@@ -138,6 +140,7 @@ export default function AcquisitionPage() {
           .eq('id', id);
       } finally {
         setSaving(false);
+        toast('Dati salvati', 'success');
       }
     },
     [supabase],
@@ -476,13 +479,16 @@ export default function AcquisitionPage() {
   return (
     <div className="p-4 md:p-8 max-w-6xl space-y-6 md:space-y-8 pb-36 lg:pb-28">
       {/* Page Header */}
-      <div className="space-y-1">
-        <h1 className="page-header-title">
-          Area 1 — Costi di Acquisizione e Spese Accessorie
-        </h1>
-        <p className="page-header-subtitle">
-          Gestisci i costi di acquisizione e le spese operative dell&apos;operazione immobiliare.
-        </p>
+      <div className="space-y-1 pb-2">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg" style={{ background: 'linear-gradient(135deg, #2563eb, #4f46e5)' }}>
+            <span className="text-white text-xs font-black">A</span>
+          </div>
+          <div>
+            <h1 className="text-xl font-extrabold text-slate-900 tracking-tight">Costi di Acquisizione e Spese Accessorie</h1>
+            <p className="text-slate-500 text-sm mt-0.5">Gestisci i costi di acquisizione e le spese operative dell&apos;operazione.</p>
+          </div>
+        </div>
       </div>
 
       {/* ====================================================== */}
@@ -553,7 +559,7 @@ export default function AcquisitionPage() {
                           label: e.target.value,
                         })
                       }
-                      className="h-8 border-transparent bg-transparent text-sm hover:border-border focus:border-blue-500 focus:bg-card"
+                      className="h-8 border-transparent bg-transparent text-sm hover:border-border focus:border-blue-500 focus:bg-black/5 dark:focus:bg-white/[0.03]"
                     />
                   )}
                 </div>
@@ -561,7 +567,7 @@ export default function AcquisitionPage() {
                 {/* Calculation type badge */}
                 <div className="flex w-16 justify-center">
                   {isPurchasePrice ? (
-                    <span className="rounded bg-blue-100 px-2 py-0.5 text-[10px] font-medium text-blue-700">
+                    <span className="rounded bg-blue-100 dark:bg-blue-500/20 px-2 py-0.5 text-[10px] font-medium text-blue-700 dark:text-blue-400">
                       FISSO
                     </span>
                   ) : (
@@ -575,7 +581,7 @@ export default function AcquisitionPage() {
                             newType === 'percentage' ? purchasePrice : 0,
                         });
                       }}
-                      className="h-6 rounded border border-border bg-card px-1 text-[10px] font-medium text-muted-foreground focus:border-blue-400 focus:outline-none"
+                      className="h-6 rounded border border-border bg-black/5 dark:bg-white/[0.03] px-1 text-[10px] font-medium text-foreground focus:border-blue-400 focus:outline-none"
                     >
                       <option value="percentage">%</option>
                       <option value="fixed">Fisso</option>
@@ -643,7 +649,7 @@ export default function AcquisitionPage() {
                     className={cn(
                       'text-sm font-medium tabular-nums',
                       isPurchasePrice
-                        ? 'font-semibold text-blue-700'
+                        ? 'font-semibold text-blue-600 dark:text-blue-400'
                         : 'text-foreground',
                     )}
                   >
@@ -787,7 +793,7 @@ export default function AcquisitionPage() {
                                 label: e.target.value,
                               })
                             }
-                            className="h-8 border-transparent bg-transparent text-sm hover:border-border focus:border-blue-500 focus:bg-card"
+                            className="h-8 border-transparent bg-transparent text-sm hover:border-border focus:border-blue-500 focus:bg-black/5 dark:focus:bg-white/[0.03]"
                           />
                         </div>
 
@@ -804,7 +810,7 @@ export default function AcquisitionPage() {
                                 calculation_type: newType,
                               });
                             }}
-                            className="h-7 w-full rounded border border-border bg-card px-1 text-[10px] font-medium text-muted-foreground focus:border-blue-400 focus:outline-none"
+                            className="h-7 w-full rounded border border-border bg-black/5 dark:bg-white/[0.03] px-1 text-[10px] font-medium text-foreground focus:border-blue-400 focus:outline-none"
                           >
                             <option value="fixed">Fisso</option>
                             <option value="percentage">%</option>
@@ -900,7 +906,7 @@ export default function AcquisitionPage() {
                                   quantity_unit: e.target.value || null,
                                 })
                               }
-                              className="h-8 border-transparent bg-transparent text-center text-xs text-muted-foreground hover:border-border focus:border-blue-500 focus:bg-card"
+                              className="h-8 border-transparent bg-transparent text-center text-xs text-muted-foreground hover:border-border focus:border-blue-500 focus:bg-black/5 dark:focus:bg-white/[0.03]"
                               placeholder="unita"
                             />
                           ) : (
@@ -971,39 +977,25 @@ export default function AcquisitionPage() {
       {/* ====================================================== */}
       {/* Sticky Summary Bar                                      */}
       {/* ====================================================== */}
-      <div className="fixed bottom-[4.5rem] lg:bottom-0 left-0 right-0 z-30 border-t border-border bg-card/95 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] backdrop-blur-sm">
+      <div className="fixed bottom-[4.5rem] lg:bottom-0 left-0 right-0 z-30 backdrop-blur-md shadow-[0_-4px_20px_rgba(0,0,0,0.08)] bg-white/95 border-t border-slate-200">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 md:px-6 py-3 md:py-4">
-          <div className="flex items-center gap-4 md:gap-8">
+          <div className="flex items-center gap-6 md:gap-10">
             <div className="flex flex-col">
-              <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-                Acquisizione
-              </span>
-              <span className="text-xs md:text-sm font-semibold tabular-nums text-foreground">
-                {formatCurrency(totalAcquisition)}
-              </span>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Acquisizione</span>
+              <span className="text-sm font-bold tabular-nums text-slate-900">{formatCurrency(totalAcquisition)}</span>
             </div>
-            <div className="h-8 w-px bg-slate-200" />
+            <div className="h-6 w-px bg-slate-200" />
             <div className="flex flex-col">
-              <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-                Operativi
-              </span>
-              <span className="text-xs md:text-sm font-semibold tabular-nums text-foreground">
-                {formatCurrency(totalOperation)}
-              </span>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Operativi</span>
+              <span className="text-sm font-bold tabular-nums text-slate-900">{formatCurrency(totalOperation)}</span>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
-            {saving && (
-              <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-            )}
+            {saving && <Loader2 className="h-3.5 w-3.5 animate-spin text-blue-500" />}
             <div className="flex flex-col items-end">
-              <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-                Totale
-              </span>
-              <span className="text-base md:text-lg font-bold tabular-nums text-foreground">
-                {formatCurrency(grandTotal)}
-              </span>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Totale</span>
+              <span className="text-base md:text-lg font-extrabold tabular-nums text-blue-600">{formatCurrency(grandTotal)}</span>
             </div>
           </div>
         </div>

@@ -1,153 +1,171 @@
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, TrendingUp, Shield, Zap, Calculator, BarChart3, FileText } from "lucide-react";
+import { ArrowRight, TrendingUp, Shield, Zap, BarChart3, Calculator, FileText } from "lucide-react";
+
+const kpis = [
+  { label: "Margine Lordo", value: "+372K", sub: "51.7% ROI", color: "from-emerald-600 to-emerald-700" },
+  { label: "Ricavo Totale", value: "720K €", sub: "3 unità", color: "from-blue-600 to-blue-700" },
+  { label: "Costo Totale",  value: "348K €", sub: "Acq + Lavori + Op.", color: "from-violet-600 to-violet-700" },
+];
+
+const trustBadges = [
+  { icon: TrendingUp, text: "ROI & Margini istantanei" },
+  { icon: Shield, text: "Dati sicuri e privati" },
+  { icon: Zap, text: "Calcoli in tempo reale" },
+];
 
 export function Hero() {
   return (
-    <section className="relative pt-32 pb-20 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section
+      className="relative min-h-screen flex flex-col justify-center overflow-hidden"
+      style={{ background: "linear-gradient(135deg, #0a0e1e 0%, #0f172a 40%, #1a0b2e 100%)" }}
+    >
+      {/* Animated blobs */}
+      <div className="absolute -top-40 -left-32 w-[500px] h-[500px] rounded-full opacity-20 animate-pulse pointer-events-none"
+           style={{ background: "radial-gradient(circle, #2563eb 0%, transparent 70%)", filter: "blur(80px)" }} />
+      <div className="absolute top-1/3 -right-40 w-[450px] h-[450px] rounded-full opacity-15 animate-pulse pointer-events-none"
+           style={{ background: "radial-gradient(circle, #7c3aed 0%, transparent 70%)", filter: "blur(80px)", animationDelay: "1s" }} />
+      <div className="absolute -bottom-32 left-1/3 w-[400px] h-[400px] rounded-full opacity-15 animate-pulse pointer-events-none"
+           style={{ background: "radial-gradient(circle, #4f46e5 0%, transparent 70%)", filter: "blur(80px)", animationDelay: "2s" }} />
+
+      {/* Grid overlay */}
+      <div
+        className="absolute inset-0 opacity-[0.03] pointer-events-none"
+        style={{
+          backgroundImage: "linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)",
+          backgroundSize: "60px 60px",
+        }}
+      />
+
+      {/* Content */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-24">
         <div className="text-center max-w-4xl mx-auto">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-card/80 border border-primary/20 text-primary text-sm font-semibold mb-10 animate-fade-in shadow-[0_2px_8px_hsl(var(--primary)/0.1)]">
-            <Zap className="w-4 h-4" />
+          <div
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold text-blue-300 mb-10 animate-fade-in"
+            style={{ background: "rgba(37,99,235,0.12)", border: "1px solid rgba(37,99,235,0.3)" }}
+          >
+            <Zap className="w-3.5 h-3.5" />
             Piattaforma professionale per operatori immobiliari
           </div>
 
-          {/* Title */}
-          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-foreground mb-8 animate-fade-in-up leading-[1.08]">
-            Analisi e gestione{" "}
-            <span className="text-gradient">operazioni immobiliari</span>
+          {/* Headline */}
+          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white mb-8 animate-fade-in-up leading-[1.06]">
+            Smetti di indovinare.{" "}
+            <span
+              className="bg-clip-text text-transparent"
+              style={{ backgroundImage: "linear-gradient(90deg, #60a5fa, #c084fc, #818cf8)" }}
+            >
+              Inizia a calcolare.
+            </span>
           </h1>
 
           {/* Subtitle */}
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-12 animate-fade-in-up leading-relaxed" style={{ animationDelay: "0.1s" }}>
-            Valuta la sostenibilita economica delle tue operazioni immobiliari.
-            Computo metrico, stima valori, analisi margini e report professionali
-            in un&apos;unica piattaforma.
+          <p className="text-xl text-slate-400 max-w-2xl mx-auto mb-12 animate-fade-in-up leading-relaxed" style={{ animationDelay: "0.1s" }}>
+            Computo metrico, stima valori, analisi costi e margini, report per le banche.
+            Tutto in un&apos;unica piattaforma. In 20 minuti, non 3 ore.
           </p>
 
-          {/* CTA */}
+          {/* CTAs */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
-            <Link href="/register">
-              <Button variant="gradient" size="xl" className="group gap-2">
-                Crea la tua prima operazione gratis
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Button>
+            <Link
+              href="/register"
+              className="group flex items-center gap-2 px-8 py-4 rounded-2xl text-white font-bold text-base transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-2xl shadow-blue-500/30 hover:shadow-blue-500/50"
+              style={{ background: "linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)" }}
+            >
+              Crea la tua prima operazione gratis
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
-            <a href="#how-it-works">
-              <Button variant="outline" size="xl">
-                Scopri come funziona
-              </Button>
+            <a
+              href="#how-it-works"
+              className="px-8 py-4 rounded-2xl text-slate-300 font-semibold text-base transition-all duration-200 hover:text-white hover:bg-white/5"
+              style={{ border: "1px solid rgba(255,255,255,0.12)" }}
+            >
+              Scopri come funziona
             </a>
           </div>
 
           {/* Trust badges */}
-          <div className="flex flex-wrap justify-center gap-10 mt-20 animate-fade-in" style={{ animationDelay: "0.4s" }}>
-            <div className="flex items-center gap-2.5 text-muted-foreground">
-              <div className="icon-container icon-container-sm rounded-lg bg-emerald-500/10 dark:bg-emerald-500/20">
-                <TrendingUp className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+          <div className="flex flex-wrap justify-center gap-10 mt-16 animate-fade-in" style={{ animationDelay: "0.4s" }}>
+            {trustBadges.map(({ icon: Icon, text }) => (
+              <div key={text} className="flex items-center gap-2.5 text-slate-400">
+                <div
+                  className="w-8 h-8 rounded-lg flex items-center justify-center"
+                  style={{ background: "rgba(96,165,250,0.1)", border: "1px solid rgba(96,165,250,0.2)" }}
+                >
+                  <Icon className="w-4 h-4 text-blue-400" />
+                </div>
+                <span className="text-sm font-semibold text-slate-300">{text}</span>
               </div>
-              <span className="text-sm font-semibold">Margini e ROI istantanei</span>
-            </div>
-            <div className="flex items-center gap-2.5 text-muted-foreground">
-              <div className="icon-container icon-container-sm rounded-lg bg-primary/10">
-                <Shield className="w-4 h-4 text-primary" />
-              </div>
-              <span className="text-sm font-semibold">Dati sicuri e protetti</span>
-            </div>
-            <div className="flex items-center gap-2.5 text-muted-foreground">
-              <div className="icon-container icon-container-sm rounded-lg bg-amber-500/10 dark:bg-amber-500/20">
-                <Zap className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-              </div>
-              <span className="text-sm font-semibold">Calcoli in tempo reale</span>
-            </div>
+            ))}
           </div>
         </div>
 
-        {/* Dashboard Preview */}
-        <div className="mt-24 relative animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
-          <div className="bg-gradient-to-b from-slate-900 to-slate-800 dark:from-slate-800 dark:to-slate-900 rounded-2xl shadow-[0_20px_60px_rgb(0_0_0/0.25)] overflow-hidden border border-slate-700/50 p-1.5">
-            <div className="bg-slate-900 dark:bg-slate-950 rounded-xl p-6">
-              {/* Fake browser bar */}
-              <div className="flex items-center gap-2 mb-6">
-                <div className="w-3 h-3 rounded-full bg-red-500/80" />
-                <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
-                <div className="w-3 h-3 rounded-full bg-green-500/80" />
-                <div className="flex-1 ml-4 h-7 bg-slate-800 rounded-lg flex items-center px-3">
-                  <span className="text-xs text-slate-500 font-medium">app.impresius.com/plans/sintesi</span>
-                </div>
+        {/* Dashboard preview mockup */}
+        <div className="mt-24 max-w-5xl mx-auto animate-fade-in-up" style={{ animationDelay: "0.5s" }}>
+          <div
+            className="rounded-2xl overflow-hidden shadow-[0_40px_120px_rgba(0,0,0,0.6)]"
+            style={{ background: "#0d1117", border: "1px solid rgba(255,255,255,0.08)" }}
+          >
+            {/* Browser bar */}
+            <div className="flex items-center gap-2 px-5 py-3.5" style={{ background: "#161b22", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+              <div className="w-3 h-3 rounded-full bg-red-500/80" />
+              <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
+              <div className="w-3 h-3 rounded-full bg-green-500/80" />
+              <div className="flex-1 ml-4 h-6 rounded-lg flex items-center px-3" style={{ background: "#0d1117" }}>
+                <span className="text-xs text-slate-500 font-mono">app.impresius.com/plans/sintesi</span>
               </div>
-              {/* Mockup: Sintesi Operazione */}
-              <div className="grid grid-cols-4 gap-4">
-                <div className="bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-xl p-4 shadow-lg">
-                  <p className="text-emerald-200 text-[0.6875rem] font-semibold uppercase tracking-wide">Margine Lordo</p>
-                  <p className="text-white text-2xl font-extrabold mt-1.5 tracking-tight">+372K</p>
-                  <p className="text-emerald-300 text-xs font-medium mt-1">51.7% ROI</p>
-                </div>
-                <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl p-4 shadow-lg">
-                  <p className="text-blue-200 text-[0.6875rem] font-semibold uppercase tracking-wide">Ricavo Totale</p>
-                  <p className="text-white text-2xl font-extrabold mt-1.5 tracking-tight">720K</p>
-                  <p className="text-blue-300 text-xs font-medium mt-1">3 unita</p>
-                </div>
-                <div className="bg-gradient-to-br from-amber-600 to-amber-700 rounded-xl p-4 shadow-lg">
-                  <p className="text-amber-200 text-[0.6875rem] font-semibold uppercase tracking-wide">Costo Totale</p>
-                  <p className="text-white text-2xl font-extrabold mt-1.5 tracking-tight">348K</p>
-                  <p className="text-amber-300 text-xs font-medium mt-1">Acq + Lavori + Op.</p>
-                </div>
-                <div className="bg-gradient-to-br from-indigo-600 to-indigo-700 rounded-xl p-4 shadow-lg">
-                  <p className="text-indigo-200 text-[0.6875rem] font-semibold uppercase tracking-wide">Costo/mq</p>
-                  <p className="text-white text-2xl font-extrabold mt-1.5 tracking-tight">1.420</p>
-                  <p className="text-indigo-300 text-xs font-medium mt-1">245 mq ragg.</p>
-                </div>
+            </div>
+
+            {/* Content */}
+            <div className="p-6">
+              {/* KPI row */}
+              <div className="grid grid-cols-3 gap-4 mb-4">
+                {kpis.map((k) => (
+                  <div key={k.label} className={`bg-gradient-to-br ${k.color} rounded-xl p-4 shadow-lg`}>
+                    <p className="text-white/70 text-[0.65rem] font-bold uppercase tracking-wider mb-1">{k.label}</p>
+                    <p className="text-white text-2xl font-extrabold tracking-tight">{k.value}</p>
+                    <p className="text-white/60 text-xs font-medium mt-1">{k.sub}</p>
+                  </div>
+                ))}
               </div>
-              {/* Cost breakdown mockup */}
-              <div className="mt-4 bg-slate-800/80 rounded-xl p-4 border border-slate-700/50">
+
+              {/* Cost bar */}
+              <div className="rounded-xl p-4 mb-4" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)" }}>
                 <div className="flex items-center gap-2 mb-3">
-                  <BarChart3 className="w-4 h-4 text-slate-400" />
-                  <span className="text-xs text-slate-400 font-semibold uppercase tracking-wide">Composizione Costi</span>
+                  <BarChart3 className="w-4 h-4 text-slate-500" />
+                  <span className="text-xs text-slate-500 font-semibold uppercase tracking-wide">Composizione Costi</span>
                 </div>
-                <div className="h-7 rounded-full overflow-hidden flex shadow-inner">
+                <div className="h-6 rounded-full overflow-hidden flex">
                   <div className="bg-gradient-to-r from-blue-500 to-blue-400 h-full" style={{ width: "56%" }} />
                   <div className="bg-gradient-to-r from-amber-500 to-amber-400 h-full" style={{ width: "16%" }} />
-                  <div className="bg-gradient-to-r from-emerald-500 to-emerald-400 h-full" style={{ width: "28%" }} />
+                  <div className="bg-gradient-to-r from-violet-500 to-violet-400 h-full" style={{ width: "28%" }} />
                 </div>
-                <div className="flex justify-between mt-2.5">
+                <div className="flex justify-between mt-2">
                   <span className="text-xs text-blue-400 font-medium">Acquisizione 56%</span>
                   <span className="text-xs text-amber-400 font-medium">Operativi 16%</span>
-                  <span className="text-xs text-emerald-400 font-medium">Lavori 28%</span>
+                  <span className="text-xs text-violet-400 font-medium">Lavori 28%</span>
                 </div>
               </div>
-              {/* Computo preview */}
-              <div className="mt-4 grid grid-cols-3 gap-4">
-                <div className="bg-slate-800/80 rounded-xl p-3.5 border border-slate-700/50">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Calculator className="w-3.5 h-3.5 text-slate-400" />
-                    <span className="text-[0.6875rem] text-slate-400 font-semibold">Computo PT</span>
+
+              {/* Bottom row */}
+              <div className="grid grid-cols-3 gap-4">
+                {[
+                  { icon: Calculator, label: "Computo PT", value: "46.636 €", sub: "41 voci" },
+                  { icon: Calculator, label: "Computo P2", value: "24.823 €", sub: "21 voci" },
+                  { icon: FileText, label: "Report PDF", value: "Professionale", sub: "Esportabile" },
+                ].map(({ icon: Icon, label, value, sub }) => (
+                  <div key={label} className="rounded-xl p-3.5" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)" }}>
+                    <div className="flex items-center gap-2 mb-2">
+                      <Icon className="w-3.5 h-3.5 text-slate-500" />
+                      <span className="text-[0.65rem] text-slate-500 font-semibold">{label}</span>
+                    </div>
+                    <p className="text-white font-extrabold text-base">{value}</p>
+                    <p className="text-slate-600 text-xs font-medium">{sub}</p>
                   </div>
-                  <p className="text-white font-extrabold text-lg">46.636</p>
-                  <p className="text-slate-500 text-xs font-medium">41 voci</p>
-                </div>
-                <div className="bg-slate-800/80 rounded-xl p-3.5 border border-slate-700/50">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Calculator className="w-3.5 h-3.5 text-slate-400" />
-                    <span className="text-[0.6875rem] text-slate-400 font-semibold">Computo P2</span>
-                  </div>
-                  <p className="text-white font-extrabold text-lg">24.823</p>
-                  <p className="text-slate-500 text-xs font-medium">21 voci</p>
-                </div>
-                <div className="bg-slate-800/80 rounded-xl p-3.5 border border-slate-700/50">
-                  <div className="flex items-center gap-2 mb-2">
-                    <FileText className="w-3.5 h-3.5 text-slate-400" />
-                    <span className="text-[0.6875rem] text-slate-400 font-semibold">Report PDF</span>
-                  </div>
-                  <p className="text-white font-extrabold text-sm">Professionale</p>
-                  <p className="text-slate-500 text-xs font-medium">Esportabile</p>
-                </div>
+                ))}
               </div>
             </div>
           </div>
-          {/* Gradient overlay at bottom */}
-          <div className="absolute -bottom-10 left-0 right-0 h-40 bg-gradient-to-t from-background/60 to-transparent" />
         </div>
       </div>
     </section>

@@ -64,8 +64,8 @@ const getCategoryLabel = (value: string) => {
 function CustomTooltip({ active, payload, label }: { active?: boolean; payload?: Array<{ name: string; value: number; color: string }>; label?: string }) {
   if (!active || !payload) return null;
   return (
-    <div className="bg-white border border-border rounded-lg shadow-lg p-3 text-xs">
-      {label && <p className="font-semibold text-foreground mb-1">{label}</p>}
+    <div className="bg-popover text-popover-foreground border border-border rounded-lg shadow-xl p-3 text-xs print:bg-white print:text-black print:border-gray-300">
+      {label && <p className="font-semibold mb-1">{label}</p>}
       {payload.map((entry, idx) => (
         <p key={idx} style={{ color: entry.color }} className="font-medium">
           {entry.name}: {formatCurrency(entry.value)}
@@ -222,85 +222,80 @@ export default function ReportPage() {
               Anteprima del report professionale dell&apos;operazione
             </p>
           </div>
-          <Button variant="gradient" onClick={() => window.print()} className="flex items-center gap-2">
+          <Button variant="default" className="flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-700 hover:to-teal-600 text-white shadow-lg shadow-emerald-500/20" onClick={() => window.print()}>
             <Printer className="w-4 h-4" />
             Stampa / Salva PDF
           </Button>
         </div>
 
         {/* ============ REPORT CONTENT ============ */}
-        <div id="report-content" className="bg-white text-black rounded-2xl shadow-xl overflow-hidden border border-border">
+        <div id="report-content" className="bg-white text-foreground rounded-2xl md:shadow-[0_4px_24px_rgba(0,0,0,0.06)] overflow-hidden border border-slate-200/60 print:shadow-none print:border-none">
 
           {/* ======= COVER PAGE ======= */}
-          <div className="relative overflow-hidden">
+          <div className="relative overflow-hidden print:h-[297mm] print:flex print:flex-col print:justify-center print:page-break-after">
             {/* Header gradient band */}
-            <div className="h-2" style={{ background: 'linear-gradient(to right, #2563eb, #4f46e5, #7c3aed)' }} />
+            <div className="absolute top-0 left-0 w-full h-4" style={{ background: 'linear-gradient(to right, #2563eb, #3b82f6, #60a5fa)' }} />
 
-            <div className="px-8 md:px-12 pt-10 pb-8">
+            <div className="px-10 md:px-16 pt-24 pb-16 flex flex-col h-full justify-center">
               {/* Logo + Brand */}
-              <div className="flex items-center gap-3 mb-10">
-                <div className="w-11 h-11 icon-gradient rounded-xl flex items-center justify-center shadow-md">
-                  <Building2 className="w-6 h-6 text-white" />
+              <div className="flex items-center gap-4 mb-20">
+                <div className="w-16 h-16 icon-gradient rounded-2xl flex items-center justify-center shadow-xl">
+                  <Building2 className="w-8 h-8 text-white" />
                 </div>
                 <div>
-                  <span className="text-xl font-extrabold text-gradient leading-tight">Impresius</span>
-                  <span className="block text-[0.6rem] font-semibold text-muted-foreground uppercase tracking-[0.15em]">Report Operazione Immobiliare</span>
+                  <span className="text-3xl font-extrabold text-gradient leading-tight tracking-tight">Impresius</span>
+                  <span className="block text-sm font-bold text-muted-foreground uppercase tracking-[0.2em] mt-1">Executive Summary</span>
                 </div>
               </div>
 
               {/* Project Title */}
-              <h1 className="text-3xl md:text-4xl font-extrabold text-foreground tracking-tight mb-3">
+              <h1 className="text-5xl md:text-7xl font-extrabold text-foreground tracking-tight mb-8 leading-tight">
                 {project.name}
               </h1>
 
               {project.description && (
-                <p className="text-base text-muted-foreground mb-6 max-w-2xl leading-relaxed">{project.description}</p>
+                <p className="text-xl text-muted-foreground mb-16 max-w-3xl leading-relaxed border-l-4 border-indigo-500 pl-6 py-2">
+                  {project.description}
+                </p>
               )}
 
               {/* Project Meta */}
-              <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground mb-8">
+              <div className="flex flex-col gap-6 text-lg text-slate-600 print:text-gray-600 mb-20 bg-slate-50 p-8 rounded-2xl border border-slate-200">
                 {(project.location_city || project.location_province) && (
-                  <span className="flex items-center gap-1.5">
-                    <MapPin className="w-4 h-4 text-blue-500" />
-                    {[project.location_address, project.location_city, project.location_province].filter(Boolean).join(', ')}
+                  <span className="flex items-center gap-4 font-medium">
+                    <div className="w-10 h-10 rounded-full bg-blue-500/10 dark:bg-blue-500/20 flex items-center justify-center"><MapPin className="w-5 h-5 text-blue-600 dark:text-blue-400" /></div>
+                    <span className="text-foreground print:text-black">{[project.location_address, project.location_city, project.location_province].filter(Boolean).join(', ')}</span>
                   </span>
                 )}
-                <span className="flex items-center gap-1.5">
-                  <Target className="w-4 h-4 text-indigo-500" />
-                  {STRATEGY_LABELS[project.strategy] || project.strategy} &middot; {PROPERTY_TYPE_LABELS[project.property_type] || project.property_type}
+                <span className="flex items-center gap-4 font-medium">
+                  <div className="w-10 h-10 rounded-full bg-indigo-500/10 dark:bg-indigo-500/20 flex items-center justify-center"><Target className="w-5 h-5 text-indigo-600 dark:text-indigo-400" /></div>
+                  <span className="text-foreground print:text-black">{STRATEGY_LABELS[project.strategy] || project.strategy} &middot; {PROPERTY_TYPE_LABELS[project.property_type] || project.property_type}</span>
                 </span>
-                <span className="flex items-center gap-1.5">
-                  <Calendar className="w-4 h-4 text-amber-500" />
-                  {createdDate}
+                <span className="flex items-center gap-4 font-medium">
+                  <div className="w-10 h-10 rounded-full bg-amber-500/10 dark:bg-amber-500/20 flex items-center justify-center"><Calendar className="w-5 h-5 text-amber-600 dark:text-amber-400" /></div>
+                  <span className="text-foreground print:text-black">Data di creazione: {createdDate}</span>
                 </span>
               </div>
 
-              {/* KPI Cards */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="rounded-xl p-4 border-l-4 border-blue-500" style={{ background: 'linear-gradient(135deg, #eff6ff 0%, #eef2ff 100%)' }}>
-                  <p className="text-[0.65rem] font-bold text-blue-600 uppercase tracking-wider mb-1">Costo Totale</p>
-                  <p className="text-lg font-extrabold text-foreground">{formatCurrency(results.total_cost)}</p>
-                </div>
-                <div className="rounded-xl p-4 border-l-4 border-emerald-500" style={{ background: 'linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%)' }}>
-                  <p className="text-[0.65rem] font-bold text-emerald-600 uppercase tracking-wider mb-1">Ricavo Totale</p>
-                  <p className="text-lg font-extrabold text-foreground">{formatCurrency(results.total_revenue)}</p>
+              {/* KPI Cards Highlights */}
+              <div className="grid grid-cols-2 gap-6 mt-auto">
+                <div className="rounded-2xl p-8 border hover:border-emerald-300 transition-colors shadow-sm bg-white border-slate-200">
+                  <div className="h-1.5 w-full bg-gradient-to-r from-emerald-400 to-emerald-600 rounded-full mb-6 print:hidden" />
+                  <p className="text-sm font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest mb-2">Ricavo Stimato</p>
+                  <p className="text-4xl font-extrabold text-foreground print:text-emerald-900">{formatCurrency(results.total_revenue)}</p>
                 </div>
                 <div className={cn(
-                  "rounded-xl p-4 border-l-4",
-                  results.gross_margin >= 0 ? "border-emerald-500" : "border-red-500"
-                )} style={{ background: results.gross_margin >= 0 ? 'linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%)' : 'linear-gradient(135deg, #fef2f2 0%, #fff1f2 100%)' }}>
-                  <p className={cn("text-[0.65rem] font-bold uppercase tracking-wider mb-1", results.gross_margin >= 0 ? "text-emerald-600" : "text-red-600")}>Margine</p>
-                  <p className={cn("text-lg font-extrabold", results.gross_margin >= 0 ? "text-emerald-700" : "text-red-700")}>{formatCurrency(results.gross_margin)}</p>
-                </div>
-                <div className="rounded-xl p-4 border-l-4 border-indigo-500" style={{ background: 'linear-gradient(135deg, #eef2ff 0%, #f5f3ff 100%)' }}>
-                  <p className="text-[0.65rem] font-bold text-indigo-600 uppercase tracking-wider mb-1">ROI</p>
-                  <p className="text-lg font-extrabold text-foreground">{formatPercentage(results.roi)}</p>
+                  "rounded-2xl p-8 border shadow-lg bg-black/5 dark:bg-white/[0.02]",
+                  results.gross_margin >= 0 
+                    ? "border-border hover:border-indigo-500/50 print:bg-indigo-50 print:border-indigo-200" 
+                    : "border-red-500/30 dark:bg-red-500/5 print:bg-red-50 print:border-red-200"
+                )}>
+                  <div className={cn("h-1.5 w-full rounded-full mb-6 print:hidden", results.gross_margin >= 0 ? "bg-gradient-to-r from-indigo-400 to-purple-600" : "bg-gradient-to-r from-red-400 to-red-600")} />
+                  <p className={cn("text-sm font-bold uppercase tracking-widest mb-2", results.gross_margin >= 0 ? "text-indigo-600 dark:text-indigo-400" : "text-red-600 dark:text-red-400")}>Ritorno (ROI)</p>
+                  <p className={cn("text-4xl font-extrabold text-foreground", results.gross_margin >= 0 ? "print:text-indigo-900" : "print:text-red-900")}>{formatPercentage(results.roi)}</p>
                 </div>
               </div>
             </div>
-
-            {/* Separator */}
-            <div className="h-px bg-gradient-to-r from-transparent via-slate-300 to-transparent mx-8" />
           </div>
 
           {/* ======= CHARTS SECTION ======= */}
@@ -313,7 +308,7 @@ export default function ReportPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-2">
               {/* Pie Chart - Cost Breakdown */}
               {costBreakdownData.length > 0 && (
-                <div className="bg-muted/80 rounded-xl p-5 border border-border">
+                <div className="rounded-xl p-5 border shadow-sm bg-black/5 dark:bg-white/[0.02] border-border print:bg-white print:border-gray-200">
                   <h3 className="text-sm font-bold text-foreground mb-4 text-center">Composizione Costi</h3>
                   <ResponsiveContainer width="100%" height={220}>
                     <PieChart>
@@ -345,7 +340,7 @@ export default function ReportPage() {
               )}
 
               {/* Bar Chart - Costi vs Ricavi */}
-              <div className="bg-muted/80 rounded-xl p-5 border border-border">
+              <div className="rounded-xl p-5 border shadow-sm bg-black/5 dark:bg-white/[0.02] border-border print:bg-white print:border-gray-200">
                 <h3 className="text-sm font-bold text-foreground mb-4 text-center">Costi vs Ricavi vs Margine</h3>
                 <ResponsiveContainer width="100%" height={220}>
                   <BarChart data={[
@@ -368,7 +363,7 @@ export default function ReportPage() {
 
               {/* Pie Chart - Operation Cost by Section */}
               {operationSectionData.length > 0 && (
-                <div className="bg-muted/80 rounded-xl p-5 border border-border">
+                <div className="rounded-xl p-5 border shadow-sm bg-black/5 dark:bg-white/[0.02] border-border print:bg-white print:border-gray-200">
                   <h3 className="text-sm font-bold text-foreground mb-4 text-center">Costi Operativi per Sezione</h3>
                   <ResponsiveContainer width="100%" height={220}>
                     <PieChart>
@@ -401,7 +396,7 @@ export default function ReportPage() {
 
               {/* Bar Chart - Construction by Floor */}
               {constructionFloorData.length > 0 && (
-                <div className="bg-muted/80 rounded-xl p-5 border border-border">
+                <div className="rounded-xl p-5 border shadow-sm bg-black/5 dark:bg-white/[0.02] border-border print:bg-white print:border-gray-200">
                   <h3 className="text-sm font-bold text-foreground mb-4 text-center">Lavori per Piano</h3>
                   <ResponsiveContainer width="100%" height={220}>
                     <BarChart data={constructionFloorData} barSize={32}>
@@ -427,11 +422,11 @@ export default function ReportPage() {
           {/* ======= SECTION A - Riepilogo Economico ======= */}
           <div className="px-8 md:px-12 py-8 print-page-break">
             <SectionHeader number="A" title="Riepilogo Economico" color="#2563eb" />
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse rounded-xl overflow-hidden border border-border print:border-none">
               <thead>
-                <tr style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)' }}>
-                  <th className="text-left py-3 px-4 font-bold text-muted-foreground text-xs uppercase tracking-wider border-b-2 border-border">Voce di Costo</th>
-                  <th className="text-right py-3 px-4 font-bold text-muted-foreground text-xs uppercase tracking-wider border-b-2 border-border">Importo</th>
+                <tr className="bg-black/5 dark:bg-white/[0.03] print:bg-gray-50">
+                  <th className="text-left py-3 px-6 font-bold text-muted-foreground print:text-gray-500 text-xs uppercase tracking-wider border-b border-border print:border-gray-200">Voce di Costo</th>
+                  <th className="text-right py-3 px-6 font-bold text-muted-foreground print:text-gray-500 text-xs uppercase tracking-wider border-b border-border print:border-gray-200">Importo</th>
                 </tr>
               </thead>
               <tbody>
@@ -688,7 +683,7 @@ export default function ReportPage() {
           </div>
 
           {/* ======= FOOTER ======= */}
-          <div className="h-1" style={{ background: 'linear-gradient(to right, #2563eb, #4f46e5, #7c3aed)' }} />
+          <div className="h-1" style={{ background: 'linear-gradient(to right, #2563eb, #3b82f6, #60a5fa)' }} />
           <div className="px-8 md:px-12 py-4 flex items-center justify-between bg-muted/80">
             <div className="flex items-center gap-2">
               <div className="w-5 h-5 icon-gradient rounded flex items-center justify-center">
