@@ -258,6 +258,8 @@ export const FLOORS = [
   { value: 'P2', label: 'Piano Secondo' },
   { value: 'P3', label: 'Piano Terzo' },
   { value: 'PSTT', label: 'Piano Sottotetto' },
+  { value: 'PC', label: 'Parti Comuni' },
+  { value: 'GEN', label: 'Spese Generali Fabbricato' },
 ] as const;
 
 export const PROPERTY_TYPES = [
