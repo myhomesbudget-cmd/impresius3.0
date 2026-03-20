@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { cn, formatCurrency, formatPercentage, formatNumber } from '@/lib/utils';
 import { calculateProjectResults } from '@/lib/calculations';
@@ -28,6 +29,7 @@ import {
   AlertTriangle,
   Shield,
   ArrowDown,
+  Printer,
 } from 'lucide-react';
 import {
   BarChart,
@@ -322,6 +324,37 @@ export default function ScenariosPage() {
 
   return (
     <div className="p-4 md:p-8 max-w-7xl space-y-8">
+      {/* ============================================================ */}
+      {/* HEADER & PRINT BUTTON                                        */}
+      {/* ============================================================ */}
+      <div className="flex items-start justify-between no-print">
+        <div>
+          <h1 className="page-header-title text-2xl">Analisi Scenari</h1>
+          <p className="page-header-subtitle">Simulazione avanzata di redditività alle variazioni di mercato</p>
+        </div>
+        <Button
+          variant="outline"
+          onClick={() => window.print()}
+          className="gap-2.5 bg-white hover:bg-slate-50 border-slate-200 text-slate-700 shadow-sm"
+        >
+          <Printer className="w-4 h-4 text-blue-600" />
+          <span className="font-semibold">Stampa PDF</span>
+        </Button>
+      </div>
+
+      {/* ---- Print Only Header ---- */}
+      <div className="print-only mb-6 pb-4 border-b-2 border-slate-200">
+        <div className="flex items-end justify-between">
+            <div>
+              <h2 className="text-2xl font-black text-slate-900 tracking-tight">Impresius Pro</h2>
+              <p className="text-sm font-semibold text-slate-500 mt-1 uppercase tracking-widest">Documento Ufficiale &mdash; Scenari di Redditività</p>
+            </div>
+            <div className="text-right">
+              <p className="text-sm font-medium text-slate-600">Generato con Impresius Platform</p>
+              <p className="text-xs text-slate-400 mt-0.5">{new Date().toLocaleDateString('it-IT')}</p>
+            </div>
+        </div>
+      </div>
 
       {/* ============================================================ */}
       {/* SEZIONE 1: INTESTAZIONE OPERAZIONE                           */}

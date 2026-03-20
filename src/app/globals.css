@@ -576,3 +576,91 @@ html, body {
   background: linear-gradient(90deg, hsl(var(--muted)) 25%, hsl(var(--border)) 50%, hsl(var(--muted)) 75%);
   background-size: 200% 100%;
 }
+
+/* ===== Print Styles ===== */
+.print-only {
+  display: none !important;
+}
+
+@media print {
+  @page {
+    margin: 1.5cm;
+    size: A4 portrait;
+  }
+
+  body, html {
+    background-color: white !important;
+    color: black !important;
+  }
+  
+  .dark {
+    /* Forzare i colori light se la modalità scura è attiva */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 0%;
+    --card: 0 0% 100%;
+    --muted: 210 40% 96%;
+    --border: 214 32% 91%;
+  }
+
+  /* Nascondere elementi superflui alla stampa */
+  .no-print,
+  button,
+  nav,
+  aside,
+  .sidebar,
+  .print-hide {
+    display: none !important;
+  }
+
+  /* Rendere visibili gli elementi print-only */
+  .print-only {
+    display: block !important;
+  }
+
+  /* Resettare container per riempire la pagina */
+  .flex-1, main, .w-full, .max-w-6xl, .max-w-7xl {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+  
+  /* Annullare i filtri blur della navigation bar e riportare gli elementi sticky sul flusso normale */
+  .fixed, .sticky {
+    position: relative !important;
+    bottom: auto !important;
+    top: auto !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+  }
+
+  /* Rendere input e test text-friendly */
+  input, select, textarea {
+    border: none !important;
+    background: transparent !important;
+    color: black !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    padding: 0 !important;
+    resize: none !important;
+    box-shadow: none !important;
+  }
+  
+  input::placeholder, textarea::placeholder {
+    color: transparent !important;
+  }
+
+  /* Gestire tabelle o schede in modo da non spezzarle a metà */
+  .print-avoid-break {
+    page-break-inside: avoid;
+  }
+  
+  thead {
+    display: table-header-group;
+  }
+  
+  tr {
+    page-break-inside: avoid;
+  }
+}

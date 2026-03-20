@@ -28,7 +28,8 @@ import {
   Loader2,
   CheckCircle2,
   Building2,
-  Save
+  Save,
+  Printer
 } from 'lucide-react';
 
 // ---------------------------------------------------------------------------
@@ -429,6 +430,28 @@ export default function ComputoMetricoPage() {
                 Area 2 &mdash; Dettaglio lavorazioni e misurazioni per piano
               </p>
             </div>
+            <Button
+              variant="outline"
+              onClick={() => window.print()}
+              className="gap-2.5 bg-white hover:bg-slate-50 border-slate-200 text-slate-700 shadow-sm no-print"
+            >
+              <Printer className="w-4 h-4 text-blue-600" />
+              <span className="font-semibold">Stampa PDF</span>
+            </Button>
+          </div>
+        </div>
+
+        {/* ---- Print Only Header ---- */}
+        <div className="print-only mb-10 pb-4 border-b-2 border-slate-200">
+          <div className="flex items-end justify-between">
+             <div>
+               <h2 className="text-2xl font-black text-slate-900 tracking-tight">Impresius Pro</h2>
+               <p className="text-sm font-semibold text-slate-500 mt-1 uppercase tracking-widest">Documento Ufficiale &mdash; Computo Metrico</p>
+             </div>
+             <div className="text-right">
+                <p className="text-sm font-medium text-slate-600">Generato con Impresius Platform</p>
+                <p className="text-xs text-slate-400 mt-0.5">{new Date().toLocaleDateString('it-IT')}</p>
+             </div>
           </div>
         </div>
 
