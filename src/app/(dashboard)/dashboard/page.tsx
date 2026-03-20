@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { formatDate } from '@/lib/utils';
 import type { Project } from '@/types/database';
 import { getDashboardSummaryUseCase } from '@/services/dashboard-summary';
@@ -63,49 +64,49 @@ export default async function DashboardPage() {
       {/* KPI Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-10">
         {/* Operazioni Totali */}
-        <div className="bg-white rounded-2xl p-5 border border-slate-200/60 shadow-sm hover:shadow-md transition-shadow">
-          <div className="flex items-center justify-between mb-4">
+        <div className="bg-white rounded-2xl p-5 border border-slate-200/60 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
+          <div className="flex items-center justify-between mb-4 relative z-10">
             <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Operazioni</span>
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-blue-50 border border-blue-100">
-              <FolderOpen className="w-5 h-5 text-blue-600" />
+            <div className="w-12 h-12 flex items-center justify-center">
+              <Image src="/3d-folder.png" alt="Operazioni" width={48} height={48} className="object-contain hover:scale-110 transition-transform duration-300" />
             </div>
           </div>
-          <p className="text-4xl font-extrabold text-slate-900 tracking-tight">{summary.totalProjects}</p>
+          <p className="text-4xl font-extrabold text-slate-900 tracking-tight relative z-10">{summary.totalProjects}</p>
           <p className="text-slate-400 text-xs font-medium mt-1">{summary.activeProjects} attive</p>
         </div>
 
         {/* In Bozza */}
-        <div className="bg-white rounded-2xl p-5 border border-slate-200/60 shadow-sm hover:shadow-md transition-shadow">
-          <div className="flex items-center justify-between mb-4">
+        <div className="bg-white rounded-2xl p-5 border border-slate-200/60 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
+          <div className="flex items-center justify-between mb-4 relative z-10">
             <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">In Bozza</span>
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-amber-50 border border-amber-100">
-              <FilePenLine className="w-5 h-5 text-amber-600" />
+            <div className="w-12 h-12 flex items-center justify-center">
+              <Image src="/3d-checklist.png" alt="In Bozza" width={48} height={48} className="object-contain hover:scale-110 transition-transform duration-300" />
             </div>
           </div>
-          <p className="text-4xl font-extrabold text-slate-900 tracking-tight">{summary.draftProjects}</p>
-          <p className="text-slate-400 text-xs font-medium mt-1">Da completare</p>
+          <p className="text-4xl font-extrabold text-slate-900 tracking-tight relative z-10">{summary.draftProjects}</p>
+          <p className="text-slate-400 text-xs font-medium mt-1 relative z-10">Da completare</p>
         </div>
 
         {/* Piano */}
-        <div className="bg-white rounded-2xl p-5 border border-slate-200/60 shadow-sm hover:shadow-md transition-shadow">
-          <div className="flex items-center justify-between mb-4">
+        <div className="bg-white rounded-2xl p-5 border border-slate-200/60 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
+          <div className="flex items-center justify-between mb-4 relative z-10">
             <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Piano Attivo</span>
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-indigo-50 border border-indigo-100">
-              <Crown className="w-5 h-5 text-indigo-600" />
+            <div className="w-12 h-12 flex items-center justify-center">
+              <Image src="/3d-crown.png" alt="Piano Attivo" width={48} height={48} className="object-contain hover:scale-110 transition-transform duration-300" />
             </div>
           </div>
           {summary.isPremium ? (
-            <>
+            <div className="relative z-10">
               <p className="text-4xl font-extrabold tracking-tight text-gradient">Premium</p>
               <p className="text-slate-400 text-xs font-medium mt-1">Operazioni illimitate</p>
-            </>
+            </div>
           ) : (
-            <>
+            <div className="relative z-10">
               <p className="text-4xl font-extrabold text-slate-900 tracking-tight">Free</p>
               <Link href="/payments" className="inline-flex items-center gap-1 text-blue-600 text-xs font-bold mt-1 hover:text-blue-700 transition-colors">
                 <Crown className="w-3 h-3" /> Passa a Premium
               </Link>
-            </>
+            </div>
           )}
         </div>
       </div>
