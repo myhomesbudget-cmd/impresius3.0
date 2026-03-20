@@ -9,6 +9,9 @@ export function formatCurrency(amount: number, currency = "EUR"): string {
   return new Intl.NumberFormat("it-IT", {
     style: "currency",
     currency,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+    useGrouping: true,
   }).format(amount);
 }
 
@@ -24,6 +27,7 @@ export function formatNumber(num: number, decimals = 2): string {
   return new Intl.NumberFormat("it-IT", {
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,
+    useGrouping: true,
   }).format(num);
 }
 

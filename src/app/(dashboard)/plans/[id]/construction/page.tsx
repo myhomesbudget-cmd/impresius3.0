@@ -72,6 +72,45 @@ function getFloorLabel(value: string): string {
 // Page Component
 // ---------------------------------------------------------------------------
 
+function PriceInput({ value, onChange }: { value: number; onChange: (v: number) => void }) {
+  const [focused, setFocused] = useState(false);
+  const [localVal, setLocalVal] = useState('');
+
+  const displayValue = focused
+    ? localVal
+    : value === 0
+    ? ''
+    : formatCurrency(value);
+
+  const handleFocus = () => {
+    setFocused(true);
+    setLocalVal(value === 0 ? '' : value.toString().replace('.', ','));
+  };
+
+  const handleBlur = () => {
+    setFocused(false);
+    if (!localVal.trim()) {
+      onChange(0);
+      return;
+    }
+    const cleanStr = localVal.replace(/\./g, '').replace(',', '.');
+    const parsed = parseFloat(cleanStr);
+    onChange(isNaN(parsed) ? 0 : parsed);
+  };
+
+  return (
+    <input
+      type="text"
+      className="w-full bg-transparent px-2 py-2 text-right text-sm font-semibold focus:outline-none focus:ring-1 focus:ring-blue-500 rounded"
+      placeholder="0,00 €"
+      value={displayValue}
+      onFocus={handleFocus}
+      onChange={(e) => setLocalVal(e.target.value)}
+      onBlur={handleBlur}
+    />
+  );
+}
+
 export default function ComputoMetricoPage() {
   const params = useParams();
   const projectId = params.id as string;
@@ -546,13 +585,9 @@ export default function ComputoMetricoPage() {
                           {/* Celle Vuote per le misurazioni nella riga principale */}
                           <td className="bg-muted/10 border-r border-border" colSpan={5}></td>
                           <td className="p-1 border-r border-border align-top bg-muted/10">
-                            <input
-                              type="number"
-                              step="0.01"
-                              className="w-full bg-transparent px-2 py-2 text-right text-sm font-semibold focus:outline-none focus:ring-1 focus:ring-blue-500 rounded"
-                              placeholder="0,00"
-                              value={item.unit_price || ''}
-                              onChange={(e) => updateItem(item.id, 'unit_price', parseFloat(e.target.value) || 0)}
+                            <PriceInput
+                              value={item.unit_price || 0}
+                              onChange={(val) => updateItem(item.id, 'unit_price', val)}
                             />
                           </td>
                           <td className="px-3 py-2 text-right font-bold border-r border-border align-top pt-3 bg-muted/10">
