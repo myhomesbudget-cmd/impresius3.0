@@ -22,6 +22,7 @@ import {
   CheckCircle2,
   Building2,
   AlertTriangle,
+  Copy,
 } from 'lucide-react';
 
 // ---------------------------------------------------------------------------
@@ -234,6 +235,57 @@ export default function ValuationPage() {
         surfaces: (newSurfaces as UnitSurface[]) || [],
       },
     ]);
+  }
+
+  async function duplicateUnit(unitToCopy: UnitWithSurfaces) {
+    setSaving(true);
+    const sortOrder = units.length;
+    const name = `${unitToCopy.name} - Copia`;
+    
+    // Inserisci la nuova unita clonata
+    const { data: newUnit, error } = await supabase
+      .from('property_units')
+      .insert({
+        project_id: projectId,
+        name,
+        floor: unitToCopy.floor,
+        destination: unitToCopy.destination,
+        market_price_sqm: unitToCopy.market_price_sqm,
+        target_sale_price: unitToCopy.target_sale_price,
+        sort_order: sortOrder,
+      })
+      .select()
+      .single();
+
+    if (error || !newUnit) {
+      setSaving(false);
+      return;
+    }
+
+    // Inserisci tutte le superfici clonate dall'unità sorgente
+    const surfaceRows = unitToCopy.surfaces.map(s => ({
+      unit_id: (newUnit as PropertyUnit).id,
+      surface_type: s.surface_type,
+      gross_surface: s.gross_surface,
+      coefficient: s.coefficient,
+      unit_price: s.unit_price,
+      floor_reference: s.floor_reference,
+      sort_order: s.sort_order,
+    }));
+
+    const { data: newSurfaces } = await supabase
+      .from('unit_surfaces')
+      .insert(surfaceRows)
+      .select();
+
+    setUnits(prev => [
+      ...prev,
+      {
+        ...(newUnit as PropertyUnit),
+        surfaces: (newSurfaces as UnitSurface[]) || [],
+      }
+    ]);
+    setSaving(false);
   }
 
   async function deleteUnit(unitId: string) {
@@ -568,13 +620,22 @@ export default function ValuationPage() {
                       </Button>
                     </div>
                   ) : (
-                    <button
-                      className="mt-5 p-2 text-muted-foreground hover:text-red-500 hover:bg-red-500/10 dark:hover:bg-red-500/20 rounded-lg transition-colors"
-                      onClick={() => setDeletingUnitId(unit.id)}
-                      title="Elimina unita"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                    <div className="flex items-center gap-1 pt-5">
+                      <button
+                        className="p-2 text-muted-foreground hover:text-blue-600 hover:bg-blue-600/10 dark:hover:bg-blue-600/20 rounded-lg transition-colors"
+                        onClick={() => duplicateUnit(unit)}
+                        title="Duplica questa unità"
+                      >
+                        <Copy className="w-4 h-4" />
+                      </button>
+                      <button
+                        className="p-2 text-muted-foreground hover:text-red-500 hover:bg-red-500/10 dark:hover:bg-red-500/20 rounded-lg transition-colors"
+                        onClick={() => setDeletingUnitId(unit.id)}
+                        title="Elimina unità"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
                   )}
                 </div>
               </CardHeader>
