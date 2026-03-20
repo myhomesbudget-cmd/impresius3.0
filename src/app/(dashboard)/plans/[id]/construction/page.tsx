@@ -202,9 +202,10 @@ export default function ComputoMetricoPage() {
         description: itemToSave.description,
         unit_of_measure: itemToSave.unit_of_measure,
         unit_price: itemToSave.unit_price,
-      }).eq('id', itemId);
+      } as Record<string, unknown>).eq('id', itemId);
 
       if (itemError) {
+        console.error('[saveItem] Supabase error on construction_items update:', JSON.stringify(itemError));
         toast('Errore: impossibile salvare la voce. Riprova.', 'error');
         setSavingItems(prev => { const next = new Set(prev); next.delete(itemId); return next; });
         return;
@@ -217,12 +218,15 @@ export default function ComputoMetricoPage() {
       if (!m.id.startsWith('temp-')) {
         const { error: mError } = await supabase.from('measurements').update({
           description: m.description,
-          parts: m.parts,
-          length: m.length,
-          width: m.width,
-          height_weight: m.height_weight
-        }).eq('id', m.id);
-        if (mError) measurementError = true;
+          parts: String(m.parts) === '-' || String(m.parts) === '' ? null : Number(m.parts),
+          length: String(m.length) === '-' || String(m.length) === '' ? null : Number(m.length),
+          width: String(m.width) === '-' || String(m.width) === '' ? null : Number(m.width),
+          height_weight: String(m.height_weight) === '-' || String(m.height_weight) === '' ? null : Number(m.height_weight)
+        } as Record<string, unknown>).eq('id', m.id);
+        if (mError) {
+          console.error('[saveItem] Supabase error on measurements update:', JSON.stringify(mError));
+          measurementError = true;
+        }
       }
     }
 
@@ -636,40 +640,48 @@ export default function ComputoMetricoPage() {
                                     <input
                                       type="number"
                                       step="1"
-                                      min="0"
                                       className="h-8 w-full rounded border-0 bg-transparent px-1 text-sm text-center text-foreground focus:bg-blue-500/10 dark:focus:bg-blue-500/20 focus:outline-none focus:ring-1 focus:ring-blue-400"
-                                      value={m.parts || ''}
-                                      onChange={(e) => updateMeasurement(m.id, item.id, 'parts', parseFloat(e.target.value) || 0)}
+                                      value={m.parts === 0 ? '' : m.parts ?? ''}
+                                      onChange={(e) => {
+                                        const val = e.target.value;
+                                        updateMeasurement(m.id, item.id, 'parts', val === '' || val === '-' ? val : parseFloat(val));
+                                      }}
                                     />
                                   </div>
                                   <div className="px-1 py-1">
                                     <input
                                       type="number"
                                       step="0.01"
-                                      min="0"
                                       className="h-8 w-full rounded border-0 bg-transparent px-1 text-sm text-center text-foreground focus:bg-blue-500/10 dark:focus:bg-blue-500/20 focus:outline-none focus:ring-1 focus:ring-blue-400"
-                                      value={m.length || ''}
-                                      onChange={(e) => updateMeasurement(m.id, item.id, 'length', parseFloat(e.target.value) || 0)}
+                                      value={m.length === 0 ? '' : m.length ?? ''}
+                                      onChange={(e) => {
+                                        const val = e.target.value;
+                                        updateMeasurement(m.id, item.id, 'length', val === '' || val === '-' ? val : parseFloat(val));
+                                      }}
                                     />
                                   </div>
                                   <div className="px-1 py-1">
                                     <input
                                       type="number"
                                       step="0.01"
-                                      min="0"
                                       className="h-8 w-full rounded border-0 bg-transparent px-1 text-sm text-center text-foreground focus:bg-blue-500/10 dark:focus:bg-blue-500/20 focus:outline-none focus:ring-1 focus:ring-blue-400"
-                                      value={m.width || ''}
-                                      onChange={(e) => updateMeasurement(m.id, item.id, 'width', parseFloat(e.target.value) || 0)}
+                                      value={m.width === 0 ? '' : m.width ?? ''}
+                                      onChange={(e) => {
+                                        const val = e.target.value;
+                                        updateMeasurement(m.id, item.id, 'width', val === '' || val === '-' ? val : parseFloat(val));
+                                      }}
                                     />
                                   </div>
                                   <div className="px-1 py-1">
                                     <input
                                       type="number"
                                       step="0.01"
-                                      min="0"
                                       className="h-8 w-full rounded border-0 bg-transparent px-1 text-sm text-center text-foreground focus:bg-blue-500/10 dark:focus:bg-blue-500/20 focus:outline-none focus:ring-1 focus:ring-blue-400"
-                                      value={m.height_weight || ''}
-                                      onChange={(e) => updateMeasurement(m.id, item.id, 'height_weight', parseFloat(e.target.value) || 0)}
+                                      value={m.height_weight === 0 ? '' : m.height_weight ?? ''}
+                                      onChange={(e) => {
+                                        const val = e.target.value;
+                                        updateMeasurement(m.id, item.id, 'height_weight', val === '' || val === '-' ? val : parseFloat(val));
+                                      }}
                                     />
                                   </div>
                                   <div className="flex items-center justify-end px-2 py-1">

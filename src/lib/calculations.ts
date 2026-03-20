@@ -42,24 +42,24 @@ import type {
  * Se tutti i campi sono 0, restituisce 0.
  */
 export function calculateMeasurementQuantity(m: Measurement): number {
-  const parts = m.parts || 0;
-  const length = m.length || 0;
-  const width = m.width || 0;
-  const height = m.height_weight || 0;
+  const parts = Number(m.parts) || 0;
+  const length = Number(m.length) || 0;
+  const width = Number(m.width) || 0;
+  const height = Number(m.height_weight) || 0;
 
-  // Se parts > 0 e tutti gli altri sono 0, la quantita e parts stessa
-  if (parts > 0 && length === 0 && width === 0 && height === 0) {
+  // Se parts !== 0 e tutti gli altri sono 0, la quantita e parts stessa
+  if (parts !== 0 && length === 0 && width === 0 && height === 0) {
     return parts;
   }
 
-  // Altrimenti moltiplica solo i valori > 0
+  // Altrimenti moltiplica solo i valori !== 0
   let result = 1;
   let hasValue = false;
 
-  if (parts > 0) { result *= parts; hasValue = true; }
-  if (length > 0) { result *= length; hasValue = true; }
-  if (width > 0) { result *= width; hasValue = true; }
-  if (height > 0) { result *= height; hasValue = true; }
+  if (parts !== 0) { result *= parts; hasValue = true; }
+  if (length !== 0) { result *= length; hasValue = true; }
+  if (width !== 0) { result *= width; hasValue = true; }
+  if (height !== 0) { result *= height; hasValue = true; }
 
   return hasValue ? result : 0;
 }
