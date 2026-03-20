@@ -340,17 +340,31 @@ export default function ComputoMetricoPage() {
   );
 
   // ---- Add floor ----
-  const addFloor = useCallback(() => {
-    const allFloorValues = FLOORS.map((f) => f.value);
-    const nextFloor = allFloorValues.find((f) => !activeFloors.includes(f));
-    if (nextFloor) {
-      setActiveFloors((prev) => {
-        const updated = [...prev, nextFloor];
-        return allFloorValues.filter((f) => updated.includes(f));
-      });
-      setActiveFloor(nextFloor);
+  const addFloor = useCallback((floorValue: string) => {
+    if (!activeFloors.includes(floorValue)) {
+      setActiveFloors((prev) => [...prev, floorValue]);
+      setActiveFloor(floorValue);
     }
   }, [activeFloors]);
+
+  // ---- Remove floor ----
+  const removeFloor = useCallback((floorToRemove: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    const hasItems = items.some((i) => i.floor === floorToRemove);
+    if (hasItems) {
+      toast("Attenzione: questo piano contiene voci. Eliminale prima di rimuoverlo dalla vista.", "error");
+      return;
+    }
+
+    setActiveFloors((prev) => {
+      const next = prev.filter((f) => f !== floorToRemove);
+      if (activeFloor === floorToRemove) {
+        setActiveFloor(next.length > 0 ? next[0] : '');
+      }
+      return next;
+    });
+  }, [items, activeFloor]);
 
   // ---- Loading ----
   if (loading) {
@@ -382,30 +396,57 @@ export default function ComputoMetricoPage() {
         <div className="flex flex-wrap items-center gap-2 mb-6">
           <div className="flex items-center gap-1 rounded-xl bg-muted p-1 overflow-x-auto mobile-scroll-hint">
             {activeFloors.map((floor) => (
-              <button
-                key={floor}
-                onClick={() => setActiveFloor(floor)}
-                className={cn(
-                  'px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200',
-                  activeFloor === floor
-                    ? 'bg-card text-blue-700 shadow-sm'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'
-                )}
-              >
-                {floor}
-              </button>
+              <div key={floor} className="relative group flex items-center">
+                <button
+                  onClick={() => setActiveFloor(floor)}
+                  className={cn(
+                    'px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 pr-8',
+                    activeFloor === floor
+                      ? 'bg-card text-blue-700 shadow-sm'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'
+                  )}
+                >
+                  {floor}
+                </button>
+                <button
+                  onClick={(e) => removeFloor(floor, e)}
+                  title="Rimuovi piano dalla vista"
+                  className={cn(
+                    "absolute right-1.5 p-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity",
+                    activeFloor === floor ? "text-blue-500 hover:bg-blue-100" : "text-muted-foreground hover:bg-muted"
+                  )}
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
             ))}
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={addFloor}
-            disabled={activeFloors.length >= FLOORS.length}
-            className="gap-1.5"
-          >
-            <Plus className="w-4 h-4" />
-            Aggiungi Piano
-          </Button>
+
+          <div className="relative inline-flex">
+            <select
+              value=""
+              onChange={(e) => {
+                if (e.target.value) addFloor(e.target.value);
+              }}
+              disabled={activeFloors.length >= FLOORS.length}
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed z-10"
+              title="Scegli un piano da aggiungere"
+            >
+              <option value="" disabled>Aggiungi Piano...</option>
+              {FLOORS.filter(f => !activeFloors.includes(f.value)).map(f => (
+                <option key={f.value} value={f.value}>{f.label}</option>
+              ))}
+            </select>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={activeFloors.length >= FLOORS.length}
+              className="gap-1.5 rounded-xl h-10 border-dashed text-muted-foreground pointer-events-none"
+            >
+              <Plus className="w-4 h-4" />
+              Aggiungi Piano
+            </Button>
+          </div>
         </div>
 
         {/* ---- Floor Label ---- */}
