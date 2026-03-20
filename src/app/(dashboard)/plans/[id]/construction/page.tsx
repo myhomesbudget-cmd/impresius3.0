@@ -1,5 +1,6 @@
 'use client';
 
+import * as React from 'react';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
@@ -473,347 +474,259 @@ export default function ComputoMetricoPage() {
             </Button>
           </div>
         ) : (
-          <div className="space-y-3">
-            {currentFloorItems.map((item) => {
-              const itemMeasurements = measurementsByItem.get(item.id) ?? [];
-              const totalQuantity = calculateItemQuantity(itemMeasurements);
-              const totalPrice = calculateItemTotal(item, itemMeasurements);
-              const isExpanded = expandedItemId === item.id;
-              const isUnsaved = unsavedItems.has(item.id);
-              const isSaving = savingItems.has(item.id);
+          <div className="bg-card rounded-xl border border-border overflow-hidden shadow-sm">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm text-left whitespace-nowrap">
+                <thead className="text-xs text-muted-foreground uppercase bg-muted/50 font-semibold border-b border-border">
+                  <tr>
+                    <th className="px-3 py-3 w-12 text-center border-r border-border">Nr.</th>
+                    <th className="px-3 py-3 min-w-[300px] border-r border-border">Designazione dei Lavori</th>
+                    <th className="px-3 py-3 w-20 text-center border-r border-border" title="Parti Uguali">Par.Ug</th>
+                    <th className="px-3 py-3 w-20 text-center border-r border-border" title="Lunghezza">Lung.</th>
+                    <th className="px-3 py-3 w-20 text-center border-r border-border" title="Larghezza">Larg.</th>
+                    <th className="px-3 py-3 w-20 text-center border-r border-border" title="Altezza / Peso">H/Peso</th>
+                    <th className="px-3 py-3 w-24 text-right border-r border-border">Quantità</th>
+                    <th className="px-3 py-3 w-32 text-right border-r border-border">Unitario €</th>
+                    <th className="px-3 py-3 w-32 text-right border-r border-border">Totale €</th>
+                    <th className="px-3 py-3 w-16 text-center">Azioni</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {currentFloorItems.map((item) => {
+                    const itemMeasurements = measurementsByItem.get(item.id) ?? [];
+                    const totalQuantity = calculateItemQuantity(itemMeasurements);
+                    const totalPrice = calculateItemTotal(item, itemMeasurements);
+                    const isUnsaved = unsavedItems.has(item.id);
+                    const isSaving = savingItems.has(item.id);
 
-              return (
-                <Card
-                  key={item.id}
-                  className={cn(
-                    'transition-all duration-200 border-2',
-                    isUnsaved ? 'border-amber-400/50 outline outline-2 outline-amber-400/20' : 'border-border',
-                    isExpanded && !isUnsaved && 'ring-2 ring-blue-500/20 shadow-md border-transparent'
-                  )}
-                >
-                  {/* ---- Collapsed Header ---- */}
-                  <div
-                    className={cn(
-                      "flex items-center gap-2 sm:gap-4 px-3 sm:px-5 py-3 sm:py-4 cursor-pointer select-none",
-                      isUnsaved && "bg-amber-50/30"
-                    )}
-                    onClick={() => setExpandedItemId(isExpanded ? null : item.id)}
-                  >
-                    <div className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-muted text-muted-foreground text-xs font-bold shrink-0">
-                      {item.item_number}
-                    </div>
-
-                    {isExpanded ? (
-                      <ChevronDown className="w-4 h-4 text-muted-foreground shrink-0" />
-                    ) : (
-                      <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
-                    )}
-
-                    <div className="flex-1 min-w-0 flex items-center gap-2">
-                      <p className="text-sm font-medium text-foreground truncate">
-                        {item.title}
-                      </p>
-                      {isUnsaved && !isExpanded && (
-                        <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" title="Modifiche non salvate" />
-                      )}
-                    </div>
-
-                    <span
-                      className={cn(
-                        'shrink-0 px-2 py-0.5 rounded-full text-[0.65rem] sm:text-xs font-medium hidden sm:inline-flex',
-                        CATEGORY_COLORS[item.category] ?? CATEGORY_COLORS.other
-                      )}
-                    >
-                      {getCategoryLabel(item.category)}
-                    </span>
-
-                    <div className="shrink-0 text-right hidden md:block min-w-[80px]">
-                      <p className="text-xs text-muted-foreground">
-                        {formatNumber(totalQuantity)} {item.unit_of_measure}
-                      </p>
-                    </div>
-
-                    <div className="shrink-0 text-right hidden md:block min-w-[60px]">
-                      <p className="text-xs text-muted-foreground">
-                        {formatCurrency(item.unit_price)}
-                      </p>
-                    </div>
-
-                    <div className="shrink-0 text-right min-w-[70px] sm:min-w-[100px]">
-                      <p className="text-xs sm:text-sm font-semibold text-foreground">
-                        {formatCurrency(totalPrice)}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* ---- Expanded Content ---- */}
-                  {isExpanded && (
-                    <CardContent className={cn("border-t border-border pt-5", isUnsaved && "bg-amber-50/10")}>
-                      {/* Item Details */}
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-                        <Input
-                          label="Titolo"
-                          value={item.title}
-                          onChange={(e) => updateItem(item.id, 'title', e.target.value)}
-                        />
-                        <div className="grid grid-cols-2 gap-3">
-                          <div className="w-full">
-                            <label className="block text-sm font-semibold text-foreground mb-2">
-                              Categoria
-                            </label>
-                            <select
-                              className={cn(
-                                'flex h-11 w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground transition-colors',
-                                'focus:border-blue-500 focus:outline-none focus:ring-[3px] focus:ring-blue-500/15'
-                              )}
-                              value={item.category}
-                              onChange={(e) => updateItem(item.id, 'category', e.target.value)}
-                            >
-                              {CONSTRUCTION_CATEGORIES.map((c) => (
-                                <option key={c.value} value={c.value}>
-                                  {c.label}
-                                </option>
-                              ))}
-                            </select>
-                          </div>
-                          <div className="w-full">
-                            <label className="block text-sm font-semibold text-foreground mb-2">
-                              U.M.
-                            </label>
-                            <select
-                              className={cn(
-                                'flex h-11 w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground transition-colors',
-                                'focus:border-blue-500 focus:outline-none focus:ring-[3px] focus:ring-blue-500/15'
-                              )}
-                              value={item.unit_of_measure}
-                              onChange={(e) => updateItem(item.id, 'unit_of_measure', e.target.value)}
-                            >
-                              {UNITS_OF_MEASURE.map((u) => (
-                                <option key={u.value} value={u.value}>
-                                  {u.label}
-                                </option>
-                              ))}
-                            </select>
-                          </div>
-                        </div>
-
-                        <div className="col-span-2">
-                          <label className="block text-sm font-semibold text-foreground mb-2">
-                            Descrizione
-                          </label>
-                          <textarea
-                            className={cn(
-                              'flex w-full rounded-lg border border-border bg-card px-3 py-2 text-sm transition-colors',
-                              'placeholder:text-muted-foreground focus:border-blue-500 focus:outline-none focus:ring-[3px] focus:ring-blue-500/15',
-                              'min-h-[60px] resize-y'
-                            )}
-                            placeholder="Descrizione della lavorazione..."
-                            value={item.description ?? ''}
-                            onChange={(e) => updateItem(item.id, 'description', e.target.value)}
-                          />
-                        </div>
-
-                        <div className="w-full">
-                          <Input
-                            label="Prezzo Unitario"
-                            type="number"
-                            step="0.01"
-                            min="0"
-                            suffix="€"
-                            value={item.unit_price}
-                            onChange={(e) => updateItem(item.id, 'unit_price', parseFloat(e.target.value) || 0)}
-                          />
-                        </div>
-                      </div>
-
-                      {/* Measurements Table */}
-                      <div className="mb-4">
-                        <div className="flex items-center justify-between mb-3">
-                          <h4 className="text-sm font-semibold text-foreground">
-                            Misurazioni
-                          </h4>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => addMeasurement(item.id)}
-                            className="gap-1 text-blue-600 hover:text-blue-700 hover:bg-blue-500/10 dark:hover:bg-blue-500/20"
-                          >
-                            <Plus className="w-3.5 h-3.5" />
-                            Aggiungi Misurazione
-                          </Button>
-                        </div>
-
-                        <div className="border border-border rounded-lg overflow-hidden overflow-x-auto mobile-scroll-hint">
-                          {/* Table Header */}
-                          <div className="grid grid-cols-[minmax(120px,1fr)_60px_70px_70px_70px_80px_32px] md:grid-cols-[1fr_70px_80px_80px_80px_90px_32px] gap-px bg-muted text-xs font-semibold text-muted-foreground uppercase tracking-wide min-w-[520px]">
-                            <div className="px-2 md:px-3 py-2" style={{ background: 'rgba(255,255,255,0.03)' }}>Descrizione</div>
-                            <div className="px-1 md:px-2 py-2 text-center" style={{ background: 'rgba(255,255,255,0.03)' }}>Par.ug</div>
-                            <div className="px-1 md:px-2 py-2 text-center" style={{ background: 'rgba(255,255,255,0.03)' }}>Lung.</div>
-                            <div className="px-1 md:px-2 py-2 text-center" style={{ background: 'rgba(255,255,255,0.03)' }}>Larg.</div>
-                            <div className="px-1 md:px-2 py-2 text-center" style={{ background: 'rgba(255,255,255,0.03)' }}>H/peso</div>
-                            <div className="px-1 md:px-2 py-2 text-right" style={{ background: 'rgba(255,255,255,0.03)' }}>Quantita</div>
-                            <div style={{ background: 'rgba(255,255,255,0.03)' }} />
-                          </div>
-
-                          {/* Table Rows */}
-                          {itemMeasurements.length === 0 ? (
-                            <div className="px-3 py-4 text-sm text-muted-foreground text-center">
-                              Nessuna misurazione &mdash; clicca &ldquo;Aggiungi Misurazione&rdquo;
+                    return (
+                      <React.Fragment key={item.id}>
+                        {/* Riga Principale della Voce (Titolo e Prezzo) */}
+                        <tr className={cn("group transition-colors", isUnsaved ? "bg-amber-50/20" : "bg-card hover:bg-muted/30")}>
+                          <td className="px-3 py-2 text-center font-bold text-muted-foreground border-r border-border align-top pt-3">
+                            {item.item_number}
+                          </td>
+                          <td className="p-0 border-r border-border align-top">
+                            <div className="flex flex-col h-full h-full min-h-[40px]">
+                              {/* Titolo e Categoria */}
+                              <div className="flex p-1 border-b border-border/50 items-center justify-between gap-2">
+                                <input
+                                  type="text"
+                                  className="flex-1 bg-transparent px-2 py-1 text-sm font-semibold focus:outline-none focus:ring-1 focus:ring-blue-500 rounded"
+                                  placeholder="Titolo lavorazione..."
+                                  value={item.title}
+                                  onChange={(e) => updateItem(item.id, 'title', e.target.value)}
+                                />
+                                <div className="flex items-center gap-1 shrink-0 px-1">
+                                  <select
+                                     className="bg-transparent text-xs text-muted-foreground border-none px-1 py-1 focus:ring-0 cursor-pointer rounded hover:bg-accent"
+                                     value={item.category}
+                                     onChange={(e) => updateItem(item.id, 'category', e.target.value)}
+                                  >
+                                    {CONSTRUCTION_CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
+                                  </select>
+                                  <select
+                                     className="bg-transparent text-xs font-semibold text-foreground border-none px-1 py-1 focus:ring-0 cursor-pointer rounded hover:bg-accent"
+                                     value={item.unit_of_measure}
+                                     onChange={(e) => updateItem(item.id, 'unit_of_measure', e.target.value)}
+                                  >
+                                    {UNITS_OF_MEASURE.map(u => <option key={u.value} value={u.value}>{u.label}</option>)}
+                                  </select>
+                                </div>
+                              </div>
+                              {/* Descrizione Lavorazione */}
+                              <textarea
+                                className="w-full bg-transparent px-3 py-2 text-sm text-foreground/80 focus:outline-none focus:ring-1 focus:ring-blue-500 rounded-b min-h-[60px] resize-y"
+                                placeholder="Descrizione estesa (opzionale)..."
+                                value={item.description ?? ''}
+                                onChange={(e) => updateItem(item.id, 'description', e.target.value)}
+                              />
                             </div>
-                          ) : (
-                            itemMeasurements.map((m) => {
-                              const qty = calculateMeasurementQuantity(m);
-                              return (
-                                <div
-                                  key={m.id}
-                                  className="grid grid-cols-[minmax(120px,1fr)_60px_70px_70px_70px_80px_32px] md:grid-cols-[1fr_70px_80px_80px_80px_90px_32px] gap-px border-t border-border bg-black/5 dark:bg-white/[0.02] min-w-[520px]"
-                                >
-                                  <div className="px-2 py-1">
-                                    <input
-                                      type="text"
-                                      className="h-8 w-full border-transparent bg-transparent text-sm hover:border-border focus:border-blue-500 focus:bg-black/5 dark:focus:bg-white/[0.03] focus:outline-none focus:ring-1 focus:ring-blue-400"
-                                      placeholder="Descrizione"
-                                      value={m.description ?? ''}
-                                      onChange={(e) => updateMeasurement(m.id, item.id, 'description', e.target.value)}
-                                    />
-                                  </div>
-                                  <div className="px-1 py-1">
-                                    <input
+                          </td>
+                          {/* Celle Vuote per le misurazioni nella riga principale */}
+                          <td className="bg-muted/10 border-r border-border" colSpan={5}></td>
+                          <td className="p-1 border-r border-border align-top bg-muted/10">
+                            <input
+                              type="number"
+                              step="0.01"
+                              className="w-full bg-transparent px-2 py-2 text-right text-sm font-semibold focus:outline-none focus:ring-1 focus:ring-blue-500 rounded"
+                              placeholder="0,00"
+                              value={item.unit_price || ''}
+                              onChange={(e) => updateItem(item.id, 'unit_price', parseFloat(e.target.value) || 0)}
+                            />
+                          </td>
+                          <td className="px-3 py-2 text-right font-bold border-r border-border align-top pt-3 bg-muted/10">
+                            {formatCurrency(totalPrice)}
+                          </td>
+                          <td className="px-2 py-2 text-center align-top pt-3">
+                             <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => deleteItem(item.id)}
+                                className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-500/10"
+                                title="Elimina intera voce"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                          </td>
+                        </tr>
+
+                        {/* Intestazione Misurazioni Interna (Opzionale, visiva per raggruppamento) */}
+                        {itemMeasurements.length > 0 && (
+                          <tr className={cn(isUnsaved ? "bg-amber-50/10" : "bg-card")}>
+                             <td className="border-r border-border"></td>
+                             <td className="px-3 py-1 text-xs font-semibold text-muted-foreground uppercase border-r border-border bg-muted/20">
+                               Riga Misurazioni:
+                             </td>
+                             <td colSpan={8} className="bg-muted/20"></td>
+                          </tr>
+                        )}
+
+                        {/* Righe Misurazioni (Dettaglio) */}
+                        {itemMeasurements.map((m) => {
+                          const qty = calculateMeasurementQuantity(m);
+                          return (
+                            <tr key={m.id} className={cn("hover:bg-muted/50", isUnsaved && "bg-amber-50/10")}>
+                               <td className="border-r border-border"></td>
+                               <td className="p-0 border-r border-border border-b border-border/30 pl-6">
+                                  <input
+                                    type="text"
+                                    className="w-full bg-transparent px-3 py-1.5 text-sm text-muted-foreground focus:outline-none focus:text-foreground focus:ring-1 focus:ring-blue-500"
+                                    placeholder="Descrizione riga (es. Finestra cucina)"
+                                    value={m.description ?? ''}
+                                    onChange={(e) => updateMeasurement(m.id, item.id, 'description', e.target.value)}
+                                  />
+                               </td>
+                               <td className="p-0 border-r border-border border-b border-border/30">
+                                  <input
                                       type="number"
                                       step="1"
-                                      className="h-8 w-full rounded border-0 bg-transparent px-1 text-sm text-center text-foreground focus:bg-blue-500/10 dark:focus:bg-blue-500/20 focus:outline-none focus:ring-1 focus:ring-blue-400"
+                                      className="w-full bg-transparent px-1 py-1.5 text-center text-sm focus:outline-none focus:bg-blue-50 dark:focus:bg-blue-900/20"
+                                      placeholder="-"
                                       value={m.parts === 0 ? '' : m.parts ?? ''}
                                       onChange={(e) => {
                                         const val = e.target.value;
                                         updateMeasurement(m.id, item.id, 'parts', val === '' || val === '-' ? val : parseFloat(val));
                                       }}
                                     />
-                                  </div>
-                                  <div className="px-1 py-1">
-                                    <input
+                               </td>
+                               <td className="p-0 border-r border-border border-b border-border/30">
+                                  <input
                                       type="number"
                                       step="0.01"
-                                      className="h-8 w-full rounded border-0 bg-transparent px-1 text-sm text-center text-foreground focus:bg-blue-500/10 dark:focus:bg-blue-500/20 focus:outline-none focus:ring-1 focus:ring-blue-400"
+                                      className="w-full bg-transparent px-1 py-1.5 text-center text-sm focus:outline-none focus:bg-blue-50 dark:focus:bg-blue-900/20"
+                                      placeholder="-"
                                       value={m.length === 0 ? '' : m.length ?? ''}
                                       onChange={(e) => {
                                         const val = e.target.value;
                                         updateMeasurement(m.id, item.id, 'length', val === '' || val === '-' ? val : parseFloat(val));
                                       }}
                                     />
-                                  </div>
-                                  <div className="px-1 py-1">
-                                    <input
+                               </td>
+                               <td className="p-0 border-r border-border border-b border-border/30">
+                                  <input
                                       type="number"
                                       step="0.01"
-                                      className="h-8 w-full rounded border-0 bg-transparent px-1 text-sm text-center text-foreground focus:bg-blue-500/10 dark:focus:bg-blue-500/20 focus:outline-none focus:ring-1 focus:ring-blue-400"
+                                      className="w-full bg-transparent px-1 py-1.5 text-center text-sm focus:outline-none focus:bg-blue-50 dark:focus:bg-blue-900/20"
+                                      placeholder="-"
                                       value={m.width === 0 ? '' : m.width ?? ''}
                                       onChange={(e) => {
                                         const val = e.target.value;
                                         updateMeasurement(m.id, item.id, 'width', val === '' || val === '-' ? val : parseFloat(val));
                                       }}
                                     />
-                                  </div>
-                                  <div className="px-1 py-1">
-                                    <input
+                               </td>
+                               <td className="p-0 border-r border-border border-b border-border/30">
+                                  <input
                                       type="number"
                                       step="0.01"
-                                      className="h-8 w-full rounded border-0 bg-transparent px-1 text-sm text-center text-foreground focus:bg-blue-500/10 dark:focus:bg-blue-500/20 focus:outline-none focus:ring-1 focus:ring-blue-400"
+                                      className="w-full bg-transparent px-1 py-1.5 text-center text-sm focus:outline-none focus:bg-blue-50 dark:focus:bg-blue-900/20"
+                                      placeholder="-"
                                       value={m.height_weight === 0 ? '' : m.height_weight ?? ''}
                                       onChange={(e) => {
                                         const val = e.target.value;
                                         updateMeasurement(m.id, item.id, 'height_weight', val === '' || val === '-' ? val : parseFloat(val));
                                       }}
                                     />
-                                  </div>
-                                  <div className="flex items-center justify-end px-2 py-1">
-                                    <span className="text-sm font-medium text-foreground">
-                                      {formatNumber(qty)}
-                                    </span>
-                                  </div>
-                                  <div className="flex items-center justify-center py-1">
-                                    <button
-                                      onClick={() => deleteMeasurement(m.id, item.id)}
-                                      className="p-1 rounded text-muted-foreground/50 hover:text-red-500 hover:bg-red-500/10 dark:hover:bg-red-500/20 transition-colors"
-                                    >
-                                      <X className="w-3.5 h-3.5" />
-                                    </button>
-                                  </div>
-                                </div>
-                              );
-                            })
-                          )}
+                               </td>
+                               <td className="px-3 py-1.5 text-right font-medium text-sm border-r border-border border-b border-border/30 bg-muted/5">
+                                 {formatNumber(qty)}
+                               </td>
+                               <td colSpan={2} className="border-r border-border border-b border-border/30 bg-muted/5"></td>
+                               <td className="px-2 py-1 text-center border-b border-border/30">
+                                  <button
+                                    onClick={() => deleteMeasurement(m.id, item.id)}
+                                    className="p-1 rounded text-muted-foreground/50 hover:text-red-500 hover:bg-red-500/10 transition-colors"
+                                    title="Elimina misurazione"
+                                  >
+                                    <X className="w-3.5 h-3.5" />
+                                  </button>
+                               </td>
+                            </tr>
+                          );
+                        })}
 
-                          {/* SOMMANO Row */}
-                          <div className="grid grid-cols-[minmax(120px,1fr)_60px_70px_70px_70px_80px_32px] md:grid-cols-[1fr_70px_80px_80px_80px_90px_32px] gap-px border-t-2 border-blue-200 bg-blue-50/60 min-w-[520px]">
-                            <div className="px-3 py-2.5 text-sm font-bold text-blue-800 uppercase tracking-wide col-span-5">
-                              Sommano
-                            </div>
-                            <div className="flex items-center justify-end px-2 py-2.5">
-                              <span className="text-sm font-bold text-blue-800">
-                                {formatNumber(totalQuantity)} {item.unit_of_measure}
-                              </span>
-                            </div>
-                            <div />
-                          </div>
-                        </div>
+                        {/* Riga Sommario Voce e Azioni (Aggiungi/Salva) */}
+                        <tr className={cn("border-b-4 border-muted", isUnsaved ? "bg-amber-50/20" : "bg-card")}>
+                           <td className="border-r border-border"></td>
+                           <td className="px-3 py-2 flex items-center justify-between border-r border-border">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => addMeasurement(item.id)}
+                                className="h-7 text-xs text-blue-600 hover:text-blue-800 hover:bg-blue-100 dark:hover:bg-blue-900/30 px-2"
+                              >
+                                <Plus className="w-3 h-3 mr-1" /> Riga Misuraz.
+                              </Button>
+                              <span className="text-xs font-bold text-muted-foreground uppercase">Sommano:</span>
+                           </td>
+                           <td colSpan={4} className="border-r border-border bg-blue-50/30"></td>
+                           <td className="px-3 py-2 text-right font-bold text-sm text-blue-700 bg-blue-50/50 border-r border-border">
+                              {formatNumber(totalQuantity)}
+                           </td>
+                           <td colSpan={2} className="border-r border-border"></td>
+                           <td className="p-2 text-center">
+                              <div className="flex justify-center">
+                                <Button
+                                  variant={isUnsaved ? "default" : "outline"}
+                                  size="sm"
+                                  onClick={() => saveItem(item.id)}
+                                  disabled={!isUnsaved || isSaving}
+                                  className={cn(
+                                    "h-8 w-8 p-0 rounded-full transition-all duration-300",
+                                    isUnsaved ? "bg-amber-500 hover:bg-amber-600 text-white shadow-md shadow-amber-500/20 animate-pulse-ring" : "border-emerald-500 text-emerald-600 bg-emerald-50/50"
+                                  )}
+                                  title={isUnsaved ? "Salva Modifiche" : "Salvato"}
+                                >
+                                  {isSaving ? (
+                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                  ) : isUnsaved ? (
+                                    <Save className="w-4 h-4" />
+                                  ) : (
+                                    <CheckCircle2 className="w-4 h-4" />
+                                  )}
+                                </Button>
+                              </div>
+                           </td>
+                        </tr>
+                      </React.Fragment>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
 
-                        {/* Total price for this item */}
-                        <div className="flex items-center justify-between mt-3 px-1">
-                          <span className="text-sm text-muted-foreground">
-                            {formatNumber(totalQuantity)} {item.unit_of_measure} &times;{' '}
-                            {formatCurrency(item.unit_price)}
-                          </span>
-                          <span className="text-base font-bold text-foreground">
-                            Totale: {formatCurrency(totalPrice)}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Manual Action Buttons */}
-                      <div className="flex justify-between items-center pt-5 mt-6 border-t border-border">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => deleteItem(item.id)}
-                          className="gap-1.5 text-red-500 hover:text-red-700 hover:bg-red-500/10 dark:hover:bg-red-500/20"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                          Elimina voce
-                        </Button>
-
-                        <Button
-                          variant={isUnsaved ? "default" : "outline"}
-                          size="default"
-                          onClick={() => saveItem(item.id)}
-                          disabled={!isUnsaved || isSaving}
-                          className={cn(
-                            "gap-2 font-semibold shadow-sm px-6 py-5 transition-all",
-                            isUnsaved && !isSaving ? "bg-amber-500 hover:bg-amber-600 text-white shadow-amber-500/30 ring-2 ring-amber-500/20" : ""
-                          )}
-                        >
-                          {isSaving ? (
-                            <>
-                              <Loader2 className="w-5 h-5 animate-spin" />
-                              Salvataggio...
-                            </>
-                          ) : isUnsaved ? (
-                            <>
-                              <Save className="w-5 h-5" />
-                              Salva Modifiche
-                            </>
-                          ) : (
-                            <>
-                              <CheckCircle2 className="w-5 h-5 text-emerald-500" />
-                              Tutto Salvato
-                            </>
-                          )}
-                        </Button>
-                      </div>
-                    </CardContent>
-                  )}
-                </Card>
-              );
-            })}
+            <div className="p-4 bg-muted/30 border-t border-border flex justify-between items-center">
+              <span className="text-sm text-muted-foreground font-medium">
+                Totale {getFloorLabel(activeFloor)}
+              </span>
+              <span className="text-lg font-bold text-foreground">
+                {formatCurrency(currentFloorItems.reduce((acc, item) => {
+                   const itemMeasurements = measurementsByItem.get(item.id) ?? [];
+                   return acc + calculateItemTotal(item, itemMeasurements);
+                }, 0))}
+              </span>
+            </div>
           </div>
         )}
 
