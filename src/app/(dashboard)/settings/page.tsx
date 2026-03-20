@@ -34,6 +34,7 @@ export default function SettingsPage() {
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [upgrading, setUpgrading] = useState(false);
   const [saved, setSaved] = useState(false);
   const [passwordSent, setPasswordSent] = useState(false);
 
@@ -120,6 +121,31 @@ export default function SettingsPage() {
     if (!error) {
       setPasswordSent(true);
       setTimeout(() => setPasswordSent(false), 5000);
+    }
+  }
+
+  async function handleUpgrade() {
+    setUpgrading(true);
+    try {
+      const res = await fetch('/api/payments/create-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ type: 'subscription' }),
+      });
+      const data = await res.json();
+      
+      if (data.sessionUrl) {
+        window.location.href = data.sessionUrl;
+      } else {
+        throw new Error(data.error || 'Errore durante la creazione della sessione.');
+      }
+    } catch (err) {
+      console.error('Errore Upgrade:', err);
+      alert('Non è stato possibile avviare il pagamento. Riprova più tardi.');
+    } finally {
+      setUpgrading(false);
     }
   }
 
@@ -305,12 +331,10 @@ export default function SettingsPage() {
                   Piano Premium attivo
                 </Button>
               ) : (
-                <Link href="/pricing">
-                  <Button variant="gradient" className="gap-2">
-                    <Crown className="w-4 h-4" />
-                    Upgrade a Premium
-                  </Button>
-                </Link>
+                <Button variant="gradient" className="gap-2" onClick={handleUpgrade} disabled={upgrading}>
+                  {upgrading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Crown className="w-4 h-4" />}
+                  {upgrading ? 'Avvio in corso...' : 'Upgrade a Premium'}
+                </Button>
               )}
             </div>
           </CardContent>
