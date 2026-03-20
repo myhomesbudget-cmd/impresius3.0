@@ -39,7 +39,24 @@ import {
   Tooltip as RechartsTooltip,
   Legend,
   ResponsiveContainer,
+  Cell,
 } from 'recharts';
+
+const CHART_COLORS_PREV = ['#bae6fd', '#ddd6fe', '#a7f3d0']; // sky-200, violet-200, emerald-200
+const CHART_COLORS_EFF = ['#0ea5e9', '#8b5cf6', '#10b981']; // sky-500, violet-500, emerald-500
+
+const CustomLegend = () => (
+  <div className="flex justify-center gap-6 mt-4 text-xs font-medium text-slate-500">
+    <div className="flex items-center gap-2">
+      <div className="w-3 h-3 rounded-sm bg-slate-200 border border-slate-300"></div>
+      <span>Preventivo (Base/Chiaro)</span>
+    </div>
+    <div className="flex items-center gap-2">
+      <div className="w-3 h-3 rounded-sm bg-slate-500"></div>
+      <span>Effettivo (Scuro)</span>
+    </div>
+  </div>
+);
 
 interface ActualCostForm {
   reference_type: 'acquisition' | 'operation' | 'construction';
@@ -443,9 +460,17 @@ export default function MonitoringPage() {
                   <RechartsTooltip
                     formatter={(value) => formatCurrency(Number(value))}
                   />
-                  <Legend />
-                  <Bar dataKey="Preventivo" fill="#94a3b8" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="Effettivo" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                  <Legend content={<CustomLegend />} />
+                  <Bar dataKey="Preventivo" radius={[4, 4, 0, 0]}>
+                    {chartData.map((entry, index) => (
+                      <Cell key={`cell-prev-${index}`} fill={CHART_COLORS_PREV[index % 3]} />
+                    ))}
+                  </Bar>
+                  <Bar dataKey="Effettivo" radius={[4, 4, 0, 0]}>
+                    {chartData.map((entry, index) => (
+                      <Cell key={`cell-eff-${index}`} fill={CHART_COLORS_EFF[index % 3]} />
+                    ))}
+                  </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </div>
