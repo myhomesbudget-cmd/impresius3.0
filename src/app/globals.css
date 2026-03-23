@@ -295,6 +295,82 @@ html, body {
   background: hsl(var(--card) / 0.75);
 }
 
+/* ===== Glassmorphism Design System ===== */
+
+/* Mesh Gradient Background — pastel undertones */
+.mesh-gradient-bg {
+  background:
+    radial-gradient(ellipse at 15% 20%, rgba(123, 97, 255, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 85% 30%, rgba(0, 194, 255, 0.10) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 80%, rgba(255, 45, 85, 0.08) 0%, transparent 50%),
+    linear-gradient(160deg, #e8eaf6 0%, #f3e5f5 30%, #e3f2fd 60%, #ede7f6 100%);
+  min-height: 100vh;
+}
+
+/* Glass Panel — modular reusable component */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 24px;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.06),
+    0 2px 8px rgba(0, 0, 0, 0.04);
+  color: #1A1A24;
+  transition: all 0.3s ease;
+}
+
+.glass-panel:hover {
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.08),
+    0 4px 12px rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px);
+}
+
+/* Glass Panel — larger radius variant for hero/feature cards */
+.glass-panel-lg {
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(20px) saturate(200%);
+  -webkit-backdrop-filter: blur(20px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: 32px;
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.06),
+    0 4px 16px rgba(0, 0, 0, 0.04);
+  color: #1A1A24;
+}
+
+/* Accent color utilities — Glassmorphism palette */
+.accent-purple { color: #7B61FF; }
+.accent-cyan { color: #00C2FF; }
+.accent-pink { color: #FF2D55; }
+
+.bg-accent-purple { background-color: #7B61FF; }
+.bg-accent-cyan { background-color: #00C2FF; }
+.bg-accent-pink { background-color: #FF2D55; }
+
+/* Accent gradient buttons */
+.btn-glass-primary {
+  background: linear-gradient(135deg, #7B61FF 0%, #00C2FF 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 16px;
+  font-weight: 700;
+  box-shadow: 0 4px 16px rgba(123, 97, 255, 0.3);
+  transition: all 0.2s ease;
+}
+
+.btn-glass-primary:hover {
+  box-shadow: 0 6px 24px rgba(123, 97, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+/* Glass KPI accent bars */
+.glass-accent-purple { border-top: 3px solid #7B61FF; }
+.glass-accent-cyan { border-top: 3px solid #00C2FF; }
+.glass-accent-pink { border-top: 3px solid #FF2D55; }
+
 /* ===== Premium Card ===== */
 .card-premium {
   background: hsl(var(--card));

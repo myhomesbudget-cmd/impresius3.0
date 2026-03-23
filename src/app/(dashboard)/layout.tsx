@@ -22,7 +22,7 @@ export default async function DashboardLayout({
 
   return (
     <MobileSidebarProvider>
-      <div className="min-h-screen bg-[#f0f4f8]">
+      <div className="min-h-screen mesh-gradient-bg">
         <Sidebar />
         <div className="min-w-0 md:ml-64">{children}</div>
         <ToastProvider />
