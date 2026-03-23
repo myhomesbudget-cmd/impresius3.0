@@ -13,7 +13,7 @@ import {
   CONSTRUCTION_CATEGORIES,
   FLOORS,
 } from '@/types/database';
-import type { ConstructionItem, Measurement } from '@/types/database';
+import type { ConstructionItem, Measurement, Project } from '@/types/database';
 import {
   calculateMeasurementQuantity,
   calculateItemQuantity,
@@ -29,7 +29,8 @@ import {
   CheckCircle2,
   Building2,
   Save,
-  Printer
+  Printer,
+  MapPin
 } from 'lucide-react';
 
 // ---------------------------------------------------------------------------
@@ -118,6 +119,7 @@ export default function ComputoMetricoPage() {
   const supabase = createClient();
 
   // ---- State ----
+  const [project, setProject] = useState<Project | null>(null);
   const [items, setItems] = useState<ConstructionItem[]>([]);
   const [measurements, setMeasurements] = useState<Measurement[]>([]);
   const [loading, setLoading] = useState(true);
@@ -132,19 +134,20 @@ export default function ComputoMetricoPage() {
   // ---- Fetch data ----
   useEffect(() => {
     async function fetchData() {
-      const [{ data: itemsData }] = await Promise.all([
+      const [{ data: projectData }, { data: itemsData }] = await Promise.all([
+        supabase
+          .from('projects')
+          .select('*')
+          .eq('id', projectId)
+          .single(),
         supabase
           .from('construction_items')
           .select('*')
           .eq('project_id', projectId)
-          .order('sort_order', { ascending: true }),
-        supabase
-          .from('measurements')
-          .select('*')
-          .eq('item_id', projectId) // will be filtered client-side
-          .order('sort_order', { ascending: true }),
+          .order('sort_order', { ascending: true })
       ]);
 
+      if (projectData) setProject(projectData as Project);
       const fetchedItems = (itemsData ?? []) as ConstructionItem[];
       setItems(fetchedItems);
 
@@ -416,44 +419,77 @@ export default function ComputoMetricoPage() {
     );
   }
 
-  return (
-    <div className="flex flex-col min-h-[calc(100vh-4rem)]">
-      <div className="flex-1 p-4 md:p-8 pb-32 lg:pb-24 max-w-6xl">
-        {/* ---- Header ---- */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="page-header-title">
-                Computo Metrico Opere
-              </h1>
-              <p className="page-header-subtitle">
-                Area 2 &mdash; Dettaglio lavorazioni e misurazioni per piano
-              </p>
-            </div>
-            <Button
-              variant="outline"
-              onClick={() => window.print()}
-              className="gap-2.5 bg-white hover:bg-slate-50 border-slate-200 text-slate-700 shadow-sm no-print"
-            >
-              <Printer className="w-4 h-4 text-blue-600" />
-              <span className="font-semibold">Stampa PDF</span>
-            </Button>
-          </div>
-        </div>
+  const reportDate = new Date().toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
-        {/* ---- Print Only Header ---- */}
-        <div className="print-only mb-10 pb-4 border-b-2 border-slate-200">
-          <div className="flex items-end justify-between">
-             <div>
-               <h2 className="text-2xl font-black text-slate-900 tracking-tight">Impresius Pro</h2>
-               <p className="text-sm font-semibold text-slate-500 mt-1 uppercase tracking-widest">Documento Ufficiale &mdash; Computo Metrico</p>
-             </div>
-             <div className="text-right">
-                <p className="text-sm font-medium text-slate-600">Generato con Impresius Platform</p>
-                <p className="text-xs text-slate-400 mt-0.5">{new Date().toLocaleDateString('it-IT')}</p>
-             </div>
+  return (
+    <>
+      <style jsx global>{`
+        @media print {
+          body, html {
+            background: white !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            font-size: 11pt !important;
+            line-height: 1.4 !important;
+          }
+          body * {
+            visibility: hidden;
+          }
+          #report-content,
+          #report-content * {
+            visibility: visible;
+          }
+          #report-content {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            background: white !important;
+          }
+          .no-print {
+            display: none !important;
+          }
+          @page {
+            margin: 15mm 15mm;
+            size: A4;
+          }
+          .print-page-break {
+            page-break-before: always;
+          }
+          .print-break-inside-avoid {
+            page-break-inside: avoid;
+            break-inside: avoid;
+          }
+          th { border-bottom: 2px solid #000 !important; color: #000 !important; }
+          td { color: #000 !important; border-color: #e5e7eb !important; }
+        }
+      `}</style>
+      
+      <div className="no-print flex flex-col min-h-[calc(100vh-4rem)]">
+        <div className="flex-1 p-4 md:p-8 pb-32 lg:pb-24 max-w-6xl">
+          {/* ---- Header ---- */}
+          <div className="mb-8">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="page-header-title">
+                  Computo Metrico Opere
+                </h1>
+                <p className="page-header-subtitle">
+                  Area 2 &mdash; Dettaglio lavorazioni e misurazioni per piano
+                </p>
+              </div>
+              <Button
+                variant="outline"
+                onClick={() => window.print()}
+                className="gap-2.5 bg-white hover:bg-slate-50 border-slate-200 text-slate-700 shadow-sm no-print"
+              >
+                <Printer className="w-4 h-4 text-blue-600" />
+                <span className="font-semibold">Stampa PDF</span>
+              </Button>
+            </div>
           </div>
-        </div>
 
         {/* ---- Floor Tabs ---- */}
         <div className="flex flex-wrap items-center gap-2 mb-6">
@@ -843,14 +879,127 @@ export default function ComputoMetricoPage() {
               );
             })}
           </div>
-          <div className="text-right ml-auto">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Totale Computo</p>
-            <p className="text-lg md:text-xl font-extrabold tabular-nums text-blue-600">
-              {formatCurrency(grandTotal)}
-            </p>
-          </div>
         </div>
       </div>
-    </div>
+      </div>
+
+      {/* ============ STAMPA COMPUTO METRICO A4 ============ */}
+      <div id="report-content" className="hidden print:block bg-white text-black mx-auto max-w-[210mm] shadow-2xl print:shadow-none print:max-w-full">
+        {/* FOGLIO A4 PADDING FRONTALE */}
+        <div className="p-8 md:p-12">
+          
+          {/* INTESTAZIONE DOCUMENTO */}
+          <div className="border-b-[3px] border-black pb-5 mb-8 flex justify-between items-end">
+            <div className="max-w-[70%]">
+              <div className="flex items-center gap-2 mb-4">
+                <Building2 className="w-6 h-6 text-[#d4af37]" />
+                <span className="text-sm font-extrabold uppercase tracking-[0.2em] text-gray-500">Impresius Pro</span>
+              </div>
+              <h1 className="text-3xl md:text-4xl font-extrabold uppercase tracking-tight text-black leading-none">
+                {project?.name || 'Progetto'}
+              </h1>
+              {project?.location_address && (
+                <p className="text-sm text-gray-600 font-medium mt-3 flex items-center gap-1.5 flex-wrap">
+                  <MapPin className="w-3.5 h-3.5 text-[#d4af37]" />
+                  {[project.location_address, project.location_city, project.location_province].filter(Boolean).join(', ')}
+                </p>
+              )}
+            </div>
+            <div className="text-right pb-1">
+              <div className="text-xs font-bold text-[#d4af37] uppercase tracking-widest mb-1">DOCUMENTO</div>
+              <div className="text-lg font-black text-black tracking-tight">COMPUTO METRICO</div>
+              <div className="text-xs text-gray-500 font-medium mt-1">Data emissione: {reportDate}</div>
+            </div>
+          </div>
+
+          {/* Dettagli per Piano */}
+          <div className="mb-10 pt-2">
+            {FLOORS.map((floor) => {
+              const floorItems = itemsByFloor.get(floor.value) || [];
+              if (floorItems.length === 0) return null;
+              
+              const ft = floorItems.reduce((sum, item) => sum + calculateItemTotal(item, measurementsByItem.get(item.id) || []), 0);
+
+              return (
+                <div key={floor.value} className="mb-12 print-break-inside-avoid">
+                  <h4 className="text-[12px] font-bold text-[#d4af37] mb-3 uppercase tracking-widest border-l-2 border-black pl-2">
+                    Piano: {floor.label}
+                  </h4>
+                  <table className="w-full text-[11.5px] text-left border-collapse">
+                    <thead>
+                      <tr className="border-y border-gray-300 bg-gray-50">
+                        <th className="py-2.5 px-2 font-bold text-black uppercase">Nr. / Lavorazione / Misurazioni</th>
+                        <th className="py-2.5 px-2 font-bold text-black text-center w-12 uppercase">U.M.</th>
+                        <th className="py-2.5 px-2 font-bold text-black text-right w-16 uppercase">Q.tà</th>
+                        <th className="py-2.5 px-2 font-bold text-black text-right w-20 uppercase">P. Unit.</th>
+                        <th className="py-2.5 px-2 font-bold text-[#d4af37] text-right w-24 uppercase">Totale</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {floorItems.map((item) => {
+                        const itemMeas = measurementsByItem.get(item.id) || [];
+                        const qty = calculateItemQuantity(itemMeas);
+                        const total = calculateItemTotal(item, itemMeas);
+                        return (
+                          <React.Fragment key={item.id}>
+                            <tr className="border-t border-gray-300">
+                              <td className="py-2 px-2 text-black font-semibold">
+                                <span className="font-bold text-gray-500 mr-2">{item.item_number}</span> 
+                                {item.title}
+                                <div className="text-[9px] text-gray-400 uppercase tracking-widest mt-0.5 ml-6">{getCategoryLabel(item.category)}</div>
+                              </td>
+                              <td className="py-2 px-2 text-center text-gray-600 font-medium align-top">{item.unit_of_measure}</td>
+                              <td className="py-2 px-2 text-right text-gray-800 font-medium align-top">{formatNumber(qty)}</td>
+                              <td className="py-2 px-2 text-right text-gray-800 font-medium align-top">{formatCurrency(item.unit_price)}</td>
+                              <td className="py-2 px-2 text-right font-bold text-black align-top">{formatCurrency(total)}</td>
+                            </tr>
+                            {/* Misurazioni detail (optional) */}
+                            {itemMeas.length > 0 && itemMeas.map((m, idx) => {
+                              const mQty = calculateMeasurementQuantity(m);
+                              return (
+                                <tr key={m.id} className="border-b border-gray-100 bg-[#fdfdfd]">
+                                  <td className="py-1 px-2 pl-8 text-[11px] text-gray-500 italic border-l-[3px] border-gray-100">
+                                    - {m.description || `Misurazione ${idx + 1}`} 
+                                    <span className="ml-2 text-[10px] text-gray-400">
+                                      ({[m.parts !== 0 && m.parts, m.length !== 0 && m.length, m.width !== 0 && m.width, m.height_weight !== 0 && m.height_weight].filter(Boolean).join(' x ')})
+                                    </span>
+                                  </td>
+                                  <td className="py-1 px-2 text-center text-[10px] text-gray-400"></td>
+                                  <td className="py-1 px-2 text-right text-[11px] font-medium text-gray-500">{formatNumber(mQty)}</td>
+                                  <td className="py-1 px-2"></td>
+                                  <td className="py-1 px-2"></td>
+                                </tr>
+                              )
+                            })}
+                          </React.Fragment>
+                        );
+                      })}
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <td colSpan={4} className="py-3 px-2 text-right font-bold uppercase text-[10px] text-gray-600">Totale {floor.label}:</td>
+                        <td className="py-3 px-2 text-right font-bold text-black border-t-[3px] border-black bg-gray-50">{formatCurrency(ft)}</td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="mt-8 border-t-[3px] border-black pt-4 flex justify-between items-center print-break-inside-avoid">
+            <div className="text-gray-500 text-sm font-semibold uppercase tracking-widest">Totale Generale Computo</div>
+            <div className="text-2xl font-black text-black">{formatCurrency(grandTotal)}</div>
+          </div>
+
+        </div>
+        
+        {/* FOGLIO A4 FOOTER BAND */}
+        <div className="bg-black px-10 md:px-14 py-4 flex items-center justify-between text-white print-break-inside-avoid">
+          <span className="text-[10px] uppercase font-bold tracking-[0.2em] text-[#d4af37]">{project?.name || 'Progetto'} &middot; Confidential</span>
+          <span className="text-[10px] font-medium opacity-70">Generato con Impresius Pro V3</span>
+        </div>
+      </div>
+    </>
   );
 }

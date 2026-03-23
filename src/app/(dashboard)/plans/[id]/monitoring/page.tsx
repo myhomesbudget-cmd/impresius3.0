@@ -46,14 +46,25 @@ const CHART_COLORS_PREV = ['#bae6fd', '#ddd6fe', '#a7f3d0']; // sky-200, violet-
 const CHART_COLORS_EFF = ['#0ea5e9', '#8b5cf6', '#10b981']; // sky-500, violet-500, emerald-500
 
 const CustomLegend = () => (
-  <div className="flex justify-center gap-6 mt-4 text-xs font-medium text-slate-500">
-    <div className="flex items-center gap-2">
-      <div className="w-3 h-3 rounded-sm bg-slate-200 border border-slate-300"></div>
-      <span>Preventivo (Base/Chiaro)</span>
-    </div>
-    <div className="flex items-center gap-2">
-      <div className="w-3 h-3 rounded-sm bg-slate-500"></div>
-      <span>Effettivo (Scuro)</span>
+  <div className="flex flex-col items-center gap-3 mt-6 mb-2">
+    <div className="flex flex-wrap justify-center gap-x-8 gap-y-4">
+      {['Acquisizione', 'Operativi', 'Costruzione'].map((label, i) => (
+        <div key={i} className="flex flex-col items-center gap-1.5 p-2 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
+           <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+             {label}
+           </span>
+           <div className="flex items-center gap-3">
+             <div className="flex items-center gap-1.5">
+               <div className="w-3 h-3 rounded-[3px]" style={{ backgroundColor: CHART_COLORS_PREV[i] }}></div>
+               <span className="text-[11px] font-medium text-slate-600 dark:text-slate-300">Preventivo</span>
+             </div>
+             <div className="flex items-center gap-1.5">
+               <div className="w-3 h-3 rounded-[3px] shadow-sm" style={{ backgroundColor: CHART_COLORS_EFF[i] }}></div>
+               <span className="text-[11px] font-medium text-slate-600 dark:text-slate-300">Effettivo</span>
+             </div>
+           </div>
+        </div>
+      ))}
     </div>
   </div>
 );

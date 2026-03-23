@@ -343,16 +343,28 @@ export default function ScenariosPage() {
       </div>
 
       {/* ---- Print Only Header ---- */}
-      <div className="print-only mb-6 pb-4 border-b-2 border-slate-200">
-        <div className="flex items-end justify-between">
-            <div>
-              <h2 className="text-2xl font-black text-slate-900 tracking-tight">Impresius Pro</h2>
-              <p className="text-sm font-semibold text-slate-500 mt-1 uppercase tracking-widest">Documento Ufficiale &mdash; Scenari di Redditività</p>
-            </div>
-            <div className="text-right">
-              <p className="text-sm font-medium text-slate-600">Generato con Impresius Platform</p>
-              <p className="text-xs text-slate-400 mt-0.5">{new Date().toLocaleDateString('it-IT')}</p>
-            </div>
+      <div className="print-only pb-5 mb-8 border-b-[3px] border-black flex justify-between items-end">
+        <div className="max-w-[70%]">
+          <div className="flex items-center gap-2 mb-4">
+            <Building2 className="w-6 h-6 text-[#d4af37]" />
+            <span className="text-sm font-extrabold uppercase tracking-[0.2em] text-gray-500">Impresius Pro</span>
+          </div>
+          <h1 className="text-3xl md:text-4xl font-extrabold uppercase tracking-tight text-black leading-none">
+            {project.name}
+          </h1>
+          {(project.location_address || project.location_city || project.location_province) && (
+            <p className="text-sm text-gray-600 font-medium mt-3 flex items-center gap-1.5 flex-wrap">
+              <MapPin className="w-3.5 h-3.5 text-[#d4af37]" />
+              {[project.location_address, project.location_city, project.location_province].filter(Boolean).join(', ')}
+            </p>
+          )}
+        </div>
+        <div className="text-right pb-1">
+          <div className="text-xs font-bold text-[#d4af37] uppercase tracking-widest mb-1">DOCUMENTO</div>
+          <div className="text-lg font-black text-black tracking-tight">ANALISI SCENARI</div>
+          <div className="text-xs text-gray-500 font-medium mt-1">
+            Data emissione: {new Date().toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+          </div>
         </div>
       </div>
 
@@ -956,6 +968,16 @@ export default function ScenariosPage() {
           </Card>
         </div>
       )}
+
+      {/* ---- Print Only Footer ---- */}
+      <div className="print-only mt-10">
+        <div className="bg-black px-10 md:px-14 py-4 flex items-center justify-between text-white print-page-break-avoid">
+          <span className="text-[10px] uppercase font-bold tracking-[0.2em] text-[#d4af37]">
+            {project?.name || 'Progetto'} &middot; Confidential
+          </span>
+          <span className="text-[10px] font-medium opacity-70">Generato con Impresius Pro V3</span>
+        </div>
+      </div>
     </div>
   );
 }

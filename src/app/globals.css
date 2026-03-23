@@ -747,7 +747,7 @@ html, body {
 
 @media print {
   @page {
-    margin: 1.5cm;
+    margin: 15mm 15mm;
     size: A4 portrait;
   }
 
@@ -817,13 +817,32 @@ html, body {
   /* Gestire tabelle o schede in modo da non spezzarle a metà */
   .print-avoid-break {
     page-break-inside: avoid;
+    break-inside: avoid;
   }
   
+  .print-page-break {
+    page-break-before: always;
+  }
+
   thead {
     display: table-header-group;
   }
   
   tr {
     page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Emulazione Palette "Report" per le tabelle normali in stampa */
+  th { 
+    border-bottom: 2px solid #000 !important; 
+    color: #000 !important; 
+    font-weight: 800 !important; 
+    text-transform: uppercase !important;
+  }
+  
+  td {
+    color: #000 !important;
+    border-color: #e5e7eb !important;
   }
 }
