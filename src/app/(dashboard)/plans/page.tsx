@@ -188,13 +188,13 @@ export default function PlansPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 sm:mb-10">
         <div>
-          <h1 className="page-header-title">Le mie Operazioni</h1>
-          <p className="page-header-subtitle">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#1A1A24] tracking-tight">Le mie Operazioni</h1>
+          <p className="text-[#1A1A24]/40 text-sm mt-1">
             Gestisci tutte le tue operazioni immobiliari
           </p>
         </div>
         <Link href="/plans/new">
-          <Button variant="gradient" className="gap-2 w-full sm:w-auto">
+          <Button variant="gradient" className="gap-2 w-full sm:w-auto btn-glass-primary !rounded-xl">
             <Plus className="w-4 h-4" />
             Nuova Operazione
           </Button>
@@ -204,15 +204,15 @@ export default function PlansPage() {
       {/* Filters */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-8">
         {/* Status Tabs */}
-        <div className="flex items-center gap-1 bg-muted rounded-xl p-1 border border-border">
+        <div className="flex items-center gap-1 rounded-xl p-1 bg-white/40 border border-white/60">
           {tabs.map((tab) => (
             <button
               key={tab.value}
               onClick={() => setStatusFilter(tab.value)}
               className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-200 ${
                 statusFilter === tab.value
-                  ? 'bg-card text-foreground shadow-[0_1px_3px_rgb(0_0_0/0.08)]'
-                  : 'text-muted-foreground hover:text-foreground'
+                  ? 'bg-white/70 text-[#1A1A24] shadow-[0_1px_3px_rgb(0_0_0/0.06)]'
+                  : 'text-[#1A1A24]/40 hover:text-[#1A1A24]/70'
               }`}
             >
               {tab.label}
@@ -222,27 +222,27 @@ export default function PlansPage() {
 
         {/* Search */}
         <div className="relative flex-1 w-full sm:max-w-xs">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#1A1A24]/30" />
+          <input
             placeholder="Cerca per nome o citta..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9"
+            className="w-full pl-9 pr-4 py-2.5 rounded-xl glass-input text-sm"
           />
         </div>
       </div>
 
       {/* Projects Table / List */}
       {filteredProjects.length === 0 ? (
-        <Card className="border-dashed border-2 border-border bg-black/5 dark:bg-white/[0.02] hover:shadow-none">
+        <Card variant="glass" className="border-dashed !border-2 !border-[#7B61FF]/15 hover:shadow-none">
           <CardContent className="flex flex-col items-center justify-center py-20">
-            <div className="empty-state-icon">
-              <Building2 className="w-9 h-9 text-blue-500" />
+            <div className="w-20 h-20 rounded-3xl flex items-center justify-center bg-[#7B61FF]/10 border border-[#7B61FF]/15 mb-6">
+              <Building2 className="w-9 h-9 text-[#7B61FF]" />
             </div>
-            <h3 className="text-lg font-bold text-foreground mb-2">
+            <h3 className="text-lg font-bold text-[#1A1A24] mb-2">
               Nessuna operazione trovata
             </h3>
-            <p className="text-sm text-muted-foreground mb-8 text-center max-w-sm leading-relaxed">
+            <p className="text-sm text-[#1A1A24]/40 mb-8 text-center max-w-sm leading-relaxed">
               {projects.length === 0
                 ? 'Crea la tua prima operazione immobiliare per iniziare ad analizzare costi, ricavi e margini.'
                 : 'Nessuna operazione corrisponde ai filtri selezionati.'}
@@ -258,7 +258,7 @@ export default function PlansPage() {
           </CardContent>
         </Card>
       ) : (
-        <Card>
+        <Card variant="glass">
           <div className="overflow-x-auto">
             <table className="w-full table-premium">
               <thead>
@@ -342,7 +342,7 @@ export default function PlansPage() {
                         </button>
 
                         {openMenuId === project.id && (
-                          <div className="absolute right-0 top-full mt-1.5 w-48 bg-black/40 dark:bg-white/[0.03] backdrop-blur-xl rounded-xl shadow-[0_8px_32px_rgb(0_0_0/0.4)] border border-border py-1.5 z-50 animate-scale-in">
+                          <div className="absolute right-0 top-full mt-1.5 w-48 glass-dropdown py-1.5 z-50 animate-scale-in">
                             <Link
                               href={`/plans/${project.id}`}
                               onClick={(e) => e.stopPropagation()}

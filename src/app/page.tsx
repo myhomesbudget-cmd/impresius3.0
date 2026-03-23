@@ -7,10 +7,7 @@ import { Footer } from "@/components/landing/Footer";
 
 export default function Home() {
   return (
-    <main
-      className="min-h-screen relative"
-      style={{ background: "#0a0e1e" }}
-    >
+    <main className="min-h-screen relative mesh-gradient-landing">
       <Navbar />
       <Hero />
       <Features />
