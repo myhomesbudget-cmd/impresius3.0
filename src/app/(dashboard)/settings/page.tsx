@@ -170,15 +170,15 @@ export default function SettingsPage() {
     <div className="p-4 md:p-8 max-w-3xl mx-auto">
       {/* Header */}
       <div className="mb-10">
-        <h1 className="page-header-title">Impostazioni</h1>
-        <p className="page-header-subtitle">
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#1A1A24] tracking-tight">Impostazioni</h1>
+        <p className="text-[#1A1A24]/40 text-sm mt-1">
           Gestisci il tuo profilo e il tuo abbonamento
         </p>
       </div>
 
       <div className="space-y-8">
         {/* Card 1 - Profilo Personale */}
-        <Card>
+        <Card variant="glass">
           <CardHeader>
             <div className="flex items-center gap-2.5">
               <div className="icon-container icon-container-sm rounded-lg bg-blue-500/10 dark:bg-blue-500/20">
@@ -269,7 +269,7 @@ export default function SettingsPage() {
         </Card>
 
         {/* Card 2 - Piano e Abbonamento */}
-        <Card>
+        <Card variant="glass">
           <CardHeader>
             <div className="flex items-center gap-2.5">
               <div className="icon-container icon-container-sm rounded-lg bg-amber-500/10 dark:bg-amber-500/20">
@@ -341,7 +341,7 @@ export default function SettingsPage() {
         </Card>
 
         {/* Card 3 - Account */}
-        <Card>
+        <Card variant="glass">
           <CardHeader>
             <div className="flex items-center gap-2.5">
               <div className="icon-container icon-container-sm rounded-lg bg-muted">

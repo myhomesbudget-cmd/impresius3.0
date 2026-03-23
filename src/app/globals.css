@@ -297,13 +297,33 @@ html, body {
 
 /* ===== Glassmorphism Design System ===== */
 
-/* Mesh Gradient Background — pastel undertones */
+/* Mesh Gradient Background — pastel undertones (dashboard) */
 .mesh-gradient-bg {
   background:
     radial-gradient(ellipse at 15% 20%, rgba(123, 97, 255, 0.12) 0%, transparent 50%),
     radial-gradient(ellipse at 85% 30%, rgba(0, 194, 255, 0.10) 0%, transparent 50%),
     radial-gradient(ellipse at 50% 80%, rgba(255, 45, 85, 0.08) 0%, transparent 50%),
     linear-gradient(160deg, #e8eaf6 0%, #f3e5f5 30%, #e3f2fd 60%, #ede7f6 100%);
+  min-height: 100vh;
+}
+
+/* Landing page mesh gradient — richer, full-page */
+.mesh-gradient-landing {
+  background:
+    radial-gradient(ellipse at 10% 10%, rgba(123, 97, 255, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 90% 20%, rgba(0, 194, 255, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 40% 60%, rgba(255, 45, 85, 0.08) 0%, transparent 45%),
+    radial-gradient(ellipse at 70% 80%, rgba(123, 97, 255, 0.10) 0%, transparent 50%),
+    linear-gradient(160deg, #ede7f6 0%, #e3f2fd 25%, #f3e5f5 50%, #e8eaf6 75%, #ede7f6 100%);
+}
+
+/* Auth page mesh gradient — centered, softer */
+.mesh-gradient-auth {
+  background:
+    radial-gradient(ellipse at 30% 30%, rgba(123, 97, 255, 0.14) 0%, transparent 55%),
+    radial-gradient(ellipse at 70% 70%, rgba(0, 194, 255, 0.12) 0%, transparent 55%),
+    radial-gradient(ellipse at 50% 50%, rgba(255, 45, 85, 0.06) 0%, transparent 50%),
+    linear-gradient(135deg, #ede7f6 0%, #e3f2fd 50%, #f3e5f5 100%);
   min-height: 100vh;
 }
 
@@ -370,6 +390,73 @@ html, body {
 .glass-accent-purple { border-top: 3px solid #7B61FF; }
 .glass-accent-cyan { border-top: 3px solid #00C2FF; }
 .glass-accent-pink { border-top: 3px solid #FF2D55; }
+
+/* Glass navbar */
+.glass-navbar {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.04);
+}
+
+/* Glass input for forms */
+.glass-input {
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 12px;
+  color: #1A1A24;
+  transition: all 0.2s ease;
+}
+
+.glass-input:focus {
+  background: rgba(255, 255, 255, 0.8);
+  border-color: #7B61FF;
+  box-shadow: 0 0 0 3px rgba(123, 97, 255, 0.15);
+  outline: none;
+}
+
+.glass-input::placeholder {
+  color: rgba(26, 26, 36, 0.35);
+}
+
+/* Glass sidebar (for dashboard) */
+.glass-sidebar {
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  border-right: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+/* Glass context menu / dropdown */
+.glass-dropdown {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  color: #1A1A24;
+}
+
+/* Glass panel — no hover lift (for static panels) */
+.glass-panel-static {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(0, 0, 0, 0.04);
+  color: #1A1A24;
+}
+
+/* Glassmorphism text gradient */
+.text-gradient-glass {
+  background: linear-gradient(135deg, #7B61FF 0%, #00C2FF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
 
 /* ===== Premium Card ===== */
 .card-premium {

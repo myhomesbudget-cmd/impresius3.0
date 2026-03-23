@@ -110,17 +110,17 @@ export default function PaymentsPage() {
     <div className="p-4 md:p-8 max-w-5xl space-y-10">
       {/* Success / Cancel Banners */}
       {success && (
-        <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 flex items-start gap-3 shadow-sm">
-          <div className="icon-container icon-container-sm rounded-lg bg-emerald-100 mt-0.5">
+        <div className="glass-panel-static !rounded-xl p-4 flex items-start gap-3 !border-emerald-500/20">
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-emerald-500/10 border border-emerald-500/15 mt-0.5 shrink-0">
             <CheckCircle2 className="w-4 h-4 text-emerald-600" />
           </div>
           <div>
-            <p className="text-sm font-bold text-emerald-800">Pagamento completato con successo!</p>
-            <p className="text-sm text-emerald-700 mt-1">
+            <p className="text-sm font-bold text-emerald-700">Pagamento completato con successo!</p>
+            <p className="text-sm text-emerald-600/70 mt-1">
               Il tuo acquisto e stato registrato.{' '}
               <button
                 onClick={() => router.push('/plans/new')}
-                className="underline font-semibold hover:text-emerald-900"
+                className="underline font-semibold hover:text-emerald-800"
               >
                 Crea una nuova operazione
               </button>
@@ -129,13 +129,13 @@ export default function PaymentsPage() {
         </div>
       )}
       {cancelled && (
-        <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 flex items-start gap-3 shadow-sm">
-          <div className="icon-container icon-container-sm rounded-lg bg-amber-100 mt-0.5">
+        <div className="glass-panel-static !rounded-xl p-4 flex items-start gap-3 !border-amber-500/20">
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-amber-500/10 border border-amber-500/15 mt-0.5 shrink-0">
             <AlertCircle className="w-4 h-4 text-amber-600" />
           </div>
           <div>
-            <p className="text-sm font-bold text-amber-800">Pagamento annullato</p>
-            <p className="text-sm text-amber-700 mt-1">
+            <p className="text-sm font-bold text-amber-700">Pagamento annullato</p>
+            <p className="text-sm text-amber-600/70 mt-1">
               Il pagamento non e stato completato. Puoi riprovare in qualsiasi momento.
             </p>
           </div>
@@ -144,8 +144,8 @@ export default function PaymentsPage() {
 
       {/* Header */}
       <div>
-        <h1 className="page-header-title">Pagamenti</h1>
-        <p className="page-header-subtitle">
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#1A1A24] tracking-tight">Pagamenti</h1>
+        <p className="text-[#1A1A24]/40 text-sm mt-1">
           Gestisci il tuo abbonamento e visualizza lo storico dei pagamenti
         </p>
       </div>
@@ -153,11 +153,11 @@ export default function PaymentsPage() {
       {/* Plan & Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         {/* Current Plan */}
-        <div className="kpi-card kpi-card-indigo">
-          <div className="p-5">
+        <div className="glass-panel glass-accent-purple">
+          <div className="p-6">
             <div className="flex items-center gap-3 mb-4">
-              <div className="icon-container icon-container-md rounded-xl bg-indigo-500/10 dark:bg-indigo-500/20">
-                <Crown className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-[#7B61FF]/10 border border-[#7B61FF]/15">
+                <Crown className="w-5 h-5 text-[#7B61FF]" />
               </div>
               <div>
                 <p className="metric-label">Piano Attuale</p>
@@ -192,11 +192,11 @@ export default function PaymentsPage() {
         </div>
 
         {/* Total Spent */}
-        <div className="kpi-card kpi-card-emerald">
-          <div className="p-5">
+        <div className="glass-panel glass-accent-cyan">
+          <div className="p-6">
             <div className="flex items-center gap-3 mb-4">
-              <div className="icon-container icon-container-md rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20">
-                <CreditCard className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-[#00C2FF]/10 border border-[#00C2FF]/15">
+                <CreditCard className="w-5 h-5 text-[#00C2FF]" />
               </div>
               <div>
                 <p className="metric-label">Totale Speso</p>
@@ -210,11 +210,11 @@ export default function PaymentsPage() {
         </div>
 
         {/* Transactions Count */}
-        <div className="kpi-card kpi-card-blue">
-          <div className="p-5">
+        <div className="glass-panel glass-accent-pink">
+          <div className="p-6">
             <div className="flex items-center gap-3 mb-4">
-              <div className="icon-container icon-container-md rounded-xl bg-blue-500/10 dark:bg-blue-500/20">
-                <Receipt className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-[#FF2D55]/10 border border-[#FF2D55]/15">
+                <Receipt className="w-5 h-5 text-[#FF2D55]" />
               </div>
               <div>
                 <p className="metric-label">Transazioni</p>
@@ -229,7 +229,7 @@ export default function PaymentsPage() {
       </div>
 
       {/* Payments History */}
-      <Card>
+      <Card variant="glass">
         <CardHeader>
           <div className="flex items-center gap-2.5">
             <div className="icon-container icon-container-sm rounded-lg bg-muted">

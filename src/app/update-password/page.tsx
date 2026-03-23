@@ -2,14 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
-
 import { createClient } from "@/lib/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Building2, Lock, CheckCircle2 } from "lucide-react";
 
 export default function UpdatePasswordPage() {
-
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -48,85 +44,101 @@ export default function UpdatePasswordPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen relative flex items-center justify-center p-4">
-        <div className="w-full max-w-md text-center">
-          <div className="bg-card/90 backdrop-blur-md rounded-2xl shadow-xl border border-border p-8">
-            <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <CheckCircle2 className="w-8 h-8 text-emerald-600" />
-            </div>
-            <h1 className="text-2xl font-bold text-foreground mb-2">
-              Password aggiornata
-            </h1>
-            <p className="text-muted-foreground text-sm">
-              La tua password è stata aggiornata con successo.
-            </p>
-            <Link href="/dashboard">
-              <Button variant="gradient" className="mt-6">
-                Vai alla Dashboard
-              </Button>
-            </Link>
+      <div className="min-h-screen flex items-center justify-center p-6 mesh-gradient-auth">
+        <div className="w-full max-w-md text-center glass-panel-lg p-10 sm:p-12">
+          <div className="w-16 h-16 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <CheckCircle2 className="w-8 h-8 text-emerald-500" />
           </div>
+          <h1 className="text-2xl font-extrabold text-[#1A1A24] mb-2">
+            Password aggiornata
+          </h1>
+          <p className="text-[#1A1A24]/50 text-sm">
+            La tua password è stata aggiornata con successo.
+          </p>
+          <Link
+            href="/dashboard"
+            className="btn-glass-primary inline-block mt-6 px-6 py-3 text-sm"
+          >
+            Vai alla Dashboard
+          </Link>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen relative flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-6 mesh-gradient-auth">
       <div className="w-full max-w-md">
         {/* Logo */}
-        <Link href="/" className="flex items-center justify-center gap-2 mb-8">
-          <div className="w-10 h-10 icon-gradient rounded-xl flex items-center justify-center">
+        <Link href="/" className="flex items-center justify-center gap-3 mb-8">
+          <div
+            className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg"
+            style={{ background: "linear-gradient(135deg, #7B61FF, #00C2FF)" }}
+          >
             <Building2 className="w-6 h-6 text-white" />
           </div>
-          <span className="text-2xl font-bold text-gradient">Impresius</span>
+          <span className="text-2xl font-extrabold text-gradient-glass">
+            Impresius
+          </span>
         </Link>
 
         {/* Card */}
-        <div className="bg-card/90 backdrop-blur-md rounded-2xl shadow-xl border border-border p-8">
-          <h1 className="text-2xl font-bold text-foreground text-center mb-2">
+        <div className="glass-panel-lg p-8">
+          <h1 className="text-2xl font-extrabold text-[#1A1A24] text-center mb-2">
             Nuova Password
           </h1>
-          <p className="text-muted-foreground text-center text-sm mb-8">
+          <p className="text-[#1A1A24]/50 text-center text-sm mb-8">
             Scegli una nuova password per il tuo account
           </p>
 
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg p-3 mb-6">
+            <div className="bg-[#FF2D55]/10 border border-[#FF2D55]/20 text-[#FF2D55] text-sm rounded-xl p-3.5 mb-6">
               {error}
             </div>
           )}
 
           <form onSubmit={handleUpdate} className="space-y-5">
-            <Input
-              label="Nuova Password"
-              type="password"
-              placeholder="Minimo 6 caratteri"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              icon={<Lock className="w-4 h-4" />}
-              required
-            />
+            <div className="space-y-1.5">
+              <label className="text-sm font-semibold text-[#1A1A24]">
+                Nuova Password
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#1A1A24]/30 pointer-events-none" />
+                <input
+                  type="password"
+                  placeholder="Minimo 6 caratteri"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="w-full pl-10 pr-4 py-3 rounded-xl glass-input text-sm font-medium"
+                />
+              </div>
+            </div>
 
-            <Input
-              label="Conferma Password"
-              type="password"
-              placeholder="Ripeti la password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              icon={<Lock className="w-4 h-4" />}
-              required
-            />
+            <div className="space-y-1.5">
+              <label className="text-sm font-semibold text-[#1A1A24]">
+                Conferma Password
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#1A1A24]/30 pointer-events-none" />
+                <input
+                  type="password"
+                  placeholder="Ripeti la password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                  className="w-full pl-10 pr-4 py-3 rounded-xl glass-input text-sm font-medium"
+                />
+              </div>
+            </div>
 
-            <Button
+            <button
               type="submit"
-              variant="gradient"
-              size="lg"
-              className="w-full"
-              loading={loading}
+              disabled={loading}
+              className="w-full py-3 rounded-xl btn-glass-primary text-sm transition-all duration-200 disabled:opacity-60 hover:scale-[1.01] active:scale-[0.99]"
             >
-              Aggiorna Password
-            </Button>
+              {loading ? "Aggiornamento in corso…" : "Aggiorna Password"}
+            </button>
           </form>
         </div>
       </div>
